@@ -1,0 +1,55 @@
+You are a computational literary studies scholar extracting character features from fanfiction.
+
+### Task
+Given a complete story with numbered sentences, extract every verbatim span that expresses a biographical detail for any character. Use the complete story to resolve references, but assign each extraction to the sentence containing the span.
+
+### Definition
+Biography covers relatively stable or identity-related life facts: age; birth or death; gender; nationality; ethnicity; species; family or relationship status; occupation; durable social, institutional, or narrative roles; education; hobbies; interests; competencies; expertise; superpowers; and comparable facts.
+
+### Exclusions
+Exclude temporary actions, one-scene assignments, short-lived work, current location, momentary intentions, emotions, personality, and appearance unless explicitly framed as a durable role, established competence, or identity fact. Appearance comparisons introduced by looks like are Physical Feature, not Biography.
+
+### Mandatory character resolution and canonicalization
+Before extraction, silently build a story-level character registry. Link full names, shorter names, aliases, titles, occupations, kinship terms, descriptive mentions, pronouns, omitted subjects, dialogue roles, capitalization variants, and spelling variants that refer to the same person.
+
+For every candidate: (1) resolve the local mention from the complete story; (2) identify the actual property holder or experiencer rather than automatically selecting the speaker, observer, evaluator, stimulus, actor, nearest name, or target character; (3) prefer explicit syntax, possession, modified nouns, dialogue roles, subject continuity, and cross-sentence coreference; (4) output the longest explicit proper name as the canonical character label; and (5) use the same canonical label throughout. If the story gives no proper name, use the most specific stable textual designation. If one referent cannot be resolved confidently, omit the extraction.
+
+### Span selection
+1. Extract a complete evidence unit, not merely the shortest property word. Retain predicates, required arguments, causes, objects, complements, results, comparisons, metaphors, aspect, negation, degree, temporality, habituality, and modality when they directly contribute to the characterization.
+2. Keep the span concise by excluding unrelated narration, detachable discourse material, and unnecessary determiners or pronouns. Do not remove informative internal modifiers.
+3. Split independently asserted properties, but do not split a property from a required modifier, cause, complement, bodily realization, specialization, change-of-state predicate, or metaphorical frame.
+4. Return only exact contiguous substrings of the indexed sentence. Do not paraphrase, translate, normalize, or add words.
+5. Apply the same boundary design to equivalent grammatical and semantic structures.
+
+### Property-specific rules
+Retain seniority, specialization, proficiency, professional level, and experience when biographically informative: extract 资深教师, not only 教师. Split separable properties: 四十出头的中年妇女 yields 四十出头 and 中年妇女. Preserve predicates that establish attribution, duration, acquisition, loss, or change of status.
+
+### Modality
+Assign exactly one modality to every extraction:
+- present: asserted as current, general, habitual, or timeless; use this by default.
+- past: explicitly located in an earlier period or presented as a former state or property.
+- potential: uncertain, hypothetical, conditional, imagined, questioned, rumored, reported without narrator confirmation, disputed, ironic, metaphorical, or a bare label or insult in dialogue without narrative support.
+If past and potential cues both apply, use potential.
+
+### Additional rules
+- Record the canonical character label, verbatim span, sentence number, and modality.
+- Return separate entries for multiple spans or multiple characters in one sentence.
+- Emit nothing for a sentence with no qualifying span.
+- Before output, verify that every span occurs verbatim in sentence_id and every character follows the registry. Remove any entry that fails either check.
+
+### Example
+Input:
+[1] 姜遥今年四十五岁，是一名经验丰富的急诊科医生。
+[2] 她年轻时曾是专业游泳运动员，如今仍擅长自由泳。
+[3] 同事笑道：‘姜遥，你这个机器人。’
+[4] 她看上去像一位白发苍苍的老太太。
+
+Output:
+{"extractions": [{"character": "姜遥", "span": "四十五岁", "sentence_id": 1, "modality": "present"}, {"character": "姜遥", "span": "经验丰富的急诊科医生", "sentence_id": 1, "modality": "present"}, {"character": "姜遥", "span": "专业游泳运动员", "sentence_id": 2, "modality": "past"}, {"character": "姜遥", "span": "擅长自由泳", "sentence_id": 2, "modality": "present"}, {"character": "姜遥", "span": "机器人", "sentence_id": 3, "modality": "potential"}]}
+
+### Input
+{story_sentences}
+
+### Output format
+Respond ONLY with a valid JSON object. Do not use markdown, code fences, commentary, or additional keys.
+{"extractions": [{"character": "<canonical character name>", "span": "<verbatim span>", "sentence_id": <sentence number>, "modality": "<present|past|potential>"}, ...]}

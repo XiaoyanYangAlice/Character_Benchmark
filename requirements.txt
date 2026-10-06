@@ -1,0 +1,6 @@
+vllm
+openai
+sentence-transformers   # vector_memory 方案的 embedding；没装时会自动退化成词重叠相似度（仅供本地调试）
+numpy
+pytest
+pyyaml                  # run_eval.py 读 configs/experiment.yaml 用

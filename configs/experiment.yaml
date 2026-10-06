@@ -1,0 +1,50 @@
+# 实验矩阵配置。TODO：9/27 由 run_eval.py 读取。
+
+# 模型权重路径统一放 /projects/prjs1995/models/（scratch-shared 对本账号没有
+# 分配个人目录，实测踩过这个坑，见 docs/SURF_GUIDE.md）。
+models:
+  - name: qwen2.5-7b
+    served_model_name: agent-model-qwen
+    path: /projects/prjs1995/models/Qwen2.5-7B-Instruct
+  - name: llama3.1-8b
+    served_model_name: agent-model-llama
+    path: /projects/prjs1995/models/Llama-3.1-8B-Instruct
+
+judge_model:
+  # 原计划用 Qwen2.5-72B 当 judge，实测这个规模通常要 2-4 张 A100 才装得下，
+  # 加上两个角色模型各占一张卡，一个作业要申请 4-6 张 GPU，8 天预算下风险
+  # 太大。judge 只需要做几个简单的 JSON 判断（矛盾/OOC/1-5分），不需要 72B
+  # 的能力，改用抽取阶段已经下载过的 Qwen2.5-14B-Instruct（见
+  # slurm/ontology_run_extraction.slurm 的 MODEL_PATH），三个服务合计 3 张卡
+  # 左右就能跑，见 docs/SURF_GUIDE.md 第 12 节。
+  name: qwen2.5-14b-instruct
+  served_model_name: judge-model
+  path: /projects/prjs1995/models/Qwen2.5-14B-Instruct
+
+memory_schemes:
+  - raw_context
+  - vector_memory
+  - structured_memory
+
+memory_params:
+  raw_context:
+    max_turns: 20
+  vector_memory:
+    # 数据源（PIPPA）是纯英文，换成小体积的英文 embedding 模型，下载快、编码快；
+    # 之后如果补充中文语料，改回 intfloat/multilingual-e5-large 之类的多语言模型。
+    embedding_model: sentence-transformers/all-MiniLM-L6-v2
+    top_k: 5
+  structured_memory:
+    # 注意：run_eval.py 实际不读这个字段——structured_memory 方案按
+    # dialogue 单条导入 fact_labels（load_character_facts_from_records），
+    # 不是整份文件一次性加载，原因见 docs/DATASET.md「跨故事串味」那一节。
+    # 留着这行只是给手动调试（比如直接调 load_character_facts() 看某份
+    # 抽取文件里有什么）用，不影响 run_eval.py 的行为。
+    character_facts_path: data/processed/character_features_en.jsonl
+
+data:
+  dialogues_path: data/processed/dialogues.jsonl
+  max_turns_per_dialogue: 20
+
+eval:
+  judge_repeats: 1   # 建议先设 3，观察 judge 方差后再决定是否降回 1

@@ -1,0 +1,8 @@
+{
+  "model": "qwen2.5-7b",
+  "n_judged": 600,
+  "n_flagged_total": 42,
+  "n_flagged_chosen": 20,
+  "n_unflagged_chosen": 20,
+  "seed": 0
+}
