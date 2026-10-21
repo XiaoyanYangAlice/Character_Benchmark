@@ -8,7 +8,7 @@ run_eval.py 在没有真值可比对时会把这一项记成 None 并跳过，�
 所以这里单独打印每个指标的非空计数，而不是只看均值，免得把"全是 None 导致
 均值=NaN"误读成"模型表现很差"。
 
-用法（在 SURF 仓库根目录下）：
+用法（在仓库根目录下）：
     python src/eval/summarize_results.py
     # 或指定别的路径：
     python src/eval/summarize_results.py --csv results/summary.csv

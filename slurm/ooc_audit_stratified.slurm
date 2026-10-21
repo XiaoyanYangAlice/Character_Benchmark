@@ -10,8 +10,15 @@
 #
 # 其实在登录节点直接跑就行（几秒钟），这个作业脚本只是为了留一份可复现的命令。
 
-module purge; module load 2025; module load Anaconda3/2025.06-1
-source activate memory-eval
+# 站点相关设置。各集群的模块名不同（module avail 查），所以这里不写死：
+# 把 CLUSTER_MODULES 设进 ~/.bashrc，例如
+#   export CLUSTER_MODULES="2024 Anaconda3/2024.02"
+#   export MODELS_DIR=/your/shared/storage/models
+# 详见 docs/CLUSTER_GUIDE.md 第 0 节。
+module purge
+for _m in ${CLUSTER_MODULES:-}; do module load "$_m"; done
+source activate "${CONDA_ENV:-memory-eval}"
+MODELS_DIR="${MODELS_DIR:-$HOME/models}"
 
 python src/eval/ooc_audit_stratified.py \
     --per-turn results/per_turn.csv results_seed1/per_turn.csv results_seed2/per_turn.csv \

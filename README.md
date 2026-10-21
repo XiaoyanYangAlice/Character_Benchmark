@@ -2,7 +2,7 @@
 
 **Does giving a role-play agent a memory make it remember — and does it make it slip out of character? Measuring both on the same long dialogues.**
 
-[Results and limitations](./docs/RESULTS.md) (Chinese) · [Experiment design](./docs/EXPERIMENT_V2.md) (Chinese) · [Judge audit](./docs/JUDGE_AUDIT.md) (Chinese) · [Dataset notes](./docs/DATASET.md) (Chinese) · [HPC guide](./docs/SURF_GUIDE.md) (Chinese)
+[Results and limitations](./docs/RESULTS.md) (Chinese) · [Experiment design](./docs/EXPERIMENT_V2.md) (Chinese) · [Judge audit](./docs/JUDGE_AUDIT.md) (Chinese) · [Dataset notes](./docs/DATASET.md) (Chinese) · [Cluster guide](./docs/CLUSTER_GUIDE.md) (Chinese)
 
 Xiaoyan Yang · GOLEM group, University of Groningen · code MIT-licensed
 
@@ -397,8 +397,10 @@ python src/eval/compare_schemes.py --csv results_v2/summary.csv --out docs/COMPA
 python src/eval/report_tables.py --runs v2=results_v2/summary.csv --out docs/REPORT_TABLES_V2.txt
 ```
 
-A full re-run needs 3×A100. Step-by-step instructions for SURF Snellius, including the
-traps hit along the way, are in [`docs/SURF_GUIDE.md`](./docs/SURF_GUIDE.md):
+A full re-run needs 3×A100. Step-by-step instructions for a generic SLURM cluster,
+including the traps hit along the way, are in
+[`docs/CLUSTER_GUIDE.md`](./docs/CLUSTER_GUIDE.md); set `MODELS_DIR` and `CLUSTER_MODULES`
+for your site first (§0 there):
 
 ```bash
 sbatch --export=ALL,EXTRA_ARGS="--out-dir results_v2" slurm/run_eval.slurm   # ~105 min
@@ -421,7 +423,7 @@ python src/eval/inspect_extraction.py \
 
 ```
 configs/experiment.yaml        models, per-scheme parameters, judge, probe and audit settings
-docs/                          RESULTS, EXPERIMENT_V2 (design), JUDGE_AUDIT, DATASET, SURF_GUIDE
+docs/                          RESULTS, EXPERIMENT_V2 (design), JUDGE_AUDIT, DATASET, CLUSTER_GUIDE
                                COMPARE_V2.txt, PROBE_DIAGNOSIS_V2.txt (raw statistical output)
 slurm/                         fact extraction, full matrix, multi-seed, judge audit/regression jobs
 src/ontology_extraction/       GOLEM-aligned character-fact extraction, 8 prompts

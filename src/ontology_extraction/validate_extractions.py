@@ -2,7 +2,7 @@
 """
 validate_extractions.py
 
-冒烟测试用的质检脚本，对应 SURF 指南里"先冒烟测试再放量"那条纪律。
+冒烟测试用的质检脚本，对应集群指南里"先冒烟测试再放量"那条纪律。
 
 功能：
 1. 基础质检：每条抽取的 span 是否确实逐字出现在对应句子里（extract_character_features.py

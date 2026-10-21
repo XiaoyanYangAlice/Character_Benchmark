@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=char_ooc_regress
-#SBATCH --partition=gpu_a100
+#SBATCH --partition=gpu_a100   # 按你的站点改，或 sbatch --partition=<名字> 覆盖
 #SBATCH --gpus=1
 #SBATCH --time=00:30:00
 #SBATCH --output=logs/ooc_regress_%j.out
@@ -11,11 +11,18 @@
 #
 # 提交（默认 judge = Qwen2.5-14B，1 张卡）：sbatch slurm/ooc_regress.slurm
 # 换 judge（环境变量传参，TAG 用来区分输出文件，TP = 张量并行卡数，--gpus 要跟 TP 一致）：
-#   JUDGE_PATH=/projects/prjs1995/models/Llama-3.1-8B-Instruct TAG=llama8b sbatch slurm/ooc_regress.slurm
-#   JUDGE_PATH=/projects/prjs1995/models/Mistral-Small-24B-Instruct-2501 TP=2 TAG=mistral24b sbatch --gpus=2 slurm/ooc_regress.slurm
+#   JUDGE_PATH=$MODELS_DIR/Llama-3.1-8B-Instruct TAG=llama8b sbatch slurm/ooc_regress.slurm
+#   JUDGE_PATH=$MODELS_DIR/Mistral-Small-24B-Instruct-2501 TP=2 TAG=mistral24b sbatch --gpus=2 slurm/ooc_regress.slurm
 
-module purge; module load 2025; module load Anaconda3/2025.06-1
-source activate memory-eval
+# 站点相关设置。各集群的模块名不同（module avail 查），所以这里不写死：
+# 把 CLUSTER_MODULES 设进 ~/.bashrc，例如
+#   export CLUSTER_MODULES="2024 Anaconda3/2024.02"
+#   export MODELS_DIR=/your/shared/storage/models
+# 详见 docs/CLUSTER_GUIDE.md 第 0 节。
+module purge
+for _m in ${CLUSTER_MODULES:-}; do module load "$_m"; done
+source activate "${CONDA_ENV:-memory-eval}"
+MODELS_DIR="${MODELS_DIR:-$HOME/models}"
 export HF_HUB_OFFLINE=1
 export VLLM_USE_FLASHINFER_SAMPLER=0
 mkdir -p logs results
@@ -24,7 +31,7 @@ for f in sheet.md key.csv labels.csv; do
     [ -f "results/ooc_audit/$f" ] || { echo "缺 results/ooc_audit/$f"; exit 1; }
 done
 
-JUDGE_PATH=${JUDGE_PATH:-/projects/prjs1995/models/Qwen2.5-14B-Instruct}
+JUDGE_PATH=${JUDGE_PATH:-$MODELS_DIR/Qwen2.5-14B-Instruct}
 TP=${TP:-1}
 TAG=${TAG:-qwen14b}
 echo "judge=$JUDGE_PATH tp=$TP tag=$TAG"

@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=char_run_eval
-#SBATCH --partition=gpu_a100
+#SBATCH --partition=gpu_a100   # 按你的站点改，或 sbatch --partition=<名字> 覆盖
 #SBATCH --gpus=3
 #SBATCH --time=10:00:00
 #SBATCH --output=logs/run_eval_%j.out
@@ -21,8 +21,15 @@
 # 用法：确认 configs/experiment.yaml 里的模型/judge 没有变化后直接提交：
 #   sbatch slurm/run_eval.slurm
 
-module purge; module load 2025; module load Anaconda3/2025.06-1
-source activate memory-eval
+# 站点相关设置。各集群的模块名不同（module avail 查），所以这里不写死：
+# 把 CLUSTER_MODULES 设进 ~/.bashrc，例如
+#   export CLUSTER_MODULES="2024 Anaconda3/2024.02"
+#   export MODELS_DIR=/your/shared/storage/models
+# 详见 docs/CLUSTER_GUIDE.md 第 0 节。
+module purge
+for _m in ${CLUSTER_MODULES:-}; do module load "$_m"; done
+source activate "${CONDA_ENV:-memory-eval}"
+MODELS_DIR="${MODELS_DIR:-$HOME/models}"
 export HF_HUB_OFFLINE=1
 # 原因同 ontology_smoke_test.slurm：计算节点没有 nvcc，关掉 FlashInfer 采样器
 # 避免它尝试 JIT 编译。
@@ -30,9 +37,9 @@ export VLLM_USE_FLASHINFER_SAMPLER=0
 mkdir -p logs results
 
 # 跟 configs/experiment.yaml 里的 name/path 一一对应，改配置时这里也要同步改。
-QWEN_PATH=/projects/prjs1995/models/Qwen2.5-7B-Instruct
-LLAMA_PATH=/projects/prjs1995/models/Llama-3.1-8B-Instruct
-JUDGE_PATH=/projects/prjs1995/models/Qwen2.5-14B-Instruct
+QWEN_PATH=$MODELS_DIR/Qwen2.5-7B-Instruct
+LLAMA_PATH=$MODELS_DIR/Llama-3.1-8B-Instruct
+JUDGE_PATH=$MODELS_DIR/Qwen2.5-14B-Instruct
 
 # CUDA_VISIBLE_DEVICES 把每个 vLLM 进程钉在自己的 GPU 上，避免三个进程抢同一张卡。
 CUDA_VISIBLE_DEVICES=0 vllm serve "$QWEN_PATH" \

@@ -29,7 +29,7 @@ bot_name 字段——structured_memory.py 是按这个标签去 character_facts 
 relationship_trajectory 字段现在统一留空（[]）——关系状态弱标签打分脚本还
 没做，是 docs/DATASET.md 里记录的 TODO，做出来之后再回填。
 
-用法（在 SURF 登录节点，跟 fetch_pippa.py 同一个目录下跑）：
+用法（在集群登录节点，跟 fetch_pippa.py 同一个目录下跑）：
     python build_dialogues.py \
         --facts ../../data/processed/character_features_en.jsonl \
         --output ../../data/processed/dialogues.jsonl

@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=char_make_probes
-#SBATCH --partition=gpu_a100
+#SBATCH --partition=gpu_a100   # 按你的站点改，或 sbatch --partition=<名字> 覆盖
 #SBATCH --gpus=1
 #SBATCH --time=00:40:00
 #SBATCH --output=logs/make_probes_%j.out
@@ -14,13 +14,20 @@
 #
 # 用法：sbatch slurm/make_probes.slurm
 
-module purge; module load 2025; module load Anaconda3/2025.06-1
-source activate memory-eval
+# 站点相关设置。各集群的模块名不同（module avail 查），所以这里不写死：
+# 把 CLUSTER_MODULES 设进 ~/.bashrc，例如
+#   export CLUSTER_MODULES="2024 Anaconda3/2024.02"
+#   export MODELS_DIR=/your/shared/storage/models
+# 详见 docs/CLUSTER_GUIDE.md 第 0 节。
+module purge
+for _m in ${CLUSTER_MODULES:-}; do module load "$_m"; done
+source activate "${CONDA_ENV:-memory-eval}"
+MODELS_DIR="${MODELS_DIR:-$HOME/models}"
 export HF_HUB_OFFLINE=1
 export VLLM_USE_FLASHINFER_SAMPLER=0
 mkdir -p logs
 
-JUDGE_PATH=${JUDGE_PATH:-/projects/prjs1995/models/Qwen2.5-14B-Instruct}
+JUDGE_PATH=${JUDGE_PATH:-$MODELS_DIR/Qwen2.5-14B-Instruct}
 
 CUDA_VISIBLE_DEVICES=0 vllm serve "$JUDGE_PATH" \
     --served-model-name judge-model --port 8002 --dtype bfloat16 --max-model-len 8192 &

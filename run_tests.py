@@ -1,8 +1,8 @@
-"""手动测试跑分器：本地（以及 SURF 上）都没装 pytest，所以用这个脚本代替——
+"""手动测试跑分器：很多环境（包括集群登录节点）没装 pytest，用这个脚本代替——
 import 每个 tests.test_* 模块，把里面所有 test_ 开头的函数都跑一遍，汇总
 通过/失败数。放在仓库根目录，跑法：
 
-    cd /projects/prjs1995/character-memory-eval   # 或你本地仓库根目录
+    cd <仓库根目录>
     python run_tests.py
 """
 import importlib

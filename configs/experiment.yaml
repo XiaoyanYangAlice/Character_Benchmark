@@ -1,14 +1,16 @@
 # 实验矩阵配置。TODO：9/27 由 run_eval.py 读取。
 
-# 模型权重路径统一放 /projects/prjs1995/models/（scratch-shared 对本账号没有
-# 分配个人目录，实测踩过这个坑，见 docs/SURF_GUIDE.md）。
+# 下面的 path 只是说明性的：代码按 name 和 --model-port 找已经起好的 vLLM 服务，
+# 真正决定加载哪份权重的是 slurm/*.slurm 里的 MODELS_DIR。两边要一致，否则你会
+# 以为换了模型其实没换。${MODELS_DIR} 不会被 YAML 展开，跑之前按实际路径改。
+# 存储该放哪、怎么查配额见 docs/CLUSTER_GUIDE.md 第 0 节。
 models:
   - name: qwen2.5-7b
     served_model_name: agent-model-qwen
-    path: /projects/prjs1995/models/Qwen2.5-7B-Instruct
+    path: ${MODELS_DIR}/Qwen2.5-7B-Instruct
   - name: llama3.1-8b
     served_model_name: agent-model-llama
-    path: /projects/prjs1995/models/Llama-3.1-8B-Instruct
+    path: ${MODELS_DIR}/Llama-3.1-8B-Instruct
 
 judge_model:
   # 原计划用 Qwen2.5-72B 当 judge，实测这个规模通常要 2-4 张 A100 才装得下，
@@ -16,10 +18,10 @@ judge_model:
   # 太大。judge 只需要做几个简单的 JSON 判断（矛盾/OOC/1-5分），不需要 72B
   # 的能力，改用抽取阶段已经下载过的 Qwen2.5-14B-Instruct（见
   # slurm/ontology_run_extraction.slurm 的 MODEL_PATH），三个服务合计 3 张卡
-  # 左右就能跑，见 docs/SURF_GUIDE.md 第 12 节。
+  # 左右就能跑，见 docs/CLUSTER_GUIDE.md 第 6 节。
   name: qwen2.5-14b-instruct
   served_model_name: judge-model
-  path: /projects/prjs1995/models/Qwen2.5-14B-Instruct
+  path: ${MODELS_DIR}/Qwen2.5-14B-Instruct
 
 memory_schemes:
   # v2 新增两个对照组。顺序就是报告里解释的顺序，不要随便调。

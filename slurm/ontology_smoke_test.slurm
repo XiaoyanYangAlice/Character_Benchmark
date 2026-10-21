@@ -1,17 +1,24 @@
 #!/bin/bash
 #SBATCH --job-name=char_extract_smoke
-#SBATCH --partition=gpu_a100
+#SBATCH --partition=gpu_a100   # 按你的站点改，或 sbatch --partition=<名字> 覆盖
 #SBATCH --gpus=1
 #SBATCH --time=00:30:00
 #SBATCH --output=logs/smoke_%j.out
 
 # 冒烟测试：只跑 --limit 2 个故事，人工检查结果没问题后再用 ontology_run_extraction.slurm 放量。
 # 在仓库根目录提交：sbatch slurm/ontology_smoke_test.slurm
-# 模型名换成你 huggingface-cli download 下载到 /projects/prjs1995/models/ 的那个目录名
-# （scratch-shared 对该账号未分配个人目录，改用项目存储 /projects/prjs1995）。
+# 模型名换成你 huggingface-cli download 下载到 $MODELS_DIR/ 的那个目录名
+# （存储路径见 docs/CLUSTER_GUIDE.md 第 0 节，用 MODELS_DIR 指定）。
 
-module purge; module load 2025; module load Anaconda3/2025.06-1
-source activate memory-eval
+# 站点相关设置。各集群的模块名不同（module avail 查），所以这里不写死：
+# 把 CLUSTER_MODULES 设进 ~/.bashrc，例如
+#   export CLUSTER_MODULES="2024 Anaconda3/2024.02"
+#   export MODELS_DIR=/your/shared/storage/models
+# 详见 docs/CLUSTER_GUIDE.md 第 0 节。
+module purge
+for _m in ${CLUSTER_MODULES:-}; do module load "$_m"; done
+source activate "${CONDA_ENV:-memory-eval}"
+MODELS_DIR="${MODELS_DIR:-$HOME/models}"
 export HF_HUB_OFFLINE=1
 # 计算节点上没有 CUDA 开发工具链（找不到 nvcc），FlashInfer 的 top-k/top-p 采样
 # kernel 第一次要 JIT 编译会报 "Could not find nvcc"——关掉 FlashInfer 采样器，
@@ -19,7 +26,7 @@ export HF_HUB_OFFLINE=1
 export VLLM_USE_FLASHINFER_SAMPLER=0
 mkdir -p logs data/processed
 
-MODEL_PATH=/projects/prjs1995/models/Qwen2.5-14B-Instruct   # 按你实际下载的模型改
+MODEL_PATH=$MODELS_DIR/Qwen2.5-14B-Instruct   # 按你实际下载的模型改
 
 # --max-model-len 8192：我们的输入（抽取 prompt + 单个角色故事文本）远用不到模型
 # 默认的 32768 上下文长度，之前冒烟测试实测 14B 模型 bf16 权重占满显存后，

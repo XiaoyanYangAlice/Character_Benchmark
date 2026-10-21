@@ -34,7 +34,7 @@
 biography/emotion/personality/physical 四类抽取 prompt（与 GOLEM 本体论文
 `G17_Character_Feature` 子类对齐），对角色卡文本跑一次抽取，直接产出
 `character_features_en.jsonl`（PIPPA 数据是纯英文，用 v4 英文版 prompt），
-合并进 `fact_labels`。具体步骤见 [`SURF_GUIDE.md`](./SURF_GUIDE.md)。
+合并进 `fact_labels`。具体步骤见 [`CLUSTER_GUIDE.md`](./CLUSTER_GUIDE.md)。
 
 ## 已知局限：主角选择用的是启发式，不是精确方法
 
@@ -75,7 +75,7 @@ biography/emotion/personality/physical 四类抽取 prompt（与 GOLEM 本体论
 处理方式：考虑到 8 天时间预算，这里不做人工逐条修正或重新设计两阶段指代消解
 流程，而是把这个误差率作为**已知局限**记录，在最终结果分析里说明"ground truth
 本身并非 100% 干净，可能给三种记忆方案的评测分数带来共同的噪声下限"。如果之后
-有时间，可以考虑的改进方向见 SURF_GUIDE.md 或 README 里冒烟测试环节讨论的
+有时间，可以考虑的改进方向见 CLUSTER_GUIDE.md 或 README 里冒烟测试环节讨论的
 两阶段抽取方案。
 
 ## 已修复：第一人称角色卡的 canonical 标签是代词，生成 prompt 里会读不通

@@ -4,8 +4,8 @@
 
 embedding 模型用 sentence-transformers（默认 intfloat/multilingual-e5-large，
 中文场景效果更好；纯英文场景可以在 configs/experiment.yaml 里换成
-sentence-transformers/all-MiniLM-L6-v2，体积小、SURF 上下载快）。SURF 上跑
-批量编码参考 docs/SURF_GUIDE.md。
+sentence-transformers/all-MiniLM-L6-v2，体积小、下载快）。集群上跑
+批量编码参考 docs/CLUSTER_GUIDE.md。
 
 没装 sentence-transformers 时（比如本地离线开发环境），自动退化成词重叠
 （Jaccard）相似度，只用来跑通整条链路的逻辑，**不能**用退化模式产出正式实验

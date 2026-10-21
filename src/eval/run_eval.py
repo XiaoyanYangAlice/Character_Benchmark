@@ -13,7 +13,7 @@ per_turn.csv 是 v2 最重要的新增产物。v1 只存汇总值，导致后来
 真正用过的那些判定来人工核对，也可以按方案分层、按轮次位置分层做分析，
 不用再花 GPU 重判。
 
-用法（模型和 judge 各自的 vLLM 服务已经在 SURF 上起好之后，见 docs/SURF_GUIDE.md）：
+用法（模型和 judge 各自的 vLLM 服务已经起好之后，见 docs/CLUSTER_GUIDE.md）：
     python src/eval/run_eval.py --config configs/experiment.yaml \
         --model-port qwen2.5-7b=8000 --model-port llama3.1-8b=8001 --model-port judge=8002
 
@@ -263,8 +263,8 @@ def main():
     ap.add_argument("--config", required=True)
     ap.add_argument("--base-url-template", default="http://localhost:{port}/v1",
                      help="vLLM 服务地址模板，{port} 会被 --model-port 对应的端口替换；"
-                          "SURF 上每个模型（含 judge）各起一个 vLLM 服务、各占一个端口，"
-                          "怎么起见 docs/SURF_GUIDE.md")
+                          "每个模型（含 judge）各起一个 vLLM 服务、各占一个端口，"
+                          "怎么起见 docs/CLUSTER_GUIDE.md")
     ap.add_argument("--model-port", action="append", default=[],
                      help="格式 name=port，比如 --model-port qwen2.5-7b=8000，"
                           "可重复传多次；judge_model 的端口用 --model-port judge=<port>")

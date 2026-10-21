@@ -1,7 +1,7 @@
 """src/eval/run_eval.py 里不需要真实 vLLM/judge 服务的部分单独测试：
 build_memory() 的三路分发对不对、character_card_text() 的 display_name 优先级、
 load_dialogues() 能不能正确解析。run_one()/main() 需要真实（或至少假的）
-OpenAI client 跑完整流程，那部分只能在装了 openai 包的环境（SURF）里用
+OpenAI client 跑完整流程，那部分只能在装了 openai 包的环境（集群上）里用
 --dry-run 或真跑一遍验证，不在这里测。"""
 import json
 import tempfile

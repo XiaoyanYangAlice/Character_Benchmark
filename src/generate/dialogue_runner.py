@@ -5,7 +5,7 @@
 粘合层——metrics.py 的四个函数都需要一份跑出来的 `turns` 列表，这个模块就是
 产出它的地方。
 
-vLLM 部署与调用方式见 docs/SURF_GUIDE.md「跑法 1」。
+vLLM 部署与调用方式见 docs/CLUSTER_GUIDE.md「跑法 1」。
 
 ⚠ 关键约定：`character_card["name"]` 必须和 ground truth 事实库
 （`data/processed/character_features_en.jsonl` 里的 "character" 字段）用的

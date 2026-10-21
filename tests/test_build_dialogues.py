@@ -1,6 +1,6 @@
 """src/generate/build_dialogues.py 里不依赖网络/datasets 包的那部分逻辑
 （事实分组、主角选择启发式）单独测试；实际拉取 PIPPA 数据的部分只能在装了
-datasets 包且有 HF 缓存的环境（SURF）里跑，不在这里测。"""
+datasets 包且有 HF 缓存的环境（集群上）里跑，不在这里测。"""
 import json
 import tempfile
 from pathlib import Path
