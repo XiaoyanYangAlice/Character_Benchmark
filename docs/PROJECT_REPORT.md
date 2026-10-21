@@ -2,6 +2,11 @@
 
 Xiaoyan Yang · 2026-10 · 代码：`character-memory-eval`（MIT）
 
+> **版本说明：本文档描述 v1（61 条短对话、3 个记忆方案），第 4 节的数字全部来自
+> v1，已被 v2 取代。v2 的结果见 [`RESULTS.md`](./RESULTS.md)，改动理由见
+> [`EXPERIMENT_V2.md`](./EXPERIMENT_V2.md)。保留本文是因为第 5 节（四类静默失败）
+> 和第 6 节（judge 审核）的方法与结论在 v2 中仍然适用。**
+
 ## 1. 项目概览
 
 **问题。** 长期角色扮演对话里，模型会忘记角色设定、前后矛盾，或者突然"出戏"，变成客服式助手腔。工业界常见的做法是给角色加"记忆"：原样保留最近上下文、用向量检索召回相关历史、或者维护结构化的角色档案。但这三种做法在同一批数据上到底差多少，缺少可复现的对比，而且评测本身（LLM-judge）有多可靠，很少被认真检查。
@@ -14,7 +19,7 @@ Xiaoyan Yang · 2026-10 · 代码：`character-memory-eval`（MIT）
 
 ## 2. 实验设计
 
-**数据。** 来自 PIPPA（Gosling et al. 2023，Apache-2.0，约 26 万轮 Character.AI 真实用户对话，附角色卡，数据集本身标注含成人内容）。筛选 ≥15 轮、角色设定信息丰富的片段，得到 61 段英文对话。每段对话固定其中的真实用户发言（`scripted_user_turns`，最多 20 轮）并喂给所有方案，保证差异只来自"记忆给了模型什么上下文"，不混入"用户聊的内容不一样"。
+**数据。** 来自 PIPPA（Gosling et al. 2023，Apache-2.0，约 26 万轮 Character.AI 真实用户对话，附角色卡，数据集本身标注含成人内容）。筛选 ≥15 轮、角色设定信息丰富的片段，得到 61 段英文对话。每段对话固定其中的真实用户发言（`scripted_user_turns`，`build_dialogues.py` 默认只取前 6 轮；61 段里 57 段正好 6 轮，均值 5.8，共约 351 条角色回复/次运行）并喂给所有方案，保证差异只来自"记忆给了模型什么上下文"，不混入"用户聊的内容不一样"。
 
 **角色事实 ground truth。** 用四类抽取器（biography / emotion / personality / physical，对齐 GOLEM 本体 `G17_Character_Feature` 子类，Pianzola et al. 2025）对角色卡做抽取，每条事实带 span 证据与 modality（present / past / potential），对 62 个故事得到 1009 条记录。已知误差：抽取是四次独立调用，指代消解不稳定（例如代词被当成独立伪角色），已在 `docs/DATASET.md` 如实记录。
 
@@ -70,7 +75,7 @@ Xiaoyan Yang · 2026-10 · 代码：`character-memory-eval`（MIT）
 
 **能说的。** (1) Qwen-7B 上 structured 的 ooc 标记率比 raw 低约 5.7 个百分点，三次重复方向一致；(2) vector 的降幅较小；(3) Llama-8B 上三种方案没有可检测差异，该模型出戏率与事实一致性已接近天花板。
 
-**不能说的。** (1) "structured 优于 vector"不成立：CI 含 0，且差异在三次里逐次缩小；(2) "记忆提升事实一致性"不成立：第一次的 +3.0 个百分点三次平均后只剩约 +1.2，由个位数对话贡献，指标接近天花板；(3) 12 个比较没做多重比较校正，属于探索性分析；(4) 这些结论只对这 61 段对话成立，不代表 PIPPA 全体。
+**不能说的。** (1) "structured 优于 vector"不成立：CI 含 0，且差异在三次里逐次缩小；(2) "记忆提升事实一致性"不成立：第一次的 +3.0 个百分点三次平均后只剩约 +1.2，由个位数对话贡献，指标接近天花板；(3) 12 个比较的主表没做多重比较校正；事后 Holm 校正后，Qwen 上 structured vs raw（校正 p=0.001）和 vector vs raw（校正 p=0.03）的 ooc 差异仍显著，所有 fact_consistency 差异和 structured vs vector 都不显著，仍按探索性分析对待；(4) 这些结论只对这 61 段对话成立，不代表 PIPPA 全体。
 
 ## 5. 四类静默失败：怎么发现的、怎么修的
 
@@ -99,7 +104,7 @@ Xiaoyan Yang · 2026-10 · 代码：`character-memory-eval`（MIT）
 
 **主要局限。**
 - judge 未经充分校验（见上）；judge 与 Qwen agent 同系，可能偏向同系回复。
-- 对话短（≤20 用户轮次），raw 窗口几乎等于完整历史，**没有测长期记忆**；structured 注入的事实与 system prompt 里的角色卡高度重叠，出戏率下降更可能来自"再次提醒人设"而非"记住了新信息"，没有设计对照把二者分开。
+- 对话很短（每段只有前 6 个用户发言），raw 的 20 轮窗口**从不截断**，raw 就是完整历史，**没有测长期记忆**；vector 在最后一轮也只是从至多 10 个历史轮次里挑 5 个；structured 注入的事实与 system prompt 里的角色卡高度重叠，出戏率下降更可能来自"再次提醒人设"而非"记住了新信息"，没有设计对照把二者分开。
 - structured_memory 只是事实清单，事件/关系抽取未实现；`relationship_accuracy` 未实现；`evidence_traceability` 是代理指标。
 - ground truth 与 structured 记忆同源，且抽取有指代消解噪声；样本仅 61 条，主角由启发式选出。
 

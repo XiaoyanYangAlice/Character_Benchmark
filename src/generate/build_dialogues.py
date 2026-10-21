@@ -92,8 +92,14 @@ def main():
     ap.add_argument("--facts", required=True, type=Path,
                      help="src/ontology_extraction/extract_character_features.py 的输出")
     ap.add_argument("--output", required=True, type=Path)
-    ap.add_argument("--max-user-turns", type=int, default=6,
-                     help="每段对话最多取多少轮用户真实发言（轮数越多，生成+评测成本越高）")
+    ap.add_argument("--max-user-turns", type=int, default=30,
+                     help="每段对话最多取多少轮用户真实发言。v1 默认是 6，导致 raw_context 的 "
+                          "20 轮窗口从不截断、三种记忆方案都没有发挥空间（见 docs/RESULTS.md "
+                          "限制 9）。v2 默认 30：配合 memory_params.raw_context.max_turns=10，"
+                          "raw 从第 6 个用户轮次起就开始丢历史，记忆方案才有意义。")
+    ap.add_argument("--min-user-turns", type=int, default=12,
+                     help="用户真实发言少于这么多轮的对话直接跳过。这是 v2 最关键的筛选条件："
+                          "短对话测不出任何记忆差异，留在数据集里只会稀释效应、虚增样本量。")
     ap.add_argument("--min-facts", type=int, default=2,
                      help="主角事实条数少于这个数就跳过（大概率是主角选错了，或者素材太薄）")
     args = ap.parse_args()
@@ -111,6 +117,7 @@ def main():
     n_skip_too_few_facts = 0
     n_skip_no_human_turns = 0
     seen_bots = set()
+    turn_counts: list[int] = []
 
     with open(args.output, "w", encoding="utf-8") as out:
         for row in ds:
@@ -129,7 +136,8 @@ def main():
             conv = row.get("conversation", []) or []
             human_turns = [m["message"] for m in conv if m.get("is_human") and m.get("message", "").strip()]
             scripted_user_turns = human_turns[: args.max_user_turns]
-            if not scripted_user_turns:
+            if len(scripted_user_turns) < args.min_user_turns:
+                # 既包含"一句人类发言都没有"的情况，也包含"有但太短"的情况。
                 n_skip_no_human_turns += 1
                 continue
 
@@ -144,18 +152,27 @@ def main():
                 "scripted_user_turns": scripted_user_turns,
                 "fact_labels": protagonist_facts,
                 "relationship_trajectory": [],  # TODO：弱标签打分脚本还没做，见 docs/DATASET.md
+                # 记忆探针由 src/generate/make_probes.py 事后填进来（需要 LLM，
+                # 这个脚本刻意不依赖 vLLM 服务）。留空时 run_eval 不跑探针指标。
+                "memory_probes": [],
             }
             out.write(json.dumps(record, ensure_ascii=False) + "\n")
+            turn_counts.append(len(scripted_user_turns))
             n_written += 1
 
     n_unmatched = len(wanted_bot_ids) - len(seen_bots)
     print(f"\n写出 {n_written} 段对话到 {args.output}")
+    if n_written:
+        print("用户轮次分布（这是 v1 最大的坑，务必核对）：")
+        import statistics
+        print(f"  中位数 {statistics.median(turn_counts)}，均值 {statistics.mean(turn_counts):.1f}，"
+              f"最小 {min(turn_counts)}，最大 {max(turn_counts)}")
     print(f"跳过：主角事实条数 < {args.min_facts} 的 {n_skip_too_few_facts} 个，"
-          f"没有人类发言轮次的 {n_skip_no_human_turns} 个，"
+          f"人类发言轮次 < {args.min_user_turns} 的 {n_skip_no_human_turns} 个，"
           f"在 pippa.jsonl 里没匹配到 bot_id 的 {n_unmatched} 个"
           f"（正常情况下应该是 0，不是就说明数据集版本变了）")
-    print("下一步：抽样核对几条 character_card.name 是不是真的对应这个故事该演的角色，"
-          "再跑 src/eval/run_eval.py。")
+    print("下一步：(1) 抽样核对几条 character_card.name 是不是真的对应这个故事该演的角色；"
+          "(2) 跑 src/generate/make_probes.py 生成记忆探针；(3) 再跑 src/eval/run_eval.py。")
 
 
 if __name__ == "__main__":

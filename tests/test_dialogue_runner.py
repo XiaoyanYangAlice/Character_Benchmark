@@ -119,3 +119,41 @@ def test_run_dialogue_passes_seed_to_model_only_when_given():
     c2 = RecordingClient(["a"])
     run_dialogue(RawContextMemory(), c2, "m", CHARACTER_CARD, ["hi"])
     assert "seed" not in c2.seen[0]
+
+
+# ---------------------------------------------------------------- v2 新增
+def test_run_dialogue_appends_probe_turns_and_marks_them():
+    """探针提问接在脚本台词之后，并且被标记出来，指标那边才能把它们从
+    出戏率的分母里排除、单独算记忆正确率。"""
+    from src.memory.raw_context import RawContextMemory
+    client = FakeClient(["回复1", "回复2", "你妹妹叫 Anna"])
+    turns = run_dialogue(
+        memory=RawContextMemory(),
+        client=client, model="m",
+        character_card={"name": "Alice", "description": "d"},
+        scripted_user_turns=["你好", "今天怎么样"],
+        memory_probes=[{"question": "我妹妹叫什么来着", "expected_answer": "Anna"}],
+    )
+    assert len(turns) == 6  # 2 轮脚本 + 1 轮探针，各含 user/character
+    assert [t["text"] for t in turns if t["speaker"] == "user"][-1] == "我妹妹叫什么来着"
+    probe_turns = [t for t in turns if t.get("is_probe")]
+    assert len(probe_turns) == 2  # 探针的 user 轮和 character 轮都被标记
+    assert all(not t.get("is_probe") for t in turns[:4])
+
+
+def test_run_dialogue_records_context_length_per_turn():
+    """每轮注入了多长的上下文必须记下来，否则无法回答『方案之间的差异是不是
+    单纯因为某个方案塞进去的字更多』。"""
+    from src.memory.no_memory import NoMemory
+    from src.memory.raw_context import RawContextMemory
+    card = {"name": "Alice", "description": "d"}
+
+    empty = run_dialogue(memory=NoMemory(), client=FakeClient(["a", "b"]), model="m",
+                         character_card=card, scripted_user_turns=["你好", "再见"])
+    assert all(t["context_chars"] == 0 for t in empty if t["speaker"] != "user")
+
+    raw = run_dialogue(memory=RawContextMemory(), client=FakeClient(["a", "b"]), model="m",
+                       character_card=card, scripted_user_turns=["你好", "再见"])
+    char_turns = [t for t in raw if t["speaker"] != "user"]
+    assert char_turns[0]["context_chars"] > 0
+    assert char_turns[1]["context_chars"] > char_turns[0]["context_chars"]

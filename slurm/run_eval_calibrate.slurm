@@ -2,10 +2,10 @@
 #SBATCH --job-name=char_run_eval_calibrate
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=3
-#SBATCH --time=00:30:00
+#SBATCH --time=01:00:00
 #SBATCH --output=logs/run_eval_%j.out
 
-# run_eval.slurm 的校准版：只跑前 5 条对话（--limit 5），--time 也相应改小成
+# run_eval.slurm 的校准版：只跑前 3 条对话（--limit 3，写到 results_calib/，不覆盖正式结果），--time 也相应改小成
 # 30 分钟，目的是在提交全量作业（366 次生成，--time 没有实测校准过）之前，先
 # 花一点点 GPU 时间看看实际单条耗时，再回去把 slurm/run_eval.slurm 里的
 # --time 调准，避免全量跑到一半被系统按超时杀掉、或者申请了用不上的 GPU 小时。
@@ -59,12 +59,12 @@ if [ "$ALL_UP" -ne 1 ]; then
     exit 1
 fi
 
-python src/eval/run_eval.py \
+python src/eval/run_eval.py --workers ${WORKERS:-12} ${EXTRA_ARGS} \
     --config configs/experiment.yaml \
     --model-port qwen2.5-7b=8000 \
     --model-port llama3.1-8b=8001 \
     --model-port judge=8002 \
-    --limit 5
+    --limit 3 --out-dir results_calib
 
 kill $QWEN_PID $LLAMA_PID $JUDGE_PID 2>/dev/null
 

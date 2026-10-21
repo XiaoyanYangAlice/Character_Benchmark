@@ -2,14 +2,19 @@
 #SBATCH --job-name=char_run_eval_seeds
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=3
-#SBATCH --time=03:30:00
+#SBATCH --time=24:00:00
 #SBATCH --output=logs/run_eval_seeds_%j.out
 
 # 重复实验：用不同的采样种子把全量矩阵再跑 2 遍（seed 1、seed 2），每遍写到独立
 # 目录 results_seed1/ results_seed2/，不会覆盖第一次（未固定种子）的 results/。
 # 两遍复用同一组 vLLM 服务，只启动一次。
 #
-# --time=03:30:00：单遍实测约 73 分钟生成 + 2 分钟一次性启动，两遍约 148 分钟，
+# ⚠ v2 的时间上限从 3.5 小时提到 16 小时：对话更长、方案从 3 个变 5 个、
+# judge_repeats 从 1 变 3，还多了事件抽取。**先跑 run_eval_calibrate.slurm
+# 拿实测单条耗时**，再按 (单条耗时 x 总次数 x 2 个 seed) 决定最终 --time，
+# 不要直接按这里的默认值提交。
+# 以下是 v1 的估算记录，留作对照：
+# 单遍实测约 73 分钟生成 + 2 分钟一次性启动，两遍约 148 分钟，
 # 加约 40% 余量。
 #
 # 提交：sbatch slurm/run_eval_seeds.slurm
@@ -56,7 +61,7 @@ fi
 
 for SEED in 1 2; do
     echo "===== seed ${SEED} 开始 ====="
-    python src/eval/run_eval.py \
+    python src/eval/run_eval.py --workers ${WORKERS:-12} ${EXTRA_ARGS} \
         --config configs/experiment.yaml \
         --model-port qwen2.5-7b=8000 \
         --model-port llama3.1-8b=8001 \

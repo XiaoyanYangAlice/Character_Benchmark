@@ -118,3 +118,127 @@ def test_structured_memory_from_records_does_not_leak_other_stories_with_same_la
 
     # 确认没有意外改到调用方传进来的原始 list（同一份 dict 被复用会引发更隐蔽的 bug）
     assert monika_facts[0]["character"] == "I"
+
+
+# ---------------------------------------------------------------- v2 新增
+def test_no_memory_returns_empty_context():
+    from src.memory.no_memory import NoMemory
+    mem = NoMemory()
+    ctx = mem.retrieve([{"turn_id": 1, "speaker": "user", "text": "x"}], {"speaker": "Ayaka"})
+    assert ctx == ""
+    assert len(mem.retrieval_log) == 1
+
+
+def test_shuffled_facts_relabels_donor_facts_so_retrieval_is_not_empty():
+    """对照组必须真的注入内容。如果忘了把捐赠事实挂到当前角色名下，retrieve()
+    按 speaker 查表会查不到任何东西、静默退化成空上下文——那 shuffled_facts
+    就变成了 no_memory 的复制品，对照完全失效且不报错。这正是 v1 踩过的
+    『传错 speaker 导致记忆全程为空』那个坑的同一形态。"""
+    from src.memory.shuffled_facts import ShuffledFactsMemory
+    donor = [{"character": "Bob", "span": "是一名宇航员", "modality": "present", "story_id": "s2"}]
+    mem = ShuffledFactsMemory()
+    mem.load_donor_facts(donor, character_name="Alice")
+
+    ctx = mem.retrieve([], {"speaker": "Alice"})
+    assert "宇航员" in ctx
+    assert mem.retrieval_log[-1]["retrieved_fact_ids"] == ["Alice#0"]
+    # 留痕：事后要能查出这条事实原本属于谁
+    assert mem.character_facts["Alice"][0]["donor_story_id"] == "s2"
+
+
+def test_structured_memory_on_new_turn_accumulates_events_from_extractor():
+    """v1 的 on_new_turn 是空实现，结构化记忆只有开局导入的静态事实，对话里
+    新出现的信息一律不进记忆——那测的就不是记忆。这里断言抽取器拿到的是
+    『一个完整来回』，并且抽出来的事件会出现在后续检索结果里。"""
+    from src.memory.structured_memory import StructuredEventMemory
+    seen = []
+
+    def fake_extractor(exchange):
+        seen.append(exchange)
+        return [{"who": "user", "kind": "fact", "content": "用户的妹妹叫 Anna"}]
+
+    mem = StructuredEventMemory(event_extractor=fake_extractor)
+    mem.on_new_turn({"turn_id": 1, "speaker": "user", "text": "我妹妹叫 Anna"})
+    assert seen == []  # 只收到用户轮次时还不能抽取，要等角色回复
+    mem.on_new_turn({"turn_id": 2, "speaker": "Alice", "text": "Anna 这名字真好听"})
+
+    assert len(seen) == 1
+    assert seen[0]["user_turn"]["text"] == "我妹妹叫 Anna"
+    assert seen[0]["character_turn"]["text"] == "Anna 这名字真好听"
+    assert "Anna" in mem.retrieve([], {"speaker": "Alice"})
+
+
+def test_structured_memory_survives_extractor_failure():
+    """抽取失败不能让整段对话白跑，但必须计数，否则会出现『事件记忆全程为空
+    却没人发现』——这正是 v1 那类静默失败的形态。"""
+    from src.memory.structured_memory import StructuredEventMemory
+
+    def boom(exchange):
+        raise RuntimeError("judge 服务挂了")
+
+    mem = StructuredEventMemory(event_extractor=boom)
+    mem.on_new_turn({"turn_id": 1, "speaker": "user", "text": "x"})
+    mem.on_new_turn({"turn_id": 2, "speaker": "Alice", "text": "y"})
+    assert mem.events == []
+    assert mem.extraction_failures == 1
+
+
+def test_structured_memory_respects_retrieval_budget():
+    """检索预算必须生效，否则 structured 注入的上下文会比别的方案长很多，
+    方案之间比的就变成了上下文长度。"""
+    from src.memory.structured_memory import StructuredEventMemory
+    facts = [{"character": "Alice", "span": f"fact{i}", "modality": "present"} for i in range(20)]
+    mem = StructuredEventMemory(max_facts=3)
+    mem.load_character_facts_from_records(facts)
+    ctx = mem.retrieve([], {"speaker": "Alice"})
+    assert "fact2" in ctx and "fact3" not in ctx
+
+
+# ---------------------------------------------------------------- 混合检索
+def test_hybrid_retrieval_keeps_relevant_early_events():
+    """诊断发现：按时间近远取最近 8 条，会把探针要考的早期信息全部挤掉
+    （一段对话约 43 条事件，只给 8 条）。hybrid 必须能把与当前问题相关的
+    早期事件捞回来，同时保留几条最近的维持对话连贯。"""
+    from src.memory.structured_memory import StructuredEventMemory
+
+    mem = StructuredEventMemory(max_events=4, retrieval="hybrid", n_recent=2)
+    mem.events = [
+        {"turn_id": 3, "who": "user", "kind": "fact",
+         "content": "The user's sister is named Anna."},                 # 早期但相关
+        {"turn_id": 5, "who": "Kasey", "kind": "event", "content": "walked to class"},
+        {"turn_id": 7, "who": "Kasey", "kind": "event", "content": "ate a sandwich"},
+        {"turn_id": 9, "who": "Kasey", "kind": "event", "content": "opened the door"},
+        {"turn_id": 11, "who": "Kasey", "kind": "event", "content": "sat down"},
+        {"turn_id": 13, "who": "Kasey", "kind": "event", "content": "looked outside"},
+    ]
+    out = mem._select_events({"text": "What is my sister called?"})
+    contents = [e["content"] for e in out]
+    assert len(out) == 4
+    assert "The user's sister is named Anna." in contents, \
+        f"相关的早期事件应当被捞回来，实际取到：{contents}"
+    assert contents[-1] == "looked outside", "最近的事件应当保留，且按时间排在最后"
+    assert [e["turn_id"] for e in out] == sorted(e["turn_id"] for e in out), \
+        "注入顺序必须按时间，否则读起来不像一条时间线"
+
+
+def test_recency_retrieval_is_unchanged_by_default():
+    """默认行为必须和 v2 一致，否则旧结果无法复现。"""
+    from src.memory.structured_memory import StructuredEventMemory
+
+    mem = StructuredEventMemory(max_events=2)
+    mem.events = [{"turn_id": i, "who": "user", "content": f"e{i}"} for i in (1, 3, 5)]
+    out = mem._select_events({"text": "e1"})
+    assert [e["content"] for e in out] == ["e3", "e5"]
+
+
+def test_hybrid_prefers_user_events_when_overlap_ties():
+    """重合度打平时优先用户相关的事件——探针问的全是用户说过的话。"""
+    from src.memory.structured_memory import StructuredEventMemory
+
+    mem = StructuredEventMemory(max_events=1, retrieval="hybrid", n_recent=0)
+    mem.events = [
+        {"turn_id": 2, "who": "Kasey", "content": "zzz unrelated one"},
+        {"turn_id": 4, "who": "user", "content": "zzz unrelated two"},
+    ]
+    out = mem._select_events({"text": "something entirely different"})
+    assert out[0]["who"] == "user"

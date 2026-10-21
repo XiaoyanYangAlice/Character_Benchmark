@@ -8,6 +8,10 @@ from abc import ABC, abstractmethod
 
 class BaseMemory(ABC):
     name: str = "base"
+    # 这个方案是否有"检索证据"的语义。raw_context/no_memory 没有（它们不检索，
+    # 只是把历史原样拼进去或者什么都不给），证据类指标对它们无定义，强行算出
+    # 一个数会被误读成"它们的证据可追溯性是 0/1"。
+    supports_evidence: bool = False
 
     @abstractmethod
     def retrieve(self, history: list[dict], current_turn: dict) -> str:

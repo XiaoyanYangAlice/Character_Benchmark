@@ -1,0 +1,170 @@
+读入 1 次重复：results_v2/summary.csv
+
+各方案平均注入上下文长度（字符，用来检查预算是否可比）：
+  llama3.1-8b   no_memory                  0
+  llama3.1-8b   raw_context             2804
+  llama3.1-8b   shuffled_facts           229
+  llama3.1-8b   structured_hybrid        682
+  llama3.1-8b   structured_memory        678
+  llama3.1-8b   vector_memory            729
+  qwen2.5-7b    no_memory                  0
+  qwen2.5-7b    raw_context             1582
+  qwen2.5-7b    shuffled_facts           229
+  qwen2.5-7b    structured_hybrid        611
+  qwen2.5-7b    structured_memory        606
+  qwen2.5-7b    vector_memory            599
+
+共 144 个比较，bootstrap 20000 次。Holm 校正在 (模型 × 指标) 族内做，共 12 个族，每族 12 个比较（族的划分是事先定的，主指标是 probe_accuracy）。差值 = A − B。
+model	metric	A vs B	n	mean(A-B)	95%CI	p	Holm p(族内)	校正后显著	A<B/tie/A>B	方向
+llama3.1-8b	fact_consistency	raw_context vs no_memory	47	+0.002	[-0.001, +0.005]	0.2212	1.0000	否	1/43/3	—
+llama3.1-8b	fact_consistency	vector_memory vs no_memory	47	-0.000	[-0.009, +0.006]	0.9900	1.0000	否	2/41/4	—
+llama3.1-8b	fact_consistency	structured_memory vs no_memory	47	+0.002	[-0.002, +0.006]	0.2799	1.0000	否	1/42/4	—
+llama3.1-8b	fact_consistency	structured_memory vs raw_context	47	+0.000	[-0.003, +0.004]	0.9577	1.0000	否	1/45/1	—
+llama3.1-8b	fact_consistency	vector_memory vs raw_context	47	-0.002	[-0.011, +0.004]	0.6376	1.0000	否	2/43/2	—
+llama3.1-8b	fact_consistency	structured_memory vs vector_memory	47	+0.003	[-0.003, +0.011]	0.5929	1.0000	否	2/43/2	—
+llama3.1-8b	fact_consistency	structured_memory vs shuffled_facts	47	+0.004	[-0.001, +0.010]	0.1718	1.0000	否	2/39/6	—
+llama3.1-8b	fact_consistency	shuffled_facts vs no_memory	47	-0.002	[-0.008, +0.003]	0.5484	1.0000	否	4/40/3	—
+llama3.1-8b	fact_consistency	structured_hybrid vs structured_memory	47	+0.001	[-0.001, +0.004]	0.5763	1.0000	否	1/44/2	—
+llama3.1-8b	fact_consistency	structured_hybrid vs no_memory	47	+0.003	[+0.001, +0.007]	0.0324	0.3564	否	0/43/4	—
+llama3.1-8b	fact_consistency	structured_hybrid vs vector_memory	47	+0.004	[-0.001, +0.012]	0.3437	1.0000	否	1/44/2	—
+llama3.1-8b	fact_consistency	structured_hybrid vs shuffled_facts	47	+0.005	[+0.001, +0.011]	0.0117	0.1404	否	0/42/5	—
+llama3.1-8b	fact_consistency_late	raw_context vs no_memory	47	-0.003	[-0.007, +0.000]	0.2616	1.0000	否	2/45/0	—
+llama3.1-8b	fact_consistency_late	vector_memory vs no_memory	47	-0.002	[-0.011, +0.004]	0.7887	1.0000	否	1/45/1	—
+llama3.1-8b	fact_consistency_late	structured_memory vs no_memory	47	-0.001	[-0.006, +0.004]	0.9486	1.0000	否	1/45/1	—
+llama3.1-8b	fact_consistency_late	structured_memory vs raw_context	47	+0.002	[-0.005, +0.010]	0.6598	1.0000	否	1/44/2	—
+llama3.1-8b	fact_consistency_late	vector_memory vs raw_context	47	+0.001	[-0.009, +0.010]	0.9208	1.0000	否	1/44/2	—
+llama3.1-8b	fact_consistency_late	structured_memory vs vector_memory	47	+0.001	[-0.006, +0.011]	0.9351	1.0000	否	1/45/1	—
+llama3.1-8b	fact_consistency_late	structured_memory vs shuffled_facts	47	+0.004	[-0.004, +0.012]	0.4263	1.0000	否	1/43/3	—
+llama3.1-8b	fact_consistency_late	shuffled_facts vs no_memory	47	-0.004	[-0.013, +0.003]	0.3304	1.0000	否	3/43/1	—
+llama3.1-8b	fact_consistency_late	structured_hybrid vs structured_memory	47	+0.001	[-0.004, +0.006]	0.9486	1.0000	否	1/45/1	—
+llama3.1-8b	fact_consistency_late	structured_hybrid vs no_memory	47	+0.000	[+0.000, +0.000]	1.0000	1.0000	否	0/47/0	—
+llama3.1-8b	fact_consistency_late	structured_hybrid vs vector_memory	47	+0.002	[-0.004, +0.011]	0.7887	1.0000	否	1/45/1	—
+llama3.1-8b	fact_consistency_late	structured_hybrid vs shuffled_facts	47	+0.004	[-0.003, +0.013]	0.3304	1.0000	否	1/43/3	—
+llama3.1-8b	leakage_rate	raw_context vs no_memory	47	+0.011	[+0.001, +0.026]	0.0319	0.3828	否	0/43/4	—
+llama3.1-8b	leakage_rate	vector_memory vs no_memory	47	+0.006	[+0.000, +0.017]	0.2589	1.0000	否	0/45/2	—
+llama3.1-8b	leakage_rate	structured_memory vs no_memory	47	-0.002	[-0.007, +0.000]	0.7322	1.0000	否	1/46/0	—
+llama3.1-8b	leakage_rate	structured_memory vs raw_context	47	-0.013	[-0.033, -0.001]	0.0319	0.3828	否	4/43/0	—
+llama3.1-8b	leakage_rate	vector_memory vs raw_context	47	-0.005	[-0.018, +0.004]	0.5491	1.0000	否	2/44/1	—
+llama3.1-8b	leakage_rate	structured_memory vs vector_memory	47	-0.008	[-0.021, +0.000]	0.0929	0.9290	否	3/44/0	—
+llama3.1-8b	leakage_rate	structured_memory vs shuffled_facts	47	-0.002	[-0.006, +0.000]	0.7186	1.0000	否	1/46/0	—
+llama3.1-8b	leakage_rate	shuffled_facts vs no_memory	47	-0.000	[-0.007, +0.006]	0.9507	1.0000	否	1/45/1	—
+llama3.1-8b	leakage_rate	structured_hybrid vs structured_memory	47	+0.001	[+0.000, +0.004]	0.7322	1.0000	否	0/46/1	—
+llama3.1-8b	leakage_rate	structured_hybrid vs no_memory	47	-0.001	[-0.004, +0.000]	0.7322	1.0000	否	1/46/0	—
+llama3.1-8b	leakage_rate	structured_hybrid vs vector_memory	47	-0.007	[-0.020, +0.000]	0.0929	0.9290	否	3/44/0	—
+llama3.1-8b	leakage_rate	structured_hybrid vs shuffled_facts	47	-0.001	[-0.006, +0.004]	0.9308	1.0000	否	1/45/1	—
+llama3.1-8b	ooc_rate	raw_context vs no_memory	47	+0.048	[+0.019, +0.081]	0.0006	0.0054	是	7/19/21	A 更差
+llama3.1-8b	ooc_rate	vector_memory vs no_memory	47	+0.006	[-0.009, +0.026]	0.5001	1.0000	否	10/27/10	—
+llama3.1-8b	ooc_rate	structured_memory vs no_memory	47	-0.000	[-0.019, +0.018]	0.9821	1.0000	否	10/28/9	—
+llama3.1-8b	ooc_rate	structured_memory vs raw_context	47	-0.048	[-0.087, -0.013]	0.0049	0.0343	是	19/21/7	A 更好
+llama3.1-8b	ooc_rate	vector_memory vs raw_context	47	-0.041	[-0.073, -0.013]	0.0020	0.0160	是	19/21/7	A 更好
+llama3.1-8b	ooc_rate	structured_memory vs vector_memory	47	-0.007	[-0.030, +0.015]	0.5698	1.0000	否	9/31/7	—
+llama3.1-8b	ooc_rate	structured_memory vs shuffled_facts	47	-0.067	[-0.108, -0.030]	0.0002	0.0024	是	23/17/7	A 更好
+llama3.1-8b	ooc_rate	shuffled_facts vs no_memory	47	+0.067	[+0.027, +0.111]	0.0003	0.0033	是	6/17/24	A 更差
+llama3.1-8b	ooc_rate	structured_hybrid vs structured_memory	47	+0.008	[-0.009, +0.028]	0.4001	1.0000	否	5/33/9	—
+llama3.1-8b	ooc_rate	structured_hybrid vs no_memory	47	+0.008	[-0.011, +0.029]	0.4713	1.0000	否	11/24/12	—
+llama3.1-8b	ooc_rate	structured_hybrid vs vector_memory	47	+0.001	[-0.013, +0.015]	0.8565	1.0000	否	8/29/10	—
+llama3.1-8b	ooc_rate	structured_hybrid vs shuffled_facts	47	-0.059	[-0.096, -0.026]	0.0003	0.0033	是	23/17/7	A 更好
+llama3.1-8b	ooc_rate_late	raw_context vs no_memory	47	+0.067	[+0.021, +0.121]	0.0032	0.0288	是	8/21/18	A 更差
+llama3.1-8b	ooc_rate_late	vector_memory vs no_memory	47	+0.008	[-0.015, +0.034]	0.5402	1.0000	否	9/31/7	—
+llama3.1-8b	ooc_rate_late	structured_memory vs no_memory	47	-0.010	[-0.032, +0.010]	0.3555	1.0000	否	9/33/5	—
+llama3.1-8b	ooc_rate_late	structured_memory vs raw_context	47	-0.077	[-0.135, -0.027]	0.0007	0.0077	是	15/26/6	A 更好
+llama3.1-8b	ooc_rate_late	vector_memory vs raw_context	47	-0.059	[-0.113, -0.011]	0.0144	0.1008	否	16/26/5	—
+llama3.1-8b	ooc_rate_late	structured_memory vs vector_memory	47	-0.018	[-0.043, +0.005]	0.1296	0.7776	否	7/36/4	—
+llama3.1-8b	ooc_rate_late	structured_memory vs shuffled_facts	47	-0.071	[-0.114, -0.032]	0.0001	0.0012	是	20/21/6	A 更好
+llama3.1-8b	ooc_rate_late	shuffled_facts vs no_memory	47	+0.061	[+0.021, +0.105]	0.0011	0.0110	是	5/23/19	A 更差
+llama3.1-8b	ooc_rate_late	structured_hybrid vs structured_memory	47	+0.021	[-0.005, +0.058]	0.1305	0.7776	否	4/34/9	—
+llama3.1-8b	ooc_rate_late	structured_hybrid vs no_memory	47	+0.012	[-0.021, +0.051]	0.5486	1.0000	否	10/25/12	—
+llama3.1-8b	ooc_rate_late	structured_hybrid vs vector_memory	47	+0.004	[-0.020, +0.028]	0.7775	1.0000	否	6/32/9	—
+llama3.1-8b	ooc_rate_late	structured_hybrid vs shuffled_facts	47	-0.049	[-0.090, -0.011]	0.0101	0.0808	否	19/19/9	—
+llama3.1-8b	probe_accuracy	raw_context vs no_memory	28	+0.071	[+0.012, +0.143]	0.0428	0.2184	否	1/21/6	—
+llama3.1-8b	probe_accuracy	vector_memory vs no_memory	28	+0.345	[+0.214, +0.476]	0.0001	0.0012	是	0/10/18	A 更好
+llama3.1-8b	probe_accuracy	structured_memory vs no_memory	28	+0.161	[+0.054, +0.280]	0.0017	0.0136	是	1/18/9	A 更好
+llama3.1-8b	probe_accuracy	structured_memory vs raw_context	28	+0.089	[-0.024, +0.220]	0.1209	0.3627	否	4/17/7	—
+llama3.1-8b	probe_accuracy	vector_memory vs raw_context	28	+0.274	[+0.131, +0.417]	0.0001	0.0012	是	1/14/13	A 更好
+llama3.1-8b	probe_accuracy	structured_memory vs vector_memory	28	-0.185	[-0.351, -0.012]	0.0364	0.2184	否	13/11/4	—
+llama3.1-8b	probe_accuracy	structured_memory vs shuffled_facts	28	+0.125	[-0.012, +0.262]	0.0809	0.3236	否	2/17/9	—
+llama3.1-8b	probe_accuracy	shuffled_facts vs no_memory	28	+0.036	[-0.036, +0.131]	0.4750	0.9500	否	2/23/3	—
+llama3.1-8b	probe_accuracy	structured_hybrid vs structured_memory	28	+0.173	[+0.054, +0.298]	0.0047	0.0329	是	2/15/11	A 更好
+llama3.1-8b	probe_accuracy	structured_hybrid vs no_memory	28	+0.333	[+0.208, +0.464]	0.0001	0.0012	是	1/10/17	A 更好
+llama3.1-8b	probe_accuracy	structured_hybrid vs vector_memory	28	-0.012	[-0.161, +0.143]	0.8761	0.9500	否	8/12/8	—
+llama3.1-8b	probe_accuracy	structured_hybrid vs shuffled_facts	28	+0.298	[+0.137, +0.446]	0.0006	0.0054	是	2/8/18	A 更好
+qwen2.5-7b	fact_consistency	raw_context vs no_memory	47	-0.009	[-0.028, +0.001]	0.3389	1.0000	否	2/44/1	—
+qwen2.5-7b	fact_consistency	vector_memory vs no_memory	47	-0.004	[-0.010, +0.001]	0.1347	1.0000	否	3/43/1	—
+qwen2.5-7b	fact_consistency	structured_memory vs no_memory	47	-0.002	[-0.009, +0.003]	0.6491	1.0000	否	2/43/2	—
+qwen2.5-7b	fact_consistency	structured_memory vs raw_context	47	+0.007	[-0.007, +0.029]	0.5855	1.0000	否	2/43/2	—
+qwen2.5-7b	fact_consistency	vector_memory vs raw_context	47	+0.005	[-0.006, +0.021]	0.6209	1.0000	否	2/43/2	—
+qwen2.5-7b	fact_consistency	structured_memory vs vector_memory	47	+0.002	[-0.004, +0.010]	0.5720	1.0000	否	2/43/2	—
+qwen2.5-7b	fact_consistency	structured_memory vs shuffled_facts	47	+0.001	[-0.010, +0.012]	0.8618	1.0000	否	3/40/4	—
+qwen2.5-7b	fact_consistency	shuffled_facts vs no_memory	47	-0.003	[-0.013, +0.006]	0.5552	1.0000	否	4/40/3	—
+qwen2.5-7b	fact_consistency	structured_hybrid vs structured_memory	47	-0.003	[-0.014, +0.006]	0.5264	1.0000	否	3/43/1	—
+qwen2.5-7b	fact_consistency	structured_hybrid vs no_memory	47	-0.005	[-0.013, +0.001]	0.1093	1.0000	否	4/42/1	—
+qwen2.5-7b	fact_consistency	structured_hybrid vs vector_memory	47	-0.001	[-0.007, +0.005]	0.7010	1.0000	否	4/41/2	—
+qwen2.5-7b	fact_consistency	structured_hybrid vs shuffled_facts	47	-0.002	[-0.018, +0.010]	0.7737	1.0000	否	5/38/4	—
+qwen2.5-7b	fact_consistency_late	raw_context vs no_memory	47	-0.011	[-0.032, +0.000]	0.7342	1.0000	否	1/46/0	—
+qwen2.5-7b	fact_consistency_late	vector_memory vs no_memory	47	-0.009	[-0.021, +0.000]	0.0906	1.0000	否	3/44/0	—
+qwen2.5-7b	fact_consistency_late	structured_memory vs no_memory	47	-0.002	[-0.010, +0.004]	0.5695	1.0000	否	2/44/1	—
+qwen2.5-7b	fact_consistency_late	structured_memory vs raw_context	47	+0.008	[-0.010, +0.037]	0.7483	1.0000	否	2/44/1	—
+qwen2.5-7b	fact_consistency_late	vector_memory vs raw_context	47	+0.001	[-0.012, +0.018]	0.9921	1.0000	否	2/44/1	—
+qwen2.5-7b	fact_consistency_late	structured_memory vs vector_memory	47	+0.007	[-0.003, +0.021]	0.2845	1.0000	否	1/44/2	—
+qwen2.5-7b	fact_consistency_late	structured_memory vs shuffled_facts	47	-0.003	[-0.015, +0.007]	0.6143	1.0000	否	3/42/2	—
+qwen2.5-7b	fact_consistency_late	shuffled_facts vs no_memory	47	+0.001	[-0.009, +0.011]	0.9652	1.0000	否	2/43/2	—
+qwen2.5-7b	fact_consistency_late	structured_hybrid vs structured_memory	47	-0.001	[-0.015, +0.010]	1.0000	1.0000	否	1/44/2	—
+qwen2.5-7b	fact_consistency_late	structured_hybrid vs no_memory	47	-0.004	[-0.011, +0.000]	0.7342	1.0000	否	1/46/0	—
+qwen2.5-7b	fact_consistency_late	structured_hybrid vs vector_memory	47	+0.006	[+0.000, +0.015]	0.2581	1.0000	否	0/45/2	—
+qwen2.5-7b	fact_consistency_late	structured_hybrid vs shuffled_facts	47	-0.004	[-0.021, +0.009]	0.7383	1.0000	否	2/43/2	—
+qwen2.5-7b	leakage_rate	raw_context vs no_memory	47	+0.008	[-0.001, +0.026]	0.2777	1.0000	否	1/43/3	—
+qwen2.5-7b	leakage_rate	vector_memory vs no_memory	47	+0.000	[-0.005, +0.005]	0.9077	1.0000	否	1/44/2	—
+qwen2.5-7b	leakage_rate	structured_memory vs no_memory	47	-0.002	[-0.006, +0.000]	0.7342	1.0000	否	1/46/0	—
+qwen2.5-7b	leakage_rate	structured_memory vs raw_context	47	-0.010	[-0.028, -0.001]	0.0308	0.3696	否	4/43/0	—
+qwen2.5-7b	leakage_rate	vector_memory vs raw_context	47	-0.008	[-0.023, +0.001]	0.0923	1.0000	否	4/42/1	—
+qwen2.5-7b	leakage_rate	structured_memory vs vector_memory	47	-0.002	[-0.006, +0.000]	0.2563	1.0000	否	2/45/0	—
+qwen2.5-7b	leakage_rate	structured_memory vs shuffled_facts	47	-0.003	[-0.007, +0.000]	0.0922	1.0000	否	3/44/0	—
+qwen2.5-7b	leakage_rate	shuffled_facts vs no_memory	47	+0.001	[-0.002, +0.005]	0.5880	1.0000	否	1/44/2	—
+qwen2.5-7b	leakage_rate	structured_hybrid vs structured_memory	47	+0.001	[+0.000, +0.004]	0.2609	1.0000	否	0/45/2	—
+qwen2.5-7b	leakage_rate	structured_hybrid vs no_memory	47	-0.000	[-0.005, +0.003]	0.9715	1.0000	否	1/44/2	—
+qwen2.5-7b	leakage_rate	structured_hybrid vs vector_memory	47	-0.001	[-0.004, +0.002]	0.9252	1.0000	否	1/45/1	—
+qwen2.5-7b	leakage_rate	structured_hybrid vs shuffled_facts	47	-0.002	[-0.006, +0.002]	0.4805	1.0000	否	3/42/2	—
+qwen2.5-7b	ooc_rate	raw_context vs no_memory	47	+0.177	[+0.118, +0.238]	0.0001	0.0012	是	8/7/32	A 更差
+qwen2.5-7b	ooc_rate	vector_memory vs no_memory	47	+0.067	[+0.027, +0.110]	0.0007	0.0056	是	9/13/25	A 更差
+qwen2.5-7b	ooc_rate	structured_memory vs no_memory	47	+0.008	[-0.028, +0.046]	0.7010	0.8172	否	16/18/13	—
+qwen2.5-7b	ooc_rate	structured_memory vs raw_context	47	-0.170	[-0.242, -0.101]	0.0001	0.0012	是	30/11/6	A 更好
+qwen2.5-7b	ooc_rate	vector_memory vs raw_context	47	-0.111	[-0.151, -0.073]	0.0001	0.0012	是	30/11/6	A 更好
+qwen2.5-7b	ooc_rate	structured_memory vs vector_memory	47	-0.059	[-0.116, -0.004]	0.0355	0.1775	否	23/14/10	—
+qwen2.5-7b	ooc_rate	structured_memory vs shuffled_facts	47	-0.067	[-0.110, -0.023]	0.0036	0.0252	是	30/7/10	A 更好
+qwen2.5-7b	ooc_rate	shuffled_facts vs no_memory	47	+0.074	[+0.033, +0.118]	0.0003	0.0027	是	13/5/29	A 更差
+qwen2.5-7b	ooc_rate	structured_hybrid vs structured_memory	47	+0.037	[-0.001, +0.076]	0.0587	0.2348	否	11/18/18	—
+qwen2.5-7b	ooc_rate	structured_hybrid vs no_memory	47	+0.045	[+0.012, +0.080]	0.0047	0.0282	是	13/12/22	A 更差
+qwen2.5-7b	ooc_rate	structured_hybrid vs vector_memory	47	-0.022	[-0.063, +0.017]	0.2791	0.8172	否	15/16/16	—
+qwen2.5-7b	ooc_rate	structured_hybrid vs shuffled_facts	47	-0.030	[-0.083, +0.022]	0.2724	0.8172	否	21/9/17	—
+qwen2.5-7b	ooc_rate_late	raw_context vs no_memory	47	+0.201	[+0.120, +0.284]	0.0001	0.0012	是	8/12/27	A 更差
+qwen2.5-7b	ooc_rate_late	vector_memory vs no_memory	47	+0.051	[+0.002, +0.100]	0.0404	0.3232	否	10/17/20	—
+qwen2.5-7b	ooc_rate_late	structured_memory vs no_memory	47	+0.017	[-0.034, +0.071]	0.5386	1.0000	否	13/21/13	—
+qwen2.5-7b	ooc_rate_late	structured_memory vs raw_context	47	-0.184	[-0.274, -0.096]	0.0001	0.0012	是	24/15/8	A 更好
+qwen2.5-7b	ooc_rate_late	vector_memory vs raw_context	47	-0.150	[-0.219, -0.084]	0.0001	0.0012	是	25/15/7	A 更好
+qwen2.5-7b	ooc_rate_late	structured_memory vs vector_memory	47	-0.035	[-0.107, +0.039]	0.3481	1.0000	否	19/15/13	—
+qwen2.5-7b	ooc_rate_late	structured_memory vs shuffled_facts	47	-0.057	[-0.112, +0.000]	0.0505	0.3535	否	25/12/10	—
+qwen2.5-7b	ooc_rate_late	shuffled_facts vs no_memory	47	+0.074	[+0.024, +0.125]	0.0042	0.0378	是	10/11/26	A 更差
+qwen2.5-7b	ooc_rate_late	structured_hybrid vs structured_memory	47	+0.024	[-0.028, +0.071]	0.3376	1.0000	否	6/24/17	—
+qwen2.5-7b	ooc_rate_late	structured_hybrid vs no_memory	47	+0.041	[-0.001, +0.083]	0.0575	0.3535	否	12/15/20	—
+qwen2.5-7b	ooc_rate_late	structured_hybrid vs vector_memory	47	-0.011	[-0.060, +0.035]	0.6720	1.0000	否	11/23/13	—
+qwen2.5-7b	ooc_rate_late	structured_hybrid vs shuffled_facts	47	-0.033	[-0.093, +0.024]	0.2703	1.0000	否	18/14/15	—
+qwen2.5-7b	probe_accuracy	raw_context vs no_memory	28	+0.060	[-0.030, +0.155]	0.2053	0.6159	否	4/17/7	—
+qwen2.5-7b	probe_accuracy	vector_memory vs no_memory	28	+0.286	[+0.155, +0.417]	0.0002	0.0020	是	2/11/15	A 更好
+qwen2.5-7b	probe_accuracy	structured_memory vs no_memory	28	+0.095	[-0.000, +0.214]	0.0774	0.3870	否	3/18/7	—
+qwen2.5-7b	probe_accuracy	structured_memory vs raw_context	28	+0.036	[-0.083, +0.167]	0.6049	1.0000	否	6/16/6	—
+qwen2.5-7b	probe_accuracy	vector_memory vs raw_context	28	+0.226	[+0.065, +0.387]	0.0055	0.0440	是	4/10/14	A 更好
+qwen2.5-7b	probe_accuracy	structured_memory vs vector_memory	28	-0.190	[-0.357, -0.012]	0.0354	0.2478	否	13/11/4	—
+qwen2.5-7b	probe_accuracy	structured_memory vs shuffled_facts	28	+0.143	[+0.048, +0.262]	0.0048	0.0432	是	1/19/8	A 更好
+qwen2.5-7b	probe_accuracy	shuffled_facts vs no_memory	28	-0.048	[-0.107, +0.000]	0.1217	0.4868	否	5/22/1	—
+qwen2.5-7b	probe_accuracy	structured_hybrid vs structured_memory	28	+0.167	[+0.012, +0.315]	0.0389	0.2478	否	4/11/13	—
+qwen2.5-7b	probe_accuracy	structured_hybrid vs no_memory	28	+0.262	[+0.155, +0.381]	0.0001	0.0012	是	0/14/14	A 更好
+qwen2.5-7b	probe_accuracy	structured_hybrid vs vector_memory	28	-0.024	[-0.161, +0.107]	0.7387	1.0000	否	9/11/8	—
+qwen2.5-7b	probe_accuracy	structured_hybrid vs shuffled_facts	28	+0.310	[+0.208, +0.423]	0.0001	0.0012	是	0/10/18	A 更好
+
+读法：
+- probe_accuracy 越高越好，是唯一直接测记忆的指标；ooc_rate / leakage_rate 越低越好。
+- ooc_rate 是 **judge 的标记率**，审核显示精确率约 40%（docs/JUDGE_AUDIT.md），不要当成真实出戏率。leakage_rate 是规则检测，高精确低召回，给的是下界。
+- 先看 structured vs shuffled_facts：不显著就说明效应来自'又贴了一遍人设'，不是记忆内容，这时 structured vs raw 的差异不能解释成记忆更好。
+- CI 含 0 或 Holm p >= 0.05 → 这批对话上看不出稳定差异，不要写'提升'。
+- Holm 在 (模型 × 指标) 族内校正。族的划分是事先定的，不是看完结果再挑的；报告里要写明这一点，否则多重比较校正没有意义。
+- bootstrap p 的下限约 1e-04，比这更小是伪精确。

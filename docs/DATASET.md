@@ -2,8 +2,13 @@
 
 ## 对话数据（生成实验用）
 
-- **主数据源**：[PIPPA](https://huggingface.co/datasets/PygmalionAI/PIPPA)（约 26 万轮来自
-  Character.AI 的真实用户对话，附角色卡）。筛选 ≥15 轮、角色设定信息丰富的片段，
+- **主数据源**：[PIPPA](https://huggingface.co/datasets/PygmalionAI/PIPPA)（Gosling et al.,
+  2023，arXiv:2308.05884）。按论文摘要的原话，它是"一群角色扮演爱好者社区众包"的结果，
+  共 100 万条以上发言、分布在 26,000 个会话里，并附角色卡。**注意不要写成"来自
+  Character.AI 的对话"**——摘要并未指明任何单一平台为来源，早期版本的本文档这么写是错的。
+  筛选 ≥15 轮（指 PIPPA 原对话的消息总数）、角色设定信息丰富的片段（v2 的
+  `build_dialogues.py` 取 `--min-user-turns 12`、`--max-user-turns 30`，筛后 47 段、
+  用户发言中位数 26 轮；v1 只取前 6 个用户发言，窗口从不截断，那是 v1 的主要缺陷），
   实际导出 90 段角色描述（`fetch_pippa.py --limit 90`）。**实测这批数据是纯英文**
   （角色卡本身就是英文写的），所以角色本体抽取统一用 `--lang en`（v4 英文版
   prompt），不使用中文版。

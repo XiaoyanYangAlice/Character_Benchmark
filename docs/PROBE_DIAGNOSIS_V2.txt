@@ -1,0 +1,26 @@
+读到 564 个 raw_outputs 文件。
+
+答案是否出现在注入的上下文里 × 是否答对
+  model        scheme                 探针数       答案在上下文     在·答对     在·答错      不在·答对      不在·答错
+  llama3.1-8b  no_memory               71         0.0%        0        0          3         68
+  llama3.1-8b  raw_context             71        22.5%        5       11          4         51
+  llama3.1-8b  shuffled_facts          71         0.0%        0        0          4         67
+  llama3.1-8b  structured_hybrid       71        39.4%       16       12          8         35
+  llama3.1-8b  structured_memory       71        19.7%        6        8          7         50
+  llama3.1-8b  vector_memory           71        62.0%       22       22          3         24
+  qwen2.5-7b   no_memory               71         0.0%        0        0          5         66
+  qwen2.5-7b   raw_context             71        16.9%        4        8          5         54
+  qwen2.5-7b   shuffled_facts          71         0.0%        0        0          1         70
+  qwen2.5-7b   structured_hybrid       71        45.1%       21       11          2         37
+  qwen2.5-7b   structured_memory       71        23.9%        6       11          5         49
+  qwen2.5-7b   vector_memory           71        62.0%       23       21          1         26
+
+读法：
+- 「答案在上下文」这一列低 → 写入或检索失败。对 structured 来说，要么抽取器
+  没写进去，要么写进去了但被 max_events 的时间近远预算挤出了检索结果。
+- 「在·答错」多 → 生成失败：记忆给对了，模型没用上。这跟记忆方案无关，
+  是提示词或模型能力的问题，换检索策略解决不了。
+- 「不在·答对」是模型猜对的，或答案恰好能从角色卡推出来。这一格大的话，
+  探针本身的难度要重新检查。
+- 匹配是朴素子串/实词匹配，会漏判语义等价的改写（'我妹妹' vs 'his sister'），
+  所以「答案在上下文」这一列是**下界**。

@@ -80,7 +80,8 @@ def build_system_prompt(character_card: dict) -> str:
 
 def run_dialogue(memory, client: OpenAI, model: str, character_card: dict,
                   scripted_user_turns: list[str], start_turn_id: int = 1,
-                  seed: int | None = None) -> list[dict]:
+                  seed: int | None = None,
+                  memory_probes: list[dict] | None = None) -> list[dict]:
     """跑完一整段对话，返回完整的 turns 列表（user 和角色轮次交替）。
 
     scripted_user_turns 是固定住的用户台词（比如从 PIPPA 原始对话里取出的真实
@@ -88,8 +89,19 @@ def run_dialogue(memory, client: OpenAI, model: str, character_card: dict,
     的回复会因为记忆方案不同而不同，这样对比才公平：差异只能来自"记忆方案给了
     模型什么上下文"，不会混进"用户这边聊的内容不一样"这个变量。
 
-    memory: 三种方案之一的实例（调用前需要是"干净"的新实例，不要跨对话复用同
+    memory: 记忆方案之一的实例（调用前需要是"干净"的新实例，不要跨对话复用同
     一个 memory 对象，否则不同故事的记忆会串到一起）。
+
+    memory_probes（v2 新增）：对话跑完之后追加的"记忆探针"提问，每个形如
+    {"question": ..., "expected_answer": ..., "source_turn_index": ...}，
+    由 src/generate/make_probes.py 生成。探针轮次和普通轮次走完全相同的流程
+    （照样调用 retrieve/on_new_turn），区别只是被标上 `is_probe: True`，
+    让指标那边把它们从 ooc/fact 的分母里排除、单独算探针正确率。
+
+    每个角色轮次上会记一个 `context_chars` 字段：这一轮记忆方案实际注入了多长
+    的上下文。不同方案的上下文预算不一样（raw 给最近 N 轮、vector 给 top-k 轮、
+    structured 给事实清单），如果不记下来，就没法回答"差异是不是单纯因为某个
+    方案塞进去的字更多"这个问题。
     """
     if not scripted_user_turns:
         raise ValueError("scripted_user_turns 为空，没有对话可跑")
@@ -103,8 +115,14 @@ def run_dialogue(memory, client: OpenAI, model: str, character_card: dict,
     history: list[dict] = []
     turn_id = start_turn_id
 
-    for user_text in scripted_user_turns:
-        user_turn = {"turn_id": turn_id, "speaker": "user", "text": user_text}
+    probe_queue = list(memory_probes or [])
+    # 探针问句接在脚本台词后面；is_probe 标记会一路带到 turns 里。
+    queue = [(text, False) for text in scripted_user_turns] + \
+            [(p.get("question", ""), True) for p in probe_queue if p.get("question")]
+
+    for user_text, is_probe in queue:
+        user_turn = {"turn_id": turn_id, "speaker": "user", "text": user_text,
+                     "is_probe": is_probe}
         history.append(user_turn)
         memory.on_new_turn(user_turn)
         turn_id += 1
@@ -125,7 +143,14 @@ def run_dialogue(memory, client: OpenAI, model: str, character_card: dict,
         context = memory.retrieve(history, pending_char_turn)
         reply_text = call_model(client, model, system_prompt, context, user_text, seed=seed)
 
-        char_turn = {"turn_id": turn_id, "speaker": character_name, "text": reply_text.strip()}
+        char_turn = {"turn_id": turn_id, "speaker": character_name, "text": reply_text.strip(),
+                     "is_probe": is_probe, "context_chars": len(context or ""),
+                     # 注入的上下文原文，不只是长度。没有它就无法区分"记忆里根本
+                     # 没有这条信息"（写入/检索失败）和"记忆里有但角色没用上"
+                     # （生成失败）——这两件事要用完全不同的办法修。截断到 4000
+                     # 字符是为了控制 raw_outputs 的体积；raw_context 实测最长
+                     # 约 2900，不会被截到。
+                     "memory_context": (context or "")[:4000]}
         history.append(char_turn)
         memory.on_new_turn(char_turn)
         turn_id += 1

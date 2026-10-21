@@ -2,18 +2,21 @@
 #SBATCH --job-name=char_run_eval
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=3
-#SBATCH --time=02:30:00
+#SBATCH --time=10:00:00
 #SBATCH --output=logs/run_eval_%j.out
 
 # 跑 run_eval.py 主实验矩阵：3 个 vLLM 服务（两个角色模型 + 一个 judge），各占
 # 一张 GPU、一个端口，起完之后跑 src/eval/run_eval.py。
 #
-# --time=02:30:00 已经按校准作业（job 27483425，--limit 5，30 次生成全部
-# 成功、结果正确写入 summary.csv）的实测耗时换算：
-#   校准 30 次生成耗时总计 360.5s，按 366/30 等比例放大 ≈ 4398s ≈ 73.3 分钟
-#   （这是纯生成+judge调用时间，不含 vLLM 启动/模型加载，那部分是一次性开销，
-#   约 2 分钟，不随对话数量增长）
-#   73.3 + 2 ≈ 75 分钟 → 取 2.5 小时（≈2x 安全余量，覆盖排队/后面对话更长等波动）
+# ⚠ v2 的规模比 v1 大很多，--time 从 2.5 小时提到 8 小时。粗算（相对 v1）：
+#   对话轮次  6 -> 约 20（--min-user-turns 12，--max-user-turns 30）  约 3x
+#   记忆方案  3 -> 5（加了 no_memory / shuffled_facts）              约 1.7x
+#   judge 调用 judge_repeats 1 -> 3                                  约 3x
+#   structured 还要额外跑事件抽取（每个来回 1 次 LLM 调用）
+#   对话条数可能从 61 降到更少（长对话筛选），这会抵消一部分
+# **先用 --limit 3 跑一次校准作业，拿到实测单条耗时再决定 --time**，不要直接
+# 提交全量——v1 就是靠校准作业才把时间估准的。校准：
+#   sbatch slurm/run_eval_calibrate.slurm
 #
 # 用法：确认 configs/experiment.yaml 里的模型/judge 没有变化后直接提交：
 #   sbatch slurm/run_eval.slurm
@@ -64,12 +67,19 @@ if [ "$ALL_UP" -ne 1 ]; then
     exit 1
 fi
 
-python src/eval/run_eval.py \
+# 显式检查退出码：v1 踩过"脚本报错但仍然打印 Done"的坑（seed 作业因为参数
+# 不存在秒退，日志末尾照样是 Done，差点把空结果当成跑完了）。
+python src/eval/run_eval.py --workers ${WORKERS:-12} ${EXTRA_ARGS} \
     --config configs/experiment.yaml \
     --model-port qwen2.5-7b=8000 \
     --model-port llama3.1-8b=8001 \
-    --model-port judge=8002
+    --model-port judge=8002 || {
+    echo "!!!!! run_eval.py 报错退出，这不是正常完成 !!!!!"
+    kill $QWEN_PID $LLAMA_PID $JUDGE_PID 2>/dev/null
+    exit 1
+}
 
 kill $QWEN_PID $LLAMA_PID $JUDGE_PID 2>/dev/null
 
-echo "Done. 结果在 results/summary.csv，完整生成记录在 results/raw_outputs/"
+echo "Done. 汇总 results/summary.csv，逐轮判定 results/per_turn.csv，"
+echo "探针 results/probe_results.csv，完整生成记录 results/raw_outputs/"

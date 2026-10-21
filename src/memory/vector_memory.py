@@ -48,6 +48,7 @@ def _lexical_similarity(query: str, text: str) -> float:
 
 class VectorMemory(BaseMemory):
     name = "vector_memory"
+    supports_evidence = True
 
     def __init__(self, embedding_model: str = "intfloat/multilingual-e5-large", top_k: int = 5):
         self.embedding_model_name = embedding_model
@@ -112,6 +113,10 @@ class VectorMemory(BaseMemory):
         self.retrieval_log.append({
             "query": query_text,
             "retrieved_turn_ids": [t.get("turn_id") for t in top],
+            # 检索到的原文也记下来，供 metrics.evidence_use_rate 计算"回复里
+            # 是不是真的用上了检索内容"。v1 的 evidence_traceability 只看
+            # "检索结果非空"，对本方案恒为 1.000，是个没有信息量的指标。
+            "retrieved_spans": [t["text"] for t in top],
         })
 
         lines = [f"{t['speaker']}: {t['text']}" for t in top]

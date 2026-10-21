@@ -21,3 +21,17 @@ results/ooc_audit/sheet.md
 results/ooc_audit/key.csv
 results/ooc_audit/labels*.csv
 results/ooc_audit/regress_per_item_*.csv
+
+# v2：各次运行的原始生成、逐轮判定、探针文本与人工核对样本都不入库
+# （PIPPA 对话原文 + 模型生成的成人内容），只放行不含任何文本的聚合指标。
+results_*/raw_outputs/
+results_*/per_turn.csv
+results_*/probe_results.csv
+results_fix/
+results_diag/
+results_qwen/
+results_llama/
+results_v2/*
+!results_v2/.gitkeep
+!results_v2/summary.csv
+docs/EXTRACTION_AUDIT*.txt

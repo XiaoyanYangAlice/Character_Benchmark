@@ -22,29 +22,81 @@ judge_model:
   path: /projects/prjs1995/models/Qwen2.5-14B-Instruct
 
 memory_schemes:
-  - raw_context
-  - vector_memory
-  - structured_memory
+  # v2 新增两个对照组。顺序就是报告里解释的顺序，不要随便调。
+  - no_memory          # 对照下界：只有 system prompt 里的角色卡，不注入任何上下文
+  - raw_context        # 最近 N 轮原文（N < 对话长度，所以会真的截断）
+  - vector_memory      # 句向量检索 top-k 历史轮次
+  - structured_memory  # 角色卡事实 + 对话中增量抽取的新信息（按时间近远取最近 8 条）
+  - structured_hybrid  # 同上，但检索改成「4 条最近 + 4 条按相关度」，见下方 memory_params
+  - shuffled_facts     # 对照：形式同 structured，但事实来自**别的角色**（内容是错的）
+
+# 为什么要加 no_memory 和 shuffled_facts：v1 的结论是"structured 比 raw 的 OOC
+# 标记率低 5.7 个百分点"，但无法排除一个平凡解释——system prompt 里已经有完整
+# 角色卡，structured 又追加了一段"[Known facts about X]"，相当于把人设又说了
+# 一遍；raw 追加的是大段对话历史，把角色卡的相对权重稀释了。也就是说效应可能
+# 来自提示词里人设的占比，而不是记忆内容正确。
+#   structured 明显优于 shuffled  -> 内容起作用，是真的记忆效应
+#   structured ≈ shuffled        -> 是"又贴了一遍人设"的提示词效应，v1 结论要改写
+#   shuffled 明显更差            -> 错误记忆会污染生成（本身也是有价值的发现）
 
 memory_params:
   raw_context:
-    max_turns: 20
+    # v2 从 20 改成 10（= 5 个来回）。v1 用 20 轮、而数据里每条对话只有 6 个
+    # 用户轮次（history 最长 11 轮），窗口一次都没有截断，raw_context 等于
+    # "完整历史"，三种方案比的根本不是记忆能力。窗口必须小于对话长度。
+    max_turns: 10
   vector_memory:
     # 数据源（PIPPA）是纯英文，换成小体积的英文 embedding 模型，下载快、编码快；
     # 之后如果补充中文语料，改回 intfloat/multilingual-e5-large 之类的多语言模型。
     embedding_model: sentence-transformers/all-MiniLM-L6-v2
     top_k: 5
+  structured_hybrid:
+    # 与 structured_memory 唯一的区别是 retrieval：保留 4 条最近的（角色总得知道
+    # 刚刚发生了什么），另外 4 个名额按与当前用户发言的实词重合度选。
+    # 依据：失败归因显示一段对话抽出约 43 条事件、只注入最近 8 条，其中仅约 27%
+    # 关于用户，而探针问的全是用户说过的话——等于角色只记得用户说的两件事。
+    # 这一条与抽取 prompt 的修改是两个变量，报告里要分开说。
+    max_facts: 8
+    max_events: 8
+    retrieval: hybrid
+    n_recent: 4
+
   structured_memory:
-    # 注意：run_eval.py 实际不读这个字段——structured_memory 方案按
-    # dialogue 单条导入 fact_labels（load_character_facts_from_records），
-    # 不是整份文件一次性加载，原因见 docs/DATASET.md「跨故事串味」那一节。
-    # 留着这行只是给手动调试（比如直接调 load_character_facts() 看某份
-    # 抽取文件里有什么）用，不影响 run_eval.py 的行为。
-    character_facts_path: data/processed/character_features_en.jsonl
+    # 检索预算：最多带 8 条事实 + 8 条对话中抽出来的新信息。设上限是为了让
+    # structured 注入的上下文长度与 raw(10 轮) / vector(5 轮) 大致可比——
+    # 实际长度每轮都记在 per_turn.csv 的 context_chars 列，报告里必须一起给，
+    # 否则无法回答"差异是不是单纯因为某个方案塞进去的字更多"。
+    max_facts: 8
+    max_events: 8
 
 data:
   dialogues_path: data/processed/dialogues.jsonl
-  max_turns_per_dialogue: 20
+  # 上限，不是实际长度。实际长度由 build_dialogues.py 的 --max-user-turns（v2
+  # 默认 30）和 --min-user-turns（默认 12）决定，跑完 run_eval.py 开头会打印
+  # 实际的用户轮次分布——每次重跑都要看一眼这行，v1 就是因为没看这个数字，
+  # 在"对话有 20 轮"的错误假设下写了整份报告。
+  max_turns_per_dialogue: 40
 
 eval:
-  judge_repeats: 1   # 建议先设 3，观察 judge 方差后再决定是否降回 1
+  # v1 用 1。审核发现 judge 的系统性误报压不下去，但多数投票至少能压掉采样
+  # 噪声那一部分，让方案之间的差少一层随机性。代价是 judge 调用量 x3。
+  judge_repeats: 3
+  # 事实一致性和探针判分用的重复次数，默认跟 judge_repeats 一样。judge 调用是
+  # 这次实验的主要时间成本，设成 1 能砍掉近一半 judge 时间。可以这么设的理由：
+  # fact_consistency 接近天花板、区分度低（v1 三次重复的差异全部不显著），
+  # 探针判分是"关键信息对上没有"、比 OOC 客观得多。OOC 是主要受 judge 噪声
+  # 影响的指标，它仍然保留 3 次投票。
+  judge_repeats_fact: 1
+  # v1 主实验用的是 v1 prompt。V2（保守判定、先理由后结论、明列常见误报类型）
+  # 在 40 条回归集上精确率没有提升（见 docs/JUDGE_AUDIT.md），但它明确排除了
+  # 几类已知误报，且那次回归是样本内测试。v2 主实验改用 V2 prompt，并用新的
+  # 分层审核重新估精确率——这次审核抽的是主实验真正用过的判定（per_turn.csv），
+  # 不需要重判。
+  ooc_prompt_version: v2
+  # 后一半轮次算"后段"。记忆方案的差别应该主要出现在后段，前段几乎没有历史
+  # 可记。v1 没有这个分层，所以无法判断观察到的差异是不是"记忆"带来的。
+  late_from_fraction: 0.5
+  # structured_memory 是否开增量事件抽取（on_new_turn 调 LLM 抽"本轮新信息"）。
+  # 关掉就退回 v1 行为：只有开局导入的静态角色卡事实，不积累对话里的新信息。
+  # 想做消融（"事件抽取贡献了多少"）就跑两次，一次开一次关。
+  event_extraction: true
