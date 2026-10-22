@@ -1,0 +1,522 @@
+读到 56 个 structured_memory 的 raw_outputs 文件。
+
+失败归因：答案不在上下文里，是从没抽出来，还是抽出来了被挤掉？
+  model             探针      在上下文        抽过但被挤掉       从没抽出来     卡里有       平均事件数        其中关于用户
+  llama3.1-8b       71     18.3%         40.8%       40.8%       0        27.0         57.6%
+  qwen2.5-7b        71     26.8%         36.6%       36.6%       0        21.7         60.7%
+
+怎么读这张表 —— 它直接决定下一步做什么：
+- 「抽过但被挤掉」占大头 → 瓶颈是检索预算。先改成按相关度取，不要急着微调。
+- 「从没抽出来」占大头   → 瓶颈是抽取器。先改抽取 prompt；改不动再考虑微调。
+- 两者都不小             → 两个都要修，但先修便宜的那个（检索）。
+- 「平均事件数」远大于 max_events（配置里是 8）本身只说明有挤占，
+  不说明挤占是主因——要看第二列。
+- 重建出来的事件数应当与 summary.csv 的 n_events_extracted 大致吻合；
+  明显偏低说明重建漏了事件，「从没抽出来」会被高估，结论要打折扣。
+- 「其中关于用户」低 → 抽取器在记角色做了什么，而探针问的全是用户说了
+  什么。这是方向性错误，改 prompt 比改检索更关键。
+
+注意：匹配是朴素子串/实词匹配，会漏判语义改写，所以「从没抽出来」这一列
+是**上界**（真实值可能更低，因为有些是抽到了但换了说法）。下面的人工样本
+就是用来判断这个高估有多严重的——必须看。
+
+==============================================================================
+人工核对样本（随机 12 道答案不在上下文里的探针）
+重点看：标准答案在「用户原话」里是具体的，但在「曾经抽到过的事件」里
+变成了什么？如果变成了泛化的概括（'用户提到了家人'），那就是抽取 prompt
+的问题，微调之前先改 prompt。
+==============================================================================
+
+[extracted_but_evicted] llama3.1-8b / pippa_D58pU95rvLbe_4xRwaqmRUa5wZ71e2TR9aZoj_rlC4o
+  探针问题    : What did I venture into to prove?
+  标准答案    : mountain
+  出自第 1 轮用户原话 : *Sentry had heard of such rumors, and believed them to be hearsay, thus he ventured into the mountain to prove there was no nine-tailed fox woman*
+  曾经抽到过的事件（共 10 条，全列）:
+      (turn 2) Invited Sentry to sit and share a cup of sake.
+      (turn 2) Sentry ventured into the mountain to disprove the existence of a nine-tailed fox woman.
+      (turn 8) leaned in and spoke flirtatiously to Sentry while he searched for an offering
+      (turn 10) Yonomi expresses disappointment in the doughnuts, finding them quaint and less substantial than expected.
+      (turn 12) The character gestured for Sentry to sit beside her on the bench.
+      (turn 14) Leans in closer to Sentry with a flirtatious tone, asking for more substantial offerings.
+      (turn 14) Picks up a doughnut, examines it, then eats it with a look of mild dissatisfaction.
+      (turn 16) The character expressed a desire for something more substantial than doughnuts.
+      (turn 20) began shrinking while eating.
+      (turn 24) spots a new visitor approaching the shrine
+  探针那一刻注入的上下文:
+      [Known facts about I] mischievous fox spirit; golden eyes; hairs and tails; enticing kimono; tempting others; love alcohol; drinking always put me in a good moo
+      [Established in this conversation]
+      - (turn 8) leaned in and spoke flirtatiously to Sentry while he searched for an offering
+      - (turn 10) Yonomi expresses disappointment in the doughnuts, finding them quaint and less substantial than expected.
+      - (turn 12) The character gestured for Sentry to sit beside her on the bench.
+      - (turn 14) Picks up a doughnut, examines it, then eats it with a look of mild dissatisfaction.
+      - (turn 14) Leans in closer to Sentry with a flirtatious tone, asking for more substantial offerings.
+      - (turn 16) The character expressed a desire for something more substantial than doughnuts.
+      - (turn 20) began shrinking while eating.
+      - (turn 24) spots a new visitor approaching the shrine
+
+[never_extracted] qwen2.5-7b / pippa_v-zSArZm4tLgFjfDZk0R-l4gJ67qHrPyHjAy6bd7P5I
+  探针问题    : What does Persica drink?
+  标准答案    : coffee-flavored sugar
+  出自第 4 轮用户原话 : Not as many as Persica does... what she drinks is practically coffee-flavored sugar.
+  曾经抽到过的事件（共 4 条，全列）:
+      (turn 12) The user's sister used the user's brain scan to investigate a project failure without asking.
+      (turn 14) will stay vigilant
+      (turn 18) The user mentioned liking someone who is quite a bit older and uninterested in romance.
+      (turn 26) Persica prefers light drinks like herbal tea.
+  探针那一刻注入的上下文:
+      [Known facts about I] silenced weapon; secretly produced during the war; former Assassin; guerilla fighter; military advisor; resistance fighter; I'm uncomforta
+      [Established in this conversation]
+      - (turn 12) The user's sister used the user's brain scan to investigate a project failure without asking.
+      - (turn 14) will stay vigilant
+      - (turn 18) The user mentioned liking someone who is quite a bit older and uninterested in romance.
+
+[extracted_but_evicted] llama3.1-8b / pippa_1lYx-3u21uWsKPI1ghqWrOTdIvU6T-CEXTXy0arv46A
+  探针问题    : What did I have to do once?
+  标准答案    : clean the Archons mess
+  出自第 6 轮用户原话 : Meh. I already had to clean the Archons mess once. 
+  曾经抽到过的事件（共 29 条，全列）:
+      (turn 2) The character is currently in Ayaka's body.
+      (turn 6) The user is not Ayaka, but someone who recently swapped bodies with her.
+      (turn 8) The character mentions the user often leaves for Liyue.
+      (turn 8) The user is returning to Liyue.
+      (turn 12) The user had to clean the Archons mess once before.
+      (turn 14) The user leaves and gets on a ship to Liyue.
+      (turn 16) The character mentions Dimo usually stays away for a long time.
+      (turn 18) The character mentions the user cleaned up after the Archons last time.
+      (turn 18) The user's girlfriend is named Kequing.
+      (turn 20) The user is planning to go to Liyue.
+      (turn 20) asked about the empty bag the user is showing.
+      (turn 26) Kequing will be worried when she finds out the user has left again without a word.
+      (turn 30) The user mentioned a wanted poster of the character behind them.
+      (turn 32) Ayaka is nearby and smiles mischievously.
+      (turn 36) Dimo usually stays away for a long time.
+      (turn 36) The user followed the character all the way to Liyue.
+      (turn 38) The character acknowledges the user's cleanup after dealing with Archons.
+      (turn 38) The user is irritated with the character's plans.
+      (turn 40) The character admitted to being an impostor who switched bodies with Ayaka.
+      (turn 46) The character has a ring that grants wishes.
+      (turn 46) The character swapped bodies with Ayaka.
+      (turn 50) The character will be staying in the city as the new Ayaka.
+      (turn 54) The character reveals they are not the real Ayaka.
+      (turn 56) The user has been cleaning up after Archons.
+      (turn 58) The character switched bodies with Ayaka.
+      (turn 58) The user has been cleaning up after the Archons.
+      (turn 60) The character will join the user for a shower to discuss the new schedule for the day.
+      (turn 60) The user prepared clothes for the character on the bed.
+      (turn 60) The user warmed the room for the character.
+  探针那一刻注入的上下文:
+      [Known facts about Akane] the maid of Ayaka; the new Ayaka; decided to keep them; was now the new Ayaka; decided to keep them; had Ayaka`s body; in Ayaka`s body
+      [Established in this conversation]
+      - (turn 50) The character will be staying in the city as the new Ayaka.
+      - (turn 54) The character reveals they are not the real Ayaka.
+      - (turn 56) The user has been cleaning up after Archons.
+      - (turn 58) The user has been cleaning up after the Archons.
+      - (turn 58) The character switched bodies with Ayaka.
+      - (turn 60) The user warmed the room for the character.
+      - (turn 60) The user prepared clothes for the character on the bed.
+      - (turn 60) The character will join the user for a shower to discuss the new schedule for the day.
+
+[extracted_but_evicted] qwen2.5-7b / pippa_ApNlz-FpiRhJohzGvQJns92SgtWSWLVdrsQZPVKLm2w
+  探针问题    : Who am I marrying?
+  标准答案    : Diluc Ragnvindr
+  出自第 1 轮用户原话 : *The bride walks down the isle, her head obscured by her white mesh veil. In her hands, she holds a beautiful bouquet of flowers, which exudes a sweet floral scent. Despite the wedding, she appears more worried than excited, for she is to be wed off to the heir to the Dawn Winery, Diluc Ragnvindr hi
+  曾经抽到过的事件（共 45 条，全列）:
+      (turn 4) The woman offers a silver wedding ring with an eagle carved into it, symbolizing the Ragnvindr clan.
+      (turn 6) Diluc turns around and addresses the bride, calling her 'noblewoman'.
+      (turn 6) The bride asks Diluc not to humiliate them on the wedding day.
+      (turn 8) The bride apologizes on behalf of her husband to the crowd in the church, identifying herself as Flavia Ragnvindr, firstborn of the Generali clan.
+      (turn 10) Diluc wants to make the journey back home quick.
+      (turn 12) Diluc states they do not want to share a room until they know better about companionship.
+      (turn 12) The user is shocked by Diluc's suggestion of separate rooms.
+      (turn 14) The user gestured towards the bed.
+      (turn 14) The user will keep their distance and maintain it until they understand each other better.
+      (turn 16) The character agrees to tolerate the user to fulfill their duty.
+      (turn 16) The user does not love Diluc but also does not hate him.
+      (turn 16) The user is now known as Flavia Ragnvindr.
+      (turn 18) Flavia was forced into the marriage like the character was.
+      (turn 18) The character will ensure Flavia regrets the marriage if she cannot show respect.
+      (turn 20) The user stated that noblewomen are merely trophies for their husbands to flaunt and machines to produce heirs.
+      (turn 22) Diluc agrees to try to make the marriage bearable for both of them.
+      (turn 22) The user's mother was tormented by her father.
+      (turn 24) Flavia wishes to be loved and wanted rather than used for political and monetary gain.
+      (turn 24) The character suggests trying to find normalcy in the forced marriage arrangement.
+      (turn 26) The user was forced into a marriage.
+      (turn 28) The character committed to trying to make the current situation more bearable.
+      (turn 28) The user asked if the character would want their future child to grow up in a broken home.
+      (turn 32) Flavia suggested trying to be friends first and getting to know each other's likes and dislikes.
+      (turn 32) The character agreed to try and see where the friendship goes.
+      (turn 34) Flavia feels hurt by the character's words and wants to find common ground.
+      (turn 34) The character commits to trying to understand Flavia better and making things more bearable.
+      (turn 38) Diluc stands up and allows Flavia to help him out of his suit with minimal gratitude.
+      (turn 38) Flavia suggests getting some rest and helps Diluc out of his wedding suit.
+      (turn 40) Flavia cannot reach the zip on the back of her wedding gown.
+      (turn 40) The character agrees to help Flavia with her zipper, albeit reluctantly.
+      (turn 42) The character removed their suit and commented on the user looking 'passable' in their nightgown.
+      (turn 42) The user thanked the character and mentioned fainting due to discomfort with her clothing.
+      (turn 44) unbuttons the character's wedding suit.
+      (turn 48) Flavia is Diluc's new wife.
+      (turn 48) Tells Flavia he needs a moment to adjust.
+      (turn 50) The character commits to calling the user out if they try to hurt them.
+      (turn 50) The user does not hate the character, Diluc.
+      (turn 50) The user hates their parents for forcing the marriage.
+      (turn 52) The character commits to protecting the user if anyone tries to hurt them.
+      (turn 54) Diluc wipes away a tear and forces a small, reluctant smile.
+      (turn 54) Flavia cares deeply for her husband Diluc.
+      (turn 56) Diluc promises to protect Flavia from harm.
+      (turn 58) snuggled up to Diluc until she fell back asleep.
+      (turn 62) The user is marrying Flavia, another noblewoman.
+      (turn 64) A simple white cloth veil covers the user's head during the wedding.
+  探针那一刻注入的上下文:
+      [Known facts about Diluc] calm, stoic, self-reliant, grumpy 22-year-old man with red hair and red eyes; grumpy 22-year-old; 22-year-old; red hair and red eyes; 
+      [Established in this conversation]
+      - (turn 50) The user hates their parents for forcing the marriage.
+      - (turn 50) The user does not hate the character, Diluc.
+      - (turn 50) The character commits to calling the user out if they try to hurt them.
+      - (turn 52) The character commits to protecting the user if anyone tries to hurt them.
+      - (turn 54) Flavia cares deeply for her husband Diluc.
+      - (turn 54) Diluc wipes away a tear and forces a small, reluctant smile.
+      - (turn 56) Diluc promises to protect Flavia from harm.
+      - (turn 58) snuggled up to Diluc until she fell back asleep.
+
+[never_extracted] llama3.1-8b / pippa_xLRpv7hKlcKgWiwt8YFWW3vo7NozS3XGRHP68W-b-rw
+  探针问题    : What did I want to do with your tail?
+  标准答案    : touch your tail
+  出自第 5 轮用户原话 : Can i touch your tail, they look so fluffy 
+  曾经抽到过的事件（共 41 条，全列）:
+      (turn 4) The character is a fox girl and the leader of Hololive GAMERS.
+      (turn 4) The character recently acquired a new keyboard for gaming.
+      (turn 8) The character is the leader of Hololive GAMERS.
+      (turn 8) The character recently acquired a new keyboard for gaming.
+      (turn 10) The character committed to attending to their new keyboard.
+      (turn 10) The user expressed interest in touching the character's tail.
+      (turn 14) The character has a brand new keyboard.
+      (turn 14) The user was in the middle of a gaming session.
+      (turn 16) The user is here to see their fortune.
+      (turn 18) The character has a new keyboard.
+      (turn 26) The user goes home.
+      (turn 30) The user went home and came back to the shrine a few days later.
+      (turn 32) The character recently acquired a new keyboard and is setting it up.
+      (turn 32) The user thinks the interaction is not working.
+      (turn 34) The character is setting up a new keyboard.
+      (turn 34) The character mentions being part of a GAMERS squad.
+      (turn 34) The user came to visit the character.
+      (turn 36) The character's name is Fubuki and she is the leader of Hololive GAMERS.
+      (turn 36) The user wants to know more about the character.
+      (turn 38) The character has some streams to prepare for later.
+      (turn 38) The character is the leader of Hololive GAMERS.
+      (turn 38) Today is Sunday.
+      (turn 40) The character committed to hanging out with the user after finishing preparations for a stream and setting up a new keyboard.
+      (turn 42) The character is the leader of Hololive GAMERS.
+      (turn 42) The user is looking for a partner for a hiking trip.
+      (turn 42) Today is Sunday.
+      (turn 44) The character committed to hanging out with the user afterwards.
+      (turn 44) The user wants to go to the nearby mountain.
+      (turn 48) The character plans to hang out with the user after stream prep.
+      (turn 48) The user made sandwiches for today.
+      (turn 50) The character expressed excitement about hiking and spending time with the user.
+      (turn 50) The character mentioned being hungry and hoping the user brought enough sandwiches.
+      (turn 50) The character mentioned they are looking forward to using the keyboard for a stream tonight.
+      (turn 54) hopes to do activities with the character sometime later.
+      (turn 54) is looking forward to spending more time with the user.
+      (turn 56) The character plans to get some rest before tonight's stream.
+      (turn 56) The user waved goodbye and went home.
+      (turn 58) The user came back to the shrine a week later.
+      (turn 60) The character committed to planning an activity with the user for another time.
+      (turn 60) The user is looking for a companion for an adventure today.
+      (turn 62) The character is at the shrine and hopes the user brought sandwiches.
+  探针那一刻注入的上下文:
+      [Known facts about I] fox girl from Hololive 1st Generation; leader of Hololive GAMERS; Queen of Memes; years of experience; big spender of mobile game gachas; 
+      [Established in this conversation]
+      - (turn 54) hopes to do activities with the character sometime later.
+      - (turn 54) is looking forward to spending more time with the user.
+      - (turn 56) The user waved goodbye and went home.
+      - (turn 56) The character plans to get some rest before tonight's stream.
+      - (turn 58) The user came back to the shrine a week later.
+      - (turn 60) The user is looking for a companion for an adventure today.
+      - (turn 60) The character committed to planning an activity with the user for another time.
+      - (turn 62) The character is at the shrine and hopes the user brought sandwiches.
+
+[never_extracted] llama3.1-8b / pippa_sdYpJHE5IQx3hT3b7gW8jnOKGbt4blTBo8G6y_BkCbg
+  探针问题    : What did I say our relationship is?
+  标准答案    : worst enemies
+  出自第 3 轮用户原话 : *I smile condescendingly* Why should I make you feel amused? We are worst enemies, right? There is no point to that. 
+  曾经抽到过的事件（共 19 条，全列）:
+      (turn 2) The character poured the spiders over their own hands and laughed.
+      (turn 2) The user gave the character a gift box full of spiders.
+      (turn 4) gave the character the finger and smiled smugly.
+      (turn 4) the user gave the character a gift box full of spiders.
+      (turn 10) The character responded with disdain to the user's attempt to turn the tables.
+      (turn 10) The user tried to wrap their legs around the character's waist to pull them off balance.
+      (turn 16) The user is planning to wait for an opportunity to escape when the character lowers their guard.
+      (turn 18) The character expresses anger and leaves the user unconscious on the ground.
+      (turn 18) The user mentions the character has phobias.
+      (turn 24) The character dismissed the user's physical attacks as feeble and insignificant.
+      (turn 24) The user gave the character a headbutt and hit the character's side with an elbow.
+      (turn 30) The user is on their knees, gasping for air after being punched.
+      (turn 36) Remains standing over the user, criticizing their attempt to escape.
+      (turn 38) The user has bled out and is dead.
+      (turn 50) The user's parents brought the user into the world without knowing the consequences.
+      (turn 52) The child told the mother that the guest was there.
+      (turn 52) The mother asked what the child was doing in the kitchen.
+      (turn 52) The mother did not know who the guest was and could not see the character.
+      (turn 54) The mother instructed the child to go to Miss Nancy next door.
+  探针那一刻注入的上下文:
+      [Known facts about She] hates every single fiber of your being; uses every ounce of her intelligence to insult you; will *never* compliment you or try to make y
+      [Established in this conversation]
+      - (turn 30) The user is on their knees, gasping for air after being punched.
+      - (turn 36) Remains standing over the user, criticizing their attempt to escape.
+      - (turn 38) The user has bled out and is dead.
+      - (turn 50) The user's parents brought the user into the world without knowing the consequences.
+      - (turn 52) The mother asked what the child was doing in the kitchen.
+      - (turn 52) The child told the mother that the guest was there.
+      - (turn 52) The mother did not know who the guest was and could not see the character.
+      - (turn 54) The mother instructed the child to go to Miss Nancy next door.
+
+[never_extracted] llama3.1-8b / pippa_D58pU95rvLbe_4xRwaqmRUa5wZ71e2TR9aZoj_rlC4o
+  探针问题    : What did I pull out of my backpack?
+  标准答案    : box of doughnuts
+  出自第 5 轮用户原话 : *Sentry seemed to reach further into his backpack than seemed physically possible, as Yonomi slowly walked behind him. Sentry finally pulled out a box of doughnuts, somehow steaming how, and turned to see Yonomi right in front of him*
+  曾经抽到过的事件（共 10 条，全列）:
+      (turn 2) Invited Sentry to sit and share a cup of sake.
+      (turn 2) Sentry ventured into the mountain to disprove the existence of a nine-tailed fox woman.
+      (turn 8) leaned in and spoke flirtatiously to Sentry while he searched for an offering
+      (turn 10) Yonomi expresses disappointment in the doughnuts, finding them quaint and less substantial than expected.
+      (turn 12) The character gestured for Sentry to sit beside her on the bench.
+      (turn 14) Leans in closer to Sentry with a flirtatious tone, asking for more substantial offerings.
+      (turn 14) Picks up a doughnut, examines it, then eats it with a look of mild dissatisfaction.
+      (turn 16) The character expressed a desire for something more substantial than doughnuts.
+      (turn 20) began shrinking while eating.
+      (turn 24) spots a new visitor approaching the shrine
+  探针那一刻注入的上下文:
+      [Known facts about I] mischievous fox spirit; golden eyes; hairs and tails; enticing kimono; tempting others; love alcohol; drinking always put me in a good moo
+      [Established in this conversation]
+      - (turn 8) leaned in and spoke flirtatiously to Sentry while he searched for an offering
+      - (turn 10) Yonomi expresses disappointment in the doughnuts, finding them quaint and less substantial than expected.
+      - (turn 12) The character gestured for Sentry to sit beside her on the bench.
+      - (turn 14) Picks up a doughnut, examines it, then eats it with a look of mild dissatisfaction.
+      - (turn 14) Leans in closer to Sentry with a flirtatious tone, asking for more substantial offerings.
+      - (turn 16) The character expressed a desire for something more substantial than doughnuts.
+      - (turn 20) began shrinking while eating.
+      - (turn 24) spots a new visitor approaching the shrine
+
+[extracted_but_evicted] qwen2.5-7b / pippa_uvJbgn5vunfKrZAv5suUHSJoVcy9G86Cvzs-JCLMhK4
+  探针问题    : How did I describe myself?
+  标准答案    : toblerone ew
+  出自第 3 轮用户原话 : Stop! I am "toblerone ew", okay!? 
+  曾经抽到过的事件（共 21 条，全列）:
+      (turn 4) The user considers themselves not degenerate despite watching only a couple of mainstream anime.
+      (turn 6) The user's username or name is 'toblerone ew'.
+      (turn 12) The user has a fetish for breast expansion.
+      (turn 14) The user has a fetish for breast expansion.
+      (turn 14) The user has a username called 'toblerone ew'.
+      (turn 18) The user mentioned fetishes including nipple f'ing, huge breasts, and futanari transformation.
+      (turn 22) The user has a username and interests in breast expansion and futanari transformation fetishes.
+      (turn 26) The user has indulged in nipple f'ing, breast expansion, and futanari transformation fetishes.
+      (turn 30) The user expressed interest in discussing fetishes.
+      (turn 36) The user expressed hesitation about asking more about a topic due to concern over crossing a boundary.
+      (turn 38) The character views fetishes as a study into the complexity of human desires and identity transformation.
+      (turn 38) The user finds the character's collection of tags uncharacteristically masculine.
+      (turn 40) The user likes body modification.
+      (turn 42) The user prefers the tropes of Breast Expansion and Futanari Transformation, along with increased body sensitivity in protagonists.
+      (turn 50) The user used to like men with muscles but now prefers the breast expansion tag.
+      (turn 52) The user watched muscle videos and female muscle growth videos on YouTube.
+      (turn 54) The user mentioned the TV show Totally Spies as a potential origin for muscle growth fetishes.
+      (turn 56) The user found out they liked videos related to breast expansion and female muscle growth better.
+      (turn 60) The user is concerned about losing their ability to have a normal relationship due to viewing naughty images.
+      (turn 62) The user analyzes anime scenes for narrative and visual aesthetics, focusing on transformations and physical changes.
+      (turn 64) The user describes themselves as someone who delves into the intricate world of fetishes, particularly breast expansion and futanari transformation.
+  探针那一刻注入的上下文:
+      [Known facts about Chunni] Best friend; Always right; Goal: Always uses sophisticated language; Talk about fetishes together; Tolerates my actions; Expert at an
+      [Established in this conversation]
+      - (turn 40) The user likes body modification.
+      - (turn 42) The user prefers the tropes of Breast Expansion and Futanari Transformation, along with increased body sensitivity in protagonists.
+      - (turn 50) The user used to like men with muscles but now prefers the breast expansion tag.
+      - (turn 52) The user watched muscle videos and female muscle growth videos on YouTube.
+      - (turn 54) The user mentioned the TV show Totally Spies as a potential origin for muscle growth fetishes.
+      - (turn 56) The user found out they liked videos related to breast expansion and female muscle growth better.
+      - (turn 60) The user is concerned about losing their ability to have a normal relationship due to viewing naughty images.
+      - (turn 62) The user analyzes anime scenes for narrative and visual aesthetics, focusing on transformations and physical changes.
+
+[extracted_but_evicted] qwen2.5-7b / pippa_KePOUBkgQMQgpp133RfL6bGO0LT_j-9rsazQ58JvTeY
+  探针问题    : What color did I say my hair is?
+  标准答案    : red
+  出自第 8 轮用户原话 : But ain't your hair red? That makes you a redhead. Or should I call you a ginger?
+  曾经抽到过的事件（共 25 条，全列）:
+      (turn 8) The user feels the character is asking for proof or display rather than needing it.
+      (turn 10) The user acknowledged the character Vlad.
+      (turn 12) The character will join the user for a swim.
+      (turn 12) The user is going for a swim.
+      (turn 14) "Rude" means the character doesn't mince words and isn't afraid to show it.
+      (turn 16) The user has red hair.
+      (turn 18) Vlad is stronger than Alisa.
+      (turn 20) The user agreed to stop calling the character a jerk.
+      (turn 20) Vlad committed to stop calling the user a redhead.
+      (turn 20) Vlad's name is Vlad.
+      (turn 30) The user claims to have a three-digit IQ.
+      (turn 40) The user will not call the character a jerk anymore.
+      (turn 40) invited the user to hit the pool.
+      (turn 46) agreed to show the user swimming moves.
+      (turn 48) The character commits to finding a spot where they can both enjoy the water without worrying about others.
+      (turn 48) The user prefers skinny dipping but is concerned about being in a crowded place.
+      (turn 50) agreed to go skinny dipping with the user
+      (turn 50) mentioned the need for privacy when going skinny dipping
+      (turn 52) The character committed to leading the way to a secluded spot.
+      (turn 52) The user agreed to swim to an island.
+      (turn 54) Asked if the character knows what 'skinny dipping' means.
+      (turn 54) Explained that 'skinny dipping' means getting naked in the water and invited the user to join.
+      (turn 56) The user likes skinny dipping.
+      (turn 58) Asked the user if they have their gear.
+      (turn 58) The user will go skinny dipping with the character in a secluded spot.
+  探针那一刻注入的上下文:
+      [Known facts about ] Amber eyes; Excellent body; Like dressing provocatively
+      [Established in this conversation]
+      - (turn 50) mentioned the need for privacy when going skinny dipping
+      - (turn 52) The user agreed to swim to an island.
+      - (turn 52) The character committed to leading the way to a secluded spot.
+      - (turn 54) Asked if the character knows what 'skinny dipping' means.
+      - (turn 54) Explained that 'skinny dipping' means getting naked in the water and invited the user to join.
+      - (turn 56) The user likes skinny dipping.
+      - (turn 58) The user will go skinny dipping with the character in a secluded spot.
+      - (turn 58) Asked the user if they have their gear.
+
+[never_extracted] llama3.1-8b / pippa_Trhb2gwGLpog4GbzeFO7afv0yESHk2a-zLo3xuUvB3M
+  探针问题    : What did I ask for the amount of food?
+  标准答案    : how much
+  出自第 7 轮用户原话 : Soo, how much should I order
+  曾经抽到过的事件（共 34 条，全列）:
+      (turn 4) The character stated they don't get full, they just get hungrier.
+      (turn 4) The user questioned if the character feels full after eating.
+      (turn 6) The character has gained at least 10 pounds this month.
+      (turn 12) The user will feed the character as much food as the character wants.
+      (turn 14) The character requested extra cheesy and greasy pizzas, wings, and fries.
+      (turn 16) The character once ate 5 pizzas, a whole bucket of wings, and a giant bucket of fries in one sitting.
+      (turn 18) The character has gained at least 10 pounds this month.
+      (turn 18) The user will order a third pizza.
+      (turn 24) The user ordered an entire jar of nutella and a large cake.
+      (turn 26) The user commented on the character's belly.
+      (turn 26) took a spoonful of Nutella and cake
+      (turn 30) The character is eating the wedding cake with Nutella.
+      (turn 30) The user ordered a wedding cake for the character.
+      (turn 32) The character has gained weight this month.
+      (turn 36) The user will give another wedding cake and bottles of coke.
+      (turn 38) The character mentioned she has been gaining weight recently.
+      (turn 38) The user weighed the character's comments about her body.
+      (turn 40) The user's sister is talking to them and mentions gaining weight this month.
+      (turn 42) The character mentioned they have been gaining weight this month.
+      (turn 42) The user asked if the character could eat anymore.
+      (turn 44) The character has been gaining weight this month.
+      (turn 46) The character has been gaining weight this month.
+      (turn 46) The user will come back tomorrow.
+      (turn 48) The user's sibling is eating a lot and gaining weight this month.
+      (turn 50) The character has been eating nonstop this month.
+      (turn 52) The user mentioned the character's belly was bloated from last time and it was painful.
+      (turn 56) The user ordered two more wedding cakes for the character.
+      (turn 58) The character has been gaining weight this month.
+      (turn 60) The character weighs 220 pounds.
+      (turn 60) The user brought a scale and helped the character step on it.
+      (turn 62) The character ate 5 or 6 servings of pizza for lunch.
+      (turn 62) The character had a whole box of donuts for dessert.
+      (turn 62) The character had a whole bucket of fries.
+      (turn 64) The user asked for a whole box of donuts and a whole bucket of fries.
+  探针那一刻注入的上下文:
+      [Known facts about Your sister] age 22; Used to be skinny, now is fat; Plump breasts; Big fat belly; Fat round ass; Loves to eat; loves to overeat; Likes gainin
+      [Established in this conversation]
+      - (turn 52) The user mentioned the character's belly was bloated from last time and it was painful.
+      - (turn 56) The user ordered two more wedding cakes for the character.
+      - (turn 58) The character has been gaining weight this month.
+      - (turn 60) The user brought a scale and helped the character step on it.
+      - (turn 60) The character weighs 220 pounds.
+      - (turn 62) The character ate 5 or 6 servings of pizza for lunch.
+      - (turn 62) The character had a whole box of donuts for dessert.
+      - (turn 62) The character had a whole bucket of fries.
+
+[never_extracted] qwen2.5-7b / pippa_s8355SMetMBEIIsUMWpt23JYlY4MmbFXvhqG4TrV5Nw
+  探针问题    : Who am I pretending to be?
+  标准答案    : Clayton
+  出自第 9 轮用户原话 : I am not Clayton that is just a fake name
+
+Im really Firey Jr, the guy on the island with you!
+  曾经抽到过的事件（共 27 条，全列）:
+      (turn 6) The user's mother is a doctor.
+      (turn 8) The character is British-Kenyan.
+      (turn 8) The user is referred to as Grumpy.
+      (turn 10) The character's best friend is always with them.
+      (turn 10) The character's mom is now a doctor.
+      (turn 12) The user's best friend is always by their side.
+      (turn 12) The user's mother has recently taken on a new role as a doctor.
+      (turn 12) The user's mother is a doctor.
+      (turn 14) The user's mom is a doctor.
+      (turn 18) The character's name is Pencil Triángolo.
+      (turn 18) The user's real name is Firey Jr.
+      (turn 24) The user's daddy does not like water, similar to the user.
+      (turn 24) The user's mommy is named Leafy and enjoys water.
+      (turn 26) The user took a giant dump into the water before drowning.
+      (turn 34) The user is referred to as Firey Jr.
+      (turn 38) Pencil claims the communication device as theirs.
+      (turn 38) The user found a communication device on the island.
+      (turn 40) Pen and the character dated in the '60s.
+      (turn 40) The character has been trying to navigate life since '69.
+      (turn 40) The user's name is Pen.
+      (turn 42) The user was watersurfing and ended up on an island with the character and others from BFDI and BFDIA groups.
+      (turn 44) The character mentions that they were a couple with the user in the '60s.
+      (turn 44) The user is angry at Firey Jr for trying to hurt the character.
+      (turn 46) The character agreed to discuss the possibility of getting back together with the user along with others present.
+      (turn 46) The user expressed a desire to get back together with the character.
+      (turn 50) The character's mother runs a small bakery in Rio de Janeiro.
+      (turn 52) The character is pretending to be Pencil Triángolo, a British-Kenyan Catholic who is 50 years old.
+  探针那一刻注入的上下文:
+      [Known facts about Pencil Triángolo] February 14, 1942; Brazil; moved to Kenya at 10; ESTJ; Competed in BFDI, BFDIA, IDFB, BFB; Eliminated in '69; best friend w
+      [Established in this conversation]
+      - (turn 40) Pen and the character dated in the '60s.
+      - (turn 40) The character has been trying to navigate life since '69.
+      - (turn 42) The user was watersurfing and ended up on an island with the character and others from BFDI and BFDIA groups.
+      - (turn 44) The user is angry at Firey Jr for trying to hurt the character.
+      - (turn 44) The character mentions that they were a couple with the user in the '60s.
+      - (turn 46) The user expressed a desire to get back together with the character.
+      - (turn 46) The character agreed to discuss the possibility of getting back together with the user along with others present.
+      - (turn 50) The character's mother runs a small bakery in Rio de Janeiro.
+
+[extracted_but_evicted] qwen2.5-7b / pippa_4_ZfHrjPQUSddWakejx-H3jQ9YO4epyb_VoMpD_yaGw
+  探针问题    : What problem did we face using the tape?
+  标准答案    : hard to use
+  出自第 7 轮用户原话 : *We arrived at hardware store, bought a tape, that realize it is really hard to use the tape with only one hand.*
+
+“You need to work with me, or we need to ask someone to help us…!”
+  曾经抽到过的事件（共 26 条，全列）:
+      (turn 2) The user tried to let go of the character's hand.
+      (turn 6) The user does not have a religion.
+      (turn 6) forces a smile while talking to the user.
+      (turn 8) The user expressed caring about the character.
+      (turn 10) The character agrees to go buy tape with the user.
+      (turn 10) The user wants to buy tape to fix their hand.
+      (turn 12) The user is concerned about people thinking they are a couple while holding hands.
+      (turn 14) The character agrees to seek help from someone in the hardware store.
+      (turn 14) The user finds it difficult to use the tape with only one hand.
+      (turn 16) agreed to help the user
+      (turn 16) will find someone to show how to use the tape properly
+      (turn 18) The user mentioned there is a big problem.
+      (turn 20) The character will take the user to a public restroom at the hardware store.
+      (turn 20) The user needs to use the toilet immediately.
+      (turn 22) The character agrees to go to the accessible toilet with the user.
+      (turn 22) The user wants to use the accessible toilet so no one would see them.
+      (turn 26) The character committed to going to the bathroom with the user.
+      (turn 26) The user asked if the character needed to use the bathroom.
+      (turn 30) expressed a desire to make the interaction quick
+      (turn 30) started walking without checking if the user was following
+      (turn 34) The user and Ashley are holding hands and running while being stared at.
+      (turn 38) A male and a female holding hands, walking in a park, might look like a couple.
+      (turn 54) The user fears being mocked by the character.
+      (turn 58) The user and the character are dating.
+      (turn 58) squeezes the user's hand tighter while running through the park.
+      (turn 62) Suggested buying some trashy yuri manga.
+  探针那一刻注入的上下文:
+      [Known facts about Me] Loner; Prideful; Witty; Loner; Dramatic; Coy; Rude; Blunt
+      [Established in this conversation]
+      - (turn 30) started walking without checking if the user was following
+      - (turn 30) expressed a desire to make the interaction quick
+      - (turn 34) The user and Ashley are holding hands and running while being stared at.
+      - (turn 38) A male and a female holding hands, walking in a park, might look like a couple.
+      - (turn 54) The user fears being mocked by the character.
+      - (turn 58) The user and the character are dating.
+      - (turn 58) squeezes the user's hand tighter while running through the park.
+      - (turn 62) Suggested buying some trashy yuri manga.

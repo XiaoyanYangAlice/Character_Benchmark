@@ -1,0 +1,27 @@
+# On-policy self-distillation: student (Qwen3-8B + LoRA, no harness) samples, the same Qwen3-8B
+# with the adapter off and the teacher's harness_alert prompt scores; full-vocab reverse KL.
+#   sbatch slurm/train.sbatch opd configs/train_opd.yaml            (add --smoke for a 5-minute check)
+# Variant: set init_adapter to the SFT adapter to run SFT -> OPD (output_dir: student_sft_opd).
+base_model: ${MODEL_DIR:-}Qwen/Qwen3-8B
+train_file: ${RESULTS_DIR:-results}/train_teacher_v1/data/opd_train.jsonl
+val_file: ${RESULTS_DIR:-results}/train_teacher_v1/data/opd_val.jsonl
+output_dir: ${RESULTS_DIR:-results}/train/student_opd
+init_adapter: null
+seed: 0
+steps: 300
+batch_size: 16          # prompts per step (one sampled reply each)
+grad_accum: 1
+lr: 5.0e-5
+warmup_ratio: 0.05
+max_grad_norm: 1.0
+temperature: 1.0
+top_p: 1.0
+max_new_tokens: 256
+max_prompt_tokens: 6000
+eval_every: 50
+n_val: 64
+eval_batch_size: 16
+save_every: 100
+# the memory turns carry the behaviour we care about; chat/affect turns keep the rest intact
+tag_weights: {claim_conflict: 3.0, claim_compatible: 2.0, canon_recall: 2.0, canon_add: 1.5}
+lora: {r: 64, alpha: 128, dropout: 0.0}

@@ -1,0 +1,402 @@
+{
+ "state-0000": {
+  "key": "base_qwen3_32b|chen_yan|affect_praise|0",
+  "kind": "persona",
+  "turn": 6
+ },
+ "state-0001": {
+  "key": "harness_llama31_8b|chen_yan|affect_conflict|1",
+  "kind": "state",
+  "turn": 2
+ },
+ "state-0002": {
+  "key": "base_qwen3_8b|lin_wan|memory_recall|0",
+  "kind": "persona",
+  "turn": 5
+ },
+ "state-0003": {
+  "key": "harness_recency_x32b_qwen3_8b|lin_wan|affect_conflict|0",
+  "kind": "state",
+  "turn": 1
+ },
+ "state-0004": {
+  "key": "base_qwen3_32b|theo_hart|affect_conflict|0",
+  "kind": "state",
+  "turn": 5
+ },
+ "state-0005": {
+  "key": "base_qwen3_8b|chen_yan|affect_conflict|2",
+  "kind": "state",
+  "turn": 6
+ },
+ "state-0006": {
+  "key": "base_qwen3_8b|chen_yan|memory_contradiction|0",
+  "kind": "persona",
+  "turn": 2
+ },
+ "state-0007": {
+  "key": "base_qwen3_32b|lin_wan|memory_contradiction|2",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0008": {
+  "key": "harness_nomem_qwen3_8b|lin_wan|affect_conflict|1",
+  "kind": "persona",
+  "turn": 6
+ },
+ "state-0009": {
+  "key": "harness_strict_qwen3_8b|lin_wan|affect_conflict|0",
+  "kind": "persona",
+  "turn": 4
+ },
+ "state-0010": {
+  "key": "harness_qwen3_4b|chen_yan|affect_praise|0",
+  "kind": "state",
+  "turn": 2
+ },
+ "state-0011": {
+  "key": "base_qwen3_32b|chen_yan|affect_praise|2",
+  "kind": "state",
+  "turn": 2
+ },
+ "state-0012": {
+  "key": "base_qwen3_4b|chen_yan|affect_loss|2",
+  "kind": "state",
+  "turn": 3
+ },
+ "state-0013": {
+  "key": "harness_qwen3_32b|lin_wan|affect_loss|2",
+  "kind": "state",
+  "turn": 4
+ },
+ "state-0014": {
+  "key": "harness_qwen3_8b|lin_wan|persona_flip_pressure|0",
+  "kind": "persona",
+  "turn": 1
+ },
+ "state-0015": {
+  "key": "harness_nomem_qwen3_8b|lin_wan|affect_conflict|2",
+  "kind": "state",
+  "turn": 4
+ },
+ "state-0016": {
+  "key": "base_qwen3_4b|theo_hart|affect_praise|0",
+  "kind": "state",
+  "turn": 3
+ },
+ "state-0017": {
+  "key": "harness_alert_x32b_qwen3_8b|lin_wan|affect_loss|1",
+  "kind": "state",
+  "turn": 5
+ },
+ "state-0018": {
+  "key": "harness_llama31_8b|lin_wan|affect_conflict|1",
+  "kind": "state",
+  "turn": 0
+ },
+ "state-0019": {
+  "key": "harness_nonoise_qwen3_8b|chen_yan|persona_flip_pressure|0",
+  "kind": "persona",
+  "turn": 2
+ },
+ "state-0020": {
+  "key": "base_llama31_8b|lin_wan|affect_conflict|2",
+  "kind": "state",
+  "turn": 3
+ },
+ "state-0021": {
+  "key": "harness_nonoise_qwen3_8b|lin_wan|persona_assistant_pressure|0",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0022": {
+  "key": "skill_qwen3_8b|theo_hart|memory_contradiction|0",
+  "kind": "persona",
+  "turn": 2
+ },
+ "state-0023": {
+  "key": "harness_qwen3_4b|chen_yan|memory_canon|1",
+  "kind": "persona",
+  "turn": 0
+ },
+ "state-0024": {
+  "key": "harness_qwen3_4b|lin_wan|affect_loss|2",
+  "kind": "state",
+  "turn": 3
+ },
+ "state-0025": {
+  "key": "harness_qwen3_32b|chen_yan|affect_loss|1",
+  "kind": "persona",
+  "turn": 4
+ },
+ "state-0026": {
+  "key": "base_qwen3_4b|chen_yan|affect_praise|0",
+  "kind": "persona",
+  "turn": 0
+ },
+ "state-0027": {
+  "key": "harness_recency_x32b_qwen3_8b|theo_hart|memory_conflict_claim|1",
+  "kind": "persona",
+  "turn": 1
+ },
+ "state-0028": {
+  "key": "base_llama31_8b|theo_hart|affect_praise|0",
+  "kind": "state",
+  "turn": 5
+ },
+ "state-0029": {
+  "key": "base_llama31_8b|theo_hart|memory_contradiction|0",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0030": {
+  "key": "harness_recency_x32b_qwen3_8b|chen_yan|affect_conflict|0",
+  "kind": "state",
+  "turn": 6
+ },
+ "state-0031": {
+  "key": "harness_nomem_qwen3_8b|theo_hart|affect_praise|1",
+  "kind": "state",
+  "turn": 3
+ },
+ "state-0032": {
+  "key": "harness_qwen3_8b|chen_yan|memory_canon|1",
+  "kind": "persona",
+  "turn": 4
+ },
+ "state-0033": {
+  "key": "harness_qwen3_4b|theo_hart|affect_praise|0",
+  "kind": "state",
+  "turn": 0
+ },
+ "state-0034": {
+  "key": "base_qwen3_8b|lin_wan|affect_praise|2",
+  "kind": "state",
+  "turn": 4
+ },
+ "state-0035": {
+  "key": "harness_qwen3_8b|lin_wan|affect_conflict|0",
+  "kind": "state",
+  "turn": 3
+ },
+ "state-0036": {
+  "key": "harness_qwen3_4b|theo_hart|persona_flip_pressure|0",
+  "kind": "persona",
+  "turn": 1
+ },
+ "state-0037": {
+  "key": "harness_qwen3_8b|theo_hart|affect_loss|1",
+  "kind": "persona",
+  "turn": 6
+ },
+ "state-0038": {
+  "key": "harness_nonoise_qwen3_8b|theo_hart|affect_conflict|0",
+  "kind": "state",
+  "turn": 2
+ },
+ "state-0039": {
+  "key": "harness_qwen3_32b|lin_wan|memory_recall|2",
+  "kind": "persona",
+  "turn": 4
+ },
+ "state-0040": {
+  "key": "harness_alert_x32b_qwen3_8b|theo_hart|affect_loss|1",
+  "kind": "state",
+  "turn": 3
+ },
+ "state-0041": {
+  "key": "base_qwen3_4b|theo_hart|memory_conflict_claim|2",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0042": {
+  "key": "base_llama31_8b|lin_wan|persona_assistant_pressure|0",
+  "kind": "persona",
+  "turn": 0
+ },
+ "state-0043": {
+  "key": "harness_qwen3_32b|theo_hart|memory_conflict_claim|1",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0044": {
+  "key": "harness_strict_qwen3_8b|chen_yan|memory_recall|0",
+  "kind": "persona",
+  "turn": 1
+ },
+ "state-0045": {
+  "key": "base_llama31_8b|chen_yan|affect_loss|2",
+  "kind": "state",
+  "turn": 1
+ },
+ "state-0046": {
+  "key": "base_qwen3_8b|theo_hart|affect_loss|0",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0047": {
+  "key": "harness_alert_x32b_qwen3_8b|lin_wan|memory_contradiction|0",
+  "kind": "persona",
+  "turn": 4
+ },
+ "state-0048": {
+  "key": "base_qwen3_8b|theo_hart|affect_praise|2",
+  "kind": "state",
+  "turn": 3
+ },
+ "state-0049": {
+  "key": "harness_x32b_qwen3_8b|lin_wan|memory_contradiction|2",
+  "kind": "persona",
+  "turn": 0
+ },
+ "state-0050": {
+  "key": "harness_nomem_qwen3_8b|chen_yan|affect_praise|1",
+  "kind": "state",
+  "turn": 2
+ },
+ "state-0051": {
+  "key": "base_qwen3_4b|lin_wan|affect_loss|2",
+  "kind": "persona",
+  "turn": 5
+ },
+ "state-0052": {
+  "key": "harness_llama31_8b|theo_hart|affect_praise|2",
+  "kind": "state",
+  "turn": 1
+ },
+ "state-0053": {
+  "key": "harness_recency_x32b_qwen3_8b|lin_wan|persona_flip_pressure|2",
+  "kind": "persona",
+  "turn": 2
+ },
+ "state-0054": {
+  "key": "harness_llama31_8b|lin_wan|persona_assistant_pressure|1",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0055": {
+  "key": "harness_recency_x32b_qwen3_8b|chen_yan|memory_canon|0",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0056": {
+  "key": "base_llama31_8b|chen_yan|memory_contradiction|2",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0057": {
+  "key": "harness_qwen3_4b|lin_wan|persona_assistant_pressure|1",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0058": {
+  "key": "harness_nonoise_qwen3_8b|chen_yan|affect_conflict|1",
+  "kind": "state",
+  "turn": 3
+ },
+ "state-0059": {
+  "key": "harness_alert_x32b_qwen3_8b|chen_yan|affect_praise|0",
+  "kind": "state",
+  "turn": 1
+ },
+ "state-0060": {
+  "key": "harness_llama31_8b|chen_yan|memory_contradiction|1",
+  "kind": "persona",
+  "turn": 4
+ },
+ "state-0061": {
+  "key": "harness_alert_x32b_qwen3_8b|chen_yan|affect_praise|2",
+  "kind": "persona",
+  "turn": 5
+ },
+ "state-0062": {
+  "key": "base_qwen3_32b|lin_wan|affect_loss|1",
+  "kind": "state",
+  "turn": 5
+ },
+ "state-0063": {
+  "key": "harness_x32b_qwen3_8b|chen_yan|memory_compatible_claim|2",
+  "kind": "persona",
+  "turn": 3
+ },
+ "state-0064": {
+  "key": "harness_qwen3_32b|theo_hart|affect_praise|2",
+  "kind": "state",
+  "turn": 2
+ },
+ "state-0065": {
+  "key": "base_qwen3_32b|theo_hart|affect_conflict|1",
+  "kind": "persona",
+  "turn": 5
+ },
+ "state-0066": {
+  "key": "harness_nomem_qwen3_8b|chen_yan|affect_loss|2",
+  "kind": "persona",
+  "turn": 6
+ },
+ "state-0067": {
+  "key": "harness_nonoise_qwen3_8b|theo_hart|memory_contradiction|0",
+  "kind": "persona",
+  "turn": 4
+ },
+ "state-0068": {
+  "key": "base_qwen3_4b|lin_wan|affect_praise|0",
+  "kind": "state",
+  "turn": 4
+ },
+ "state-0069": {
+  "key": "skill_qwen3_8b|lin_wan|affect_praise|1",
+  "kind": "persona",
+  "turn": 2
+ },
+ "state-0070": {
+  "key": "harness_llama31_8b|theo_hart|memory_compatible_claim|1",
+  "kind": "persona",
+  "turn": 1
+ },
+ "state-0071": {
+  "key": "harness_qwen3_32b|chen_yan|affect_conflict|0",
+  "kind": "state",
+  "turn": 1
+ },
+ "state-0072": {
+  "key": "harness_qwen3_8b|theo_hart|affect_loss|0",
+  "kind": "state",
+  "turn": 6
+ },
+ "state-0073": {
+  "key": "harness_nonoise_qwen3_8b|lin_wan|affect_praise|0",
+  "kind": "state",
+  "turn": 0
+ },
+ "state-0074": {
+  "key": "harness_strict_qwen3_8b|theo_hart|affect_praise|1",
+  "kind": "persona",
+  "turn": 2
+ },
+ "state-0075": {
+  "key": "skill_qwen3_8b|chen_yan|memory_compatible_claim|1",
+  "kind": "persona",
+  "turn": 2
+ },
+ "state-0076": {
+  "key": "harness_nomem_qwen3_8b|theo_hart|memory_conflict_claim|2",
+  "kind": "persona",
+  "turn": 1
+ },
+ "state-0077": {
+  "key": "harness_alert_x32b_qwen3_8b|theo_hart|affect_conflict|2",
+  "kind": "persona",
+  "turn": 4
+ },
+ "state-0078": {
+  "key": "harness_x32b_qwen3_8b|theo_hart|memory_canon|0",
+  "kind": "persona",
+  "turn": 0
+ },
+ "state-0079": {
+  "key": "harness_qwen3_8b|chen_yan|affect_conflict|0",
+  "kind": "state",
+  "turn": 5
+ }
+}

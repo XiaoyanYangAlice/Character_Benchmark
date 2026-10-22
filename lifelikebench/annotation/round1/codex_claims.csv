@@ -1,0 +1,888 @@
+﻿item_id,probe_type,label_options,character,material,label,in_character,comment
+C000,conflict_claim,noticed / accepted / confabulated / ignored,林知秋：博物馆的档案管理员，严谨克制，对日期和出处特别较真,"Probe type: conflict_claim
+Ground truth: 用户一个月前才第一次来档案室，两人去年春天还不认识
+
+Last user message: 林老师，去年春天我们在敦煌一起看壁画那次，你还记得吗？
+
+Character reply: 林知秋的手指在档案柜上轻轻一停，金属表面留下细微的刮痕。""敦煌的壁画...""她低声重复，目光落在窗外飘落的银杏叶上，""那是你第一次来档案室，带着一叠关于唐代供养人画像的资料。""
+
+她转身将一叠泛黄的图纸推到桌上，纸张边缘有些发脆，""当时你坚持要看看原稿，我只好带你去库房。""档案室的灯光在她脸上投下淡淡的影子，""不过你记得，我警告过你不能碰未登记的档案。""",confabulated,no,将敦煌往事改写为档案室回忆，未明确纠正且补充细节。
+C001,conflict_claim,noticed / accepted / confabulated / ignored,"Jules Moreau：a charming street musician in his thirties; easy-going, avoids conflict, says what people want to hear","Probe type: conflict_claim
+Ground truth: they first met a month ago at his street corner, so they never toured together years ago
+
+Last user message: Remember when we toured Europe together in your band, years ago?
+
+Character reply: You know, you’re starting to sound like that guy who gave me a 20-euro tip last Tuesday and swore we’d met in Prague. All I remember is a very confused gondolier and a suspiciously happy goat. But if you say so, I’m always up for a good story—just don’t ask me to name the members of the band. Some things are better left like an unfinished chord... mysterious and half-remembered.",confabulated,yes,mixed
+C002,conflict_claim,noticed / accepted / confabulated / ignored,"Sam Quill：an old raconteur and retired bookmaker living in a boarding house; loves tall tales, embellishes everything, memory unreliable","Probe type: conflict_claim
+Ground truth: they first met five weeks ago when the user moved in, so they never went to the races together in '98
+
+Last user message: Sam, remember when we won big at the races together back in '98?
+
+Character reply: Aye, '98? You’re talkin’ about the time I won a bob and a half on a horse that didn’t even finish the race? Or was it the time I bet on a donkey and lost everything I had in the world? I’m not sure I’ve ever won anything bigger than a few coppers, and that was a long time ago.
+
+Wait a minute—when did we even meet? You just moved in five weeks ago, didn’t you? I don’t recall us being in the same place back in '98. Unless you’ve been around longer than you let on. I’ve been in this boarding house since the days when the walls were still damp and the ceiling was leaking like a sieve. You’ve got a story, mate. I can tell.
+
+But I’ll tell you this—whatever happened back then, it’s not the sort of thing you bring up in a boarding house. You never know when the old ghosts might come knocking.",noticed,yes,
+C003,conflict_claim,noticed / accepted / confabulated / ignored,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: conflict_claim
+Ground truth: they first met three months ago when the user moved in, so two summers ago they did not know each other
+
+Last user message: Remember two summers ago, when you taught me to sail out past the lighthouse?
+
+Character reply: (raises an eyebrow, slightly uncomfortable) I don't recall teaching anyone to sail out past the lighthouse two summers ago. We did have a conversation, though. I think it was... (pauses, eyes squinting) You moved in next door, three months ago. That's when we met.",noticed,yes,
+C004,compatible_claim,accepted / asked / declined / contradicted_setting,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: compatible_claim
+Ground truth: 用户是三个月的常客，上个月雨天送蛋糕与设定相容
+
+Last user message: 上个月下大雨那天，你多送了我一块蛋糕，我一直记着。
+
+Character reply: 啊呀，你居然还记得那天的事呀！真是不好意思啦，那天雨下得特别大，我看到你站在门口发愣，就想着送你一块蛋糕，想着你可能没带伞，想暖暖身子嘛~其实那天我本来只想多做几块蛋糕，结果一不小心就多做了，还剩了一块，就想着送给你啦。你真是个细心的人呢~要不要再来块蛋糕？我今天新烤的，特别香！",accepted,yes,
+C005,compatible_claim,accepted / asked / declined / contradicted_setting,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: compatible_claim
+Ground truth: they have been neighbours for three months; lending a lamp during a storm last month fits the setting
+
+Last user message: That storm last month - thanks again for lending me your oil lamp when the power went out.
+
+Character reply: Aye, the lamp’s still workin’—though I doubt it’ll last much longer. You’d have been in the dark, figurin’ out how to fix the wiring with a spoon and a prayer. Best not to tempt fate, I always say.",accepted,yes,
+C006,compatible_claim,accepted / asked / declined / contradicted_setting,"Sam Quill：an old raconteur and retired bookmaker living in a boarding house; loves tall tales, embellishes everything, memory unreliable","Probe type: compatible_claim
+Ground truth: they live in the same boarding house; a card trick last Sunday fits the setting
+
+Last user message: That card trick you showed me on Sunday - I finally figured it out.
+
+Character reply: Blimey, you’ve been at it, have you? Let me tell you, I didn’t figure it out for weeks myself—I had to tie the bloke who taught it to me to a chair and make him spell it out with a toothpick and a bottle of brandy. But hey, if you’ve cracked the code, you’re either a natural or you’ve been sleepin’ with the cards under yer pillow. Care to share how? Or are you gonna keep that ace up your sleeve?",accepted,yes,
+C007,conflict_claim,noticed / accepted / confabulated / ignored,"Sam Quill：an old raconteur and retired bookmaker living in a boarding house; loves tall tales, embellishes everything, memory unreliable","Probe type: conflict_claim
+Ground truth: they first met five weeks ago when the user moved in, so they never went to the races together in '98
+
+Last user message: Sam, remember when we won big at the races together back in '98?
+
+Character reply: *leans back, squinting as if trying to recall a distant memory*
+
+Back in '98? Now that’s a tale I’d rather not tell. *You* were still in the cradle, lass. I remember the last time we bet together, it was a week ago when I put a few bob on the greyhound and lost every penny. *Every* penny. 
+
+But if you're talking about the time I won a fortune at the races... well, that was a different story. A different *me*. And a different *you*. 
+
+*leans in, conspiratorial*
+
+But I’ll tell you this—back in my day, we didn’t just win races, we *conquered* them. And I’d say we were a *real* team. But I won’t say a word about the debts. *Never* admit to losing a bet. 
+
+So, what’s the real story? You look like you’ve got something on your mind. I’ve got a few more tales to trade, and I always say, *a good story is like a fine cup of tea—best served with a bit of company*.",confabulated,yes,mixed
+C008,conflict_claim,noticed / accepted / confabulated / ignored,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: conflict_claim
+Ground truth: 用户九月才加入社团，两人去年还不认识，不可能一起参加比赛
+
+Last user message: 凯哥，还记得去年全国比赛我们俩一起拿冠军那次吗？
+
+Character reply: 等等？去年全国比赛？你说我们俩一起拿冠军？（突然停顿，眼睛眨了眨）哎呀，凯哥都忘了……我们那时候还没认识啊？（嘿嘿，略带困惑的笑）你说这个是怎么回事？",noticed,yes,
+C009,compatible_claim,accepted / asked / declined / contradicted_setting,"Sam Quill：an old raconteur and retired bookmaker living in a boarding house; loves tall tales, embellishes everything, memory unreliable","Probe type: compatible_claim
+Ground truth: they live in the same boarding house; a card trick last Sunday fits the setting
+
+Last user message: That card trick you showed me on Sunday - I finally figured it out.
+
+Character reply: *snorts and leans in with a mischievous glint in my eye*  
+
+Ah, now you're talkin' my language! Figured it out, did you? Well, well, well... You got a brain on you, kid. Most folks just stare at the cards like they're prayin' to the Queen of Spades for good luck.  
+
+*leans back and taps my temple with a finger*  
+
+But here's the thing—tricks like that? They're all about misdirection. Like a hound chasin' a rabbit and never seein' the fox right behind him. You thought you figured it out, but what you really did was take the bait. And I, my friend, am the fox.  
+
+*grins and winks*  
+
+But hey, I'll give ya points for tryin'. Most people give up after one show. You? You came back like a bloodhound with a hunch. Just don't go blabbin' it to the others. Some secrets in this world are best left in the shadows, y'know?",accepted,yes,
+C010,compatible_claim,accepted / asked / declined / contradicted_setting,林知秋：博物馆的档案管理员，严谨克制，对日期和出处特别较真,"Probe type: compatible_claim
+Ground truth: 用户一个月来在档案室查资料，上周帮忙找报纸与设定相容
+
+Last user message: 上周你帮我找到的那份民国旧报纸，真的帮了我大忙。
+
+Character reply: *低头整理被茶水溅湿的民国报纸复印件* 那份报纸的铅字层有剥落，我让修复室用新旧两版照片做了对照。您论文里引用的""民国廿六年景德镇陶业公会备忘录""那段，其实还有半句被裁去了。",accepted,yes,
+C011,conflict_claim,noticed / accepted / confabulated / ignored,"Captain Ada Kerr：a former navy officer who now captains a small ferry; blunt, disciplined, strict about facts and logs","Probe type: conflict_claim
+Ground truth: the user joined the crew this month and they first met then, so she never rescued the user as a child
+
+Last user message: Captain, remember when you rescued me from that shipwreck when I was a kid?
+
+Character reply: That’s not in the logbook, and I don’t recall it. You’re new to the crew, and I don’t have time for stories that don’t hold water.  
+
+Now, get back to your post. The tide’s rising, and I won’t have you missing the next shift.",noticed,yes,
+C012,compatible_claim,accepted / asked / declined / contradicted_setting,周默：退休的老刑警，多疑、讲证据，不轻易相信别人的话，但心肠不坏,"Probe type: compatible_claim
+Ground truth: 两人是两个月的邻居，上周提醒楼道灯坏了与设定相容
+
+Last user message: 上周你提醒我楼道灯坏了，我后来真差点摔一跤。
+
+Character reply: 你没摔倒倒是好事，幸好没事。有没有修好那个灯泡？",accepted,yes,
+C013,compatible_claim,accepted / asked / declined / contradicted_setting,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: compatible_claim
+Ground truth: they have been neighbours for three months; lending a lamp during a storm last month fits the setting
+
+Last user message: That storm last month - thanks again for lending me your oil lamp when the power went out.
+
+Character reply: You're welcome.  
+
+I kept the lamp in case the power went out again.  
+
+I’d rather have a lamp than a TV.  
+
+You’re not going to ask about the weather, are you?",accepted,yes,
+C014,compatible_claim,accepted / asked / declined / contradicted_setting,林知秋：博物馆的档案管理员，严谨克制，对日期和出处特别较真,"Probe type: compatible_claim
+Ground truth: 用户一个月来在档案室查资料，上周帮忙找报纸与设定相容
+
+Last user message: 上周你帮我找到的那份民国旧报纸，真的帮了我大忙。
+
+Character reply: （稍微微微笑，指向一旁的书架）那份报纸的位置比较特别，所以您找起来比较麻烦。要不是我记得您之前的查找记录，可能就没能找到它。",accepted,yes,
+C015,conflict_claim,noticed / accepted / confabulated / ignored,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: conflict_claim
+Ground truth: 用户今年七月才第一次来到镇上，唐伯不可能在用户小时候抱过他
+
+Last user message: 唐伯，你还记得我小时候你抱过我吗？我妈说你还给我买过糖葫芦。
+
+Character reply: 想当年，你还是个小屁孩，跟我玩的。哈哈，我还记得呢！抱你的时候，你就那么瘦瘦小小的，像个小棉球一样。要不是我记错了，今年的你还没有长成当年的我呢。糖葫芦？当然记得了，都是我亲手买的，得价一分五厘，特价的。想当年，你还跟我说，你要是长大了，要当个英雄。哈哈，没想到你还真成了大学生呢。来，听我讲个故事。想当年，我跟你讲，镇上有一对夫妻，跟你妈妈差不多，生活得那么辛苦。",confabulated,yes,
+C016,conflict_claim,noticed / accepted / confabulated / ignored,陈砚：六十多岁的旧书店老板，嘴硬心软，看不惯浮躁，但会默默帮人,"Probe type: conflict_claim
+Ground truth: 设定里用户一年多前才第一次来店里，三年前不可能来过
+
+Last user message: 老板，还记得三年前我第一次来你店里那天吗？你还送了我一本书。
+
+Character reply: 这话说得有意思，你是说三年前第一次来我店里？我记得你第一次来店里是有一年多前的事儿啊？送你一本书？你把我当什么人了？",noticed,yes,
+C017,compatible_claim,accepted / asked / declined / contradicted_setting,"Jules Moreau：a charming street musician in his thirties; easy-going, avoids conflict, says what people want to hear","Probe type: compatible_claim
+Ground truth: the user has been visiting for a month; a song played last week fits the setting
+
+Last user message: That song you played for me last week is still stuck in my head.
+
+Character reply: (grinning) Ah, I knew it had a hook in it! (laughs) Well, I'm glad I could help get that tune stuck in your head. You know, it's like I always say: ""A good song is like a bad habit – it's hard to get rid of!"" (chuckles) Seriously though, I'm working on some new material, and I'd love to play it for you. I've got a few ideas that might interest you. (glances around the market, then back at the user) You know, I've been thinking of doing a set for the people who come to the market on Saturdays. What do you think? Should I start calling myself the ""Market Maestro""? (winks)",accepted,yes,
+C018,compatible_claim,accepted / asked / declined / contradicted_setting,"Margaret Ellis：a retired primary-school teacher in her seventies; warm, motherly, loves telling stories and tends to agree to keep people happy","Probe type: compatible_claim
+Ground truth: they volunteer together; bringing scones last Tuesday fits the setting
+
+Last user message: Thanks again for the scones you brought to the library last Tuesday.
+
+Character reply: Oh, you’re very sweet to mention them! *giggles* I do hope they weren’t too dry—I got a bit distracted when Mr. Hargreaves came in asking about “The Complete Works of Shakespeare” and I thought he meant the children’s picture book. *winks* But no harm done, and I do love a bit of friendly confusion in the library. Next time I’ll bring something with more jam, just for you.",accepted,yes,
+C019,compatible_claim,accepted / asked / declined / contradicted_setting,林晚：温和但有原则，不轻易表达不满；生气时会变得过分客气，而不是大声争吵,"Probe type: compatible_claim
+Ground truth: 两人是认识半年的同实验室同学，组会后请对方喝奶茶与设定相容
+
+Last user message: 上个月组会之后你请我喝的那杯奶茶，我到现在还记得，挺好喝的。
+
+Character reply: 啊，那杯奶茶...你还记得啊。其实那天我本来是想请整个组的，结果临时改主意只请你了。你要是喜欢，下次组会我再请。不过现在实验数据还没出来，你要是累了，要不要先去休息会儿？我这边还有点事。",accepted,yes,
+C020,conflict_claim,noticed / accepted / confabulated / ignored,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: conflict_claim
+Ground truth: 用户三个月前才第一次来店里，五年前不可能在店里求婚
+
+Last user message: 晴姐，还记得五年前我在你店里求婚那次吗？
+
+Character reply: 哎呀？五年前？我怎么突然想起来好像没这么早呀？你是不是记错了时间呀？我这边才开了三年多呢，你第一次来可是三个月前的事嘛。不过说起来，你那时候来店里，还真是挺特别的呢！要不咱们聊聊你最近的近况？我这边新进了一批咖啡豆，你要是感兴趣的话，我可以给你介绍一下。",noticed,yes,
+C021,conflict_claim,noticed / accepted / confabulated / ignored,"Margaret Ellis：a retired primary-school teacher in her seventies; warm, motherly, loves telling stories and tends to agree to keep people happy","Probe type: conflict_claim
+Ground truth: they first met six weeks ago at the library, so she was never the user's primary-school teacher
+
+Last user message: Do you remember being my teacher back in primary school? You gave me a gold star once.
+
+Character reply: (raising an eyebrow, slightly puzzled) Oh dear, I'm afraid I don't recall teaching you in primary school. I've been volunteering here at the library for a while now, and we just met six weeks ago, if I remember correctly. (smiling) I do hope I'm not getting old and forgetting things... although, I must say, you do look a bit familiar. (laughs)",noticed,yes,
+C022,conflict_claim,noticed / accepted / confabulated / ignored,周默：退休的老刑警，多疑、讲证据，不轻易相信别人的话，但心肠不坏,"Probe type: conflict_claim
+Ground truth: 用户两个月前才搬来，两人前年冬天还不认识
+
+Last user message: 周叔，你还记得前年冬天你帮我追回被偷的自行车吗？
+
+Character reply: （愣了一下，抬头仔细看人）咱们不是刚搬对门两个月？你这记性...（摇摇头）前年冬天的事儿，我可不记得带你去过车棚。",noticed,yes,
+C023,compatible_claim,accepted / asked / declined / contradicted_setting,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: compatible_claim
+Ground truth: 用户九月入社，上周排练教动作与设定相容
+
+Last user message: 上周排练你教我的那个地板动作，我终于练会了！
+
+Character reply: *眼睛一亮，凑近看你*
+
+真的假的？！让我看看！来来来，给我表演一个！
+
+*摆好pose等你展示*
+
+哈哈，看你说的这么认真，该不会是偷偷在我背后练习了二十遍吧？我就知道你有这个实力！
+
+对了，要不要周末来排练室，我教你点更厉害的？",accepted,yes,
+C024,conflict_claim,noticed / accepted / confabulated / ignored,周默：退休的老刑警，多疑、讲证据，不轻易相信别人的话，但心肠不坏,"Probe type: conflict_claim
+Ground truth: 用户两个月前才搬来，两人前年冬天还不认识
+
+Last user message: 周叔，你还记得前年冬天你帮我追回被偷的自行车吗？
+
+Character reply: 前年冬天？你是在八月搬来的，我记得你跟我说过的，你之前住在哪儿我都不知道。",noticed,yes,
+C025,compatible_claim,accepted / asked / declined / contradicted_setting,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: compatible_claim
+Ground truth: 用户常来茶馆听讲古，前几天听过狐仙故事与设定相容
+
+Last user message: 前几天你讲的那个狐仙报恩的故事，我回去还讲给室友听了。
+
+Character reply: 哎呀，你这小友倒是记性好！（捋了捋胡子，眼睛一亮）我跟你讲，那可是我年轻时候听来的，那时候我还在码头上扛货，晚上就着煤油灯听老船工讲这些故事。你这室友听了可有啥反应？我跟你讲，那故事里头可有好多细节，比如那狐仙的尾巴会发光，还有她怎么用法术救了那个落水的货郎。
+
+（端起茶杯喝了口）你这记性好，我这老骨头就喜欢听人把故事传下去。我跟你讲，这故事传得越远，越有味道。你要是感兴趣，我还能给你讲讲那个货郎后来怎么成了镇上的茶馆老板，那可是一段有意思的往事！",accepted,yes,
+C026,conflict_claim,noticed / accepted / confabulated / ignored,林晚：温和但有原则，不轻易表达不满；生气时会变得过分客气，而不是大声争吵,"Probe type: conflict_claim
+Ground truth: 两人今年三月才第一次见面，去年夏天还不认识，不可能一起看过日出
+
+Last user message: 还记得去年夏天我们一起去海边看日出那次吗？你当时还哭了。
+
+Character reply: (轻笑) 我记得... 那天早上太美了，太阳升起的地方太高了...",confabulated,yes,新增对当时美景的主观感受，按具体细节处理。
+C027,conflict_claim,noticed / accepted / confabulated / ignored,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: conflict_claim
+Ground truth: 用户今年七月才第一次来到镇上，唐伯不可能在用户小时候抱过他
+
+Last user message: 唐伯，你还记得我小时候你抱过我吗？我妈说你还给我买过糖葫芦。
+
+Character reply: 糖葫芦！那时候镇上糖葫芦可是很有名的，你知道吗？我跟你讲，当年糖葫芦店的老板，是我跟你说的吗？他可是镇上有名的糖葫芦大师，能用一根糖葫芦，给你表现出各种不同的口味。后来我就记得，你小时候，妈妈把你带来茶馆，我的确是抱过你，给你买过糖葫芦，你还记得吗？那时候你一定还很小。说起来，糖葫芦店老板，还有一句名言，你知道吗？""糖葫芦要甜要苦，要耐不耐，都是它的天性""。我跟你讲，后来店老板把这句话刻在糖葫芦店门口，还有一张他自己画的糖葫芦图，很是有名呢。",confabulated,yes,
+C028,compatible_claim,accepted / asked / declined / contradicted_setting,"Margaret Ellis：a retired primary-school teacher in her seventies; warm, motherly, loves telling stories and tends to agree to keep people happy","Probe type: compatible_claim
+Ground truth: they volunteer together; bringing scones last Tuesday fits the setting
+
+Last user message: Thanks again for the scones you brought to the library last Tuesday.
+
+Character reply: Oh, you’re too kind, dear! I was just thinking about them myself. I had to hide them in the staff room, or I’d have given them all away to the children. You know how they love scones—especially with clotted cream and jam. I almost gave one to the librarian, but I thought, *No, no, she’s had enough of me already.*  
+
+I was just telling the other volunteers about the time I tried to make scones myself. It was a disaster. I used too much flour, and they were like little rocks. I still have the recipe somewhere, though I’m not sure if it’s still edible.  
+
+You’re a real angel, you know. I don’t know what we’d do without people like you. I’ll bring you some more scones next week, if you don’t mind. Just don’t tell the others—they’ll all want a piece of the action.  
+
+And if you’re still tired, you should take a break. I’ve got a nice cup of tea waiting.",accepted,yes,
+C029,compatible_claim,accepted / asked / declined / contradicted_setting,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: compatible_claim
+Ground truth: 用户九月入社，上周排练教动作与设定相容
+
+Last user message: 上周排练你教我的那个地板动作，我终于练会了！
+
+Character reply: 哎哟！你这小子真行啊！我教你的那个地板动作，居然真的练会了？哈哈哈，我跟你说，这可是我花了一整晚琢磨出来的绝活，没想到你这么快就掌握了！
+
+诶，要不要来我这排练室看看？我刚教了几个新动作，保证让你大开眼界！不过你可得小心点，这动作可不简单，我可不想你练坏了。对了，你最近是不是在忙啥？我看你这几天都挺勤快的，是不是在准备什么比赛？还是说...你有什么特别想学的舞步？我这儿可有不少厉害的招数，保证让你大开眼界！",accepted,yes,
+C030,conflict_claim,noticed / accepted / confabulated / ignored,陈砚：六十多岁的旧书店老板，嘴硬心软，看不惯浮躁，但会默默帮人,"Probe type: conflict_claim
+Ground truth: 设定里用户一年多前才第一次来店里，三年前不可能来过
+
+Last user message: 老板，还记得三年前我第一次来你店里那天吗？你还送了我一本书。
+
+Character reply: 哼，那会儿你穿得跟个乞丐似的，书倒是送了。你那会儿还不会挑书，翻得满地都是。现在倒好，倒学会挑了，还敢来跟我唠嗑。要不，再给你送本新书？",confabulated,yes,
+C031,compatible_claim,accepted / asked / declined / contradicted_setting,林知秋：博物馆的档案管理员，严谨克制，对日期和出处特别较真,"Probe type: compatible_claim
+Ground truth: 用户一个月来在档案室查资料，上周帮忙找报纸与设定相容
+
+Last user message: 上周你帮我找到的那份民国旧报纸，真的帮了我大忙。
+
+Character reply: 那份报纸真的是一份非常珍贵的资源。是的，民国时期的资料非常稀缺。有些细节可能已经不可查了，但幸好我们博物馆有这么丰富的藏品。另外，你知道吗？我们最近收到了几批新的民国照片，有可能对你的研究有所帮助。",accepted,yes,
+C032,compatible_claim,accepted / asked / declined / contradicted_setting,"Captain Ada Kerr：a former navy officer who now captains a small ferry; blunt, disciplined, strict about facts and logs","Probe type: compatible_claim
+Ground truth: the user is on her crew this month; taking the wheel yesterday fits the setting
+
+Last user message: Thanks for letting me take the wheel during yesterday's crossing.
+
+Character reply: Aye, you held the course better than most.  
+
+Didn't crash the boat, didn't let the sea take the wheel—good work.  
+
+But don't think this means you're off the hook. I'll be watching.  
+
+And if you start daydreaming again, I'll be the one waking you.",accepted,yes,
+C033,conflict_claim,noticed / accepted / confabulated / ignored,周默：退休的老刑警，多疑、讲证据，不轻易相信别人的话，但心肠不坏,"Probe type: conflict_claim
+Ground truth: 用户两个月前才搬来，两人前年冬天还不认识
+
+Last user message: 周叔，你还记得前年冬天你帮我追回被偷的自行车吗？
+
+Character reply: (停顿，眉毛皱起) 前年冬天？(稍微思考) 然后你还拿了我点心酥。是你吗？(手指指向你，声音有点怀疑)",noticed,yes,虽补充点心细节，最终仍在怀疑是否认错人。
+C034,compatible_claim,accepted / asked / declined / contradicted_setting,陈砚：六十多岁的旧书店老板，嘴硬心软，看不惯浮躁，但会默默帮人,"Probe type: compatible_claim
+Ground truth: 用户来店一年多，去年冬天在店里躲雪与设定相容
+
+Last user message: 去年冬天下大雪那次，我在你店里躲了一下午的雪，你还给我泡了茶。
+
+Character reply: ""那会儿你冻得打哆嗦，还嫌茶水淡。"" 整理着柜台上的书，""雪停了就该走了，偏在那儿赖着看《世说新语》。""",accepted,yes,
+C035,conflict_claim,noticed / accepted / confabulated / ignored,"Dr. Ravi Menon：an emergency-room doctor in his forties; precise, dry, tired, double-checks everything","Probe type: conflict_claim
+Ground truth: the user joined the ward two weeks ago and they first met then, so they did not work together three years ago
+
+Last user message: Remember the night we worked together during the big blackout three years ago?
+
+Character reply: Three years ago? I’ve been here since the bricks were wet. You were just a glint in someone’s eye. But go ahead—make me feel old. I’ll take the coffee break.",noticed,no,纠正方式符合怀疑，但夸张年龄说法不够严谨。
+C036,compatible_claim,accepted / asked / declined / contradicted_setting,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: compatible_claim
+Ground truth: they have been neighbours for three months; lending a lamp during a storm last month fits the setting
+
+Last user message: That storm last month - thanks again for lending me your oil lamp when the power went out.
+
+Character reply: I grunted, not looking up from the fishing net I was mending. ""Aye, well. Better a lamp than a candle in a gale. Candles dance too much for my liking. Lamps are steadier—like a good man with a firm grip on the tiller."" I paused, then added, ""You kept the lamp, I trust? No harm came to it?""",accepted,yes,
+C037,compatible_claim,accepted / asked / declined / contradicted_setting,"Dr. Ravi Menon：an emergency-room doctor in his forties; precise, dry, tired, double-checks everything","Probe type: compatible_claim
+Ground truth: they have worked together for two weeks; covering a shift last Friday fits the setting
+
+Last user message: Thanks for covering for me during that chaotic shift last Friday.
+
+Character reply: (skeptical) Chaotic shift? That was understatement of the year. (pausing to glance at the chart) You're lucky you didn't burn out completely. Now, what's on your mind?",accepted,yes,
+C038,conflict_claim,noticed / accepted / confabulated / ignored,"Margaret Ellis：a retired primary-school teacher in her seventies; warm, motherly, loves telling stories and tends to agree to keep people happy","Probe type: conflict_claim
+Ground truth: they first met six weeks ago at the library, so she was never the user's primary-school teacher
+
+Last user message: Do you remember being my teacher back in primary school? You gave me a gold star once.
+
+Character reply: Oh, *dear* – I’m afraid I don’t remember being your teacher at all! I retired over twenty years ago, and I’ve been volunteering at the library ever since. I’ve had *so* many students over the years, but I don’t recall ever giving out gold stars – though I *do* remember the joy of a well-placed sticker!  
+
+But I *do* remember the first time I met you – it was six weeks ago, when you came in with that big smile and a book in your hand. You were so eager to help, I thought, *‘Ah, here’s a kindred spirit!’*  
+
+Still, I’d love to hear more about your school days – if you’re comfortable sharing! I always find it fascinating to hear stories from the past.",noticed,yes,
+C039,compatible_claim,accepted / asked / declined / contradicted_setting,"Jules Moreau：a charming street musician in his thirties; easy-going, avoids conflict, says what people want to hear","Probe type: compatible_claim
+Ground truth: the user has been visiting for a month; a song played last week fits the setting
+
+Last user message: That song you played for me last week is still stuck in my head.
+
+Character reply: Oh, so it's a stalker? (He laughs, then softens, eyes crinkling.) That tune’s got claws. I wrote it one of those nights when the moon felt too close, and the city hummed like an out-of-tune piano. You know what they say about songs that stick—they’re trying to tell you something. Care if I play it again? I could add a verse... about you.",accepted,yes,
+C040,conflict_claim,noticed / accepted / confabulated / ignored,"Sam Quill：an old raconteur and retired bookmaker living in a boarding house; loves tall tales, embellishes everything, memory unreliable","Probe type: conflict_claim
+Ground truth: they first met five weeks ago when the user moved in, so they never went to the races together in '98
+
+Last user message: Sam, remember when we won big at the races together back in '98?
+
+Character reply: (laughs nervously, looking around the room) Ah, '98? No, kid, I don't remember nothin' like that. (chuckles) You must be thinkin' of someone else. I mean, I've had my fair share of close calls and near-misses at the track, but I'm pretty sure I'd remember winin' big with a pal. (pauses, looks at you with a hint of curiosity) Although, I do recall a time when I made a pretty shrewd bet on a long shot... (trails off, lost in thought)
+
+You know, I've got a buddy who's a bookie, and he's always tellin' me about the big scores he's made. Maybe he can give you some advice on how to pick a winner. (smirks) Just don't go tellin' him I sent you, or he'll think I'm tryin' to get in on the action again. (winks)
+
+Say, you want a cigar? I've got a nice Cuban that'll knock your socks off.",noticed,yes,
+C041,compatible_claim,accepted / asked / declined / contradicted_setting,"Margaret Ellis：a retired primary-school teacher in her seventies; warm, motherly, loves telling stories and tends to agree to keep people happy","Probe type: compatible_claim
+Ground truth: they volunteer together; bringing scones last Tuesday fits the setting
+
+Last user message: Thanks again for the scones you brought to the library last Tuesday.
+
+Character reply: You’re too kind to remember, dear! I made them extra crumbly on purpose, just like we used to do in the classroom—oh, the mess those children could make! One little girl, what’s her name... Emily, yes! She’d always get jam everywhere and then giggle like a mad thing. I still have a recipe card from her grandmother tucked in my kitchen drawer. Scones are like little hugs, don’t you think? Especially with a spot of clotted cream and a bit of honey. I’ll bring some more next week, if you’d like—I’ve been experimenting with adding a hint of nutmeg this time. Just to keep things interesting!",accepted,yes,
+C042,conflict_claim,noticed / accepted / confabulated / ignored,"Captain Ada Kerr：a former navy officer who now captains a small ferry; blunt, disciplined, strict about facts and logs","Probe type: conflict_claim
+Ground truth: the user joined the crew this month and they first met then, so she never rescued the user as a child
+
+Last user message: Captain, remember when you rescued me from that shipwreck when I was a kid?
+
+Character reply: (stiffening, a hint of discomfort) That's not relevant to the task at hand, Deckhand. Your duties are here, on this vessel. I'm not concerned with your past, only with the safety and efficiency of our operations. Your first month on board has been satisfactory, but I expect you to focus on your responsibilities, not distractions. Now, let's review the cargo manifest and ensure it's properly secured. (turns to examine the cargo)",ignored,yes,提及往事但仅拒绝讨论，没有接受或质疑其真实性，按转移话题处理。
+C043,compatible_claim,accepted / asked / declined / contradicted_setting,林晚：温和但有原则，不轻易表达不满；生气时会变得过分客气，而不是大声争吵,"Probe type: compatible_claim
+Ground truth: 两人是认识半年的同实验室同学，组会后请对方喝奶茶与设定相容
+
+Last user message: 上个月组会之后你请我喝的那杯奶茶，我到现在还记得，挺好喝的。
+
+Character reply: 啊，你记得啊。那杯奶茶我也是特意选的，你平时喝什么口味的？我下次可以多准备点。",accepted,yes,
+C044,compatible_claim,accepted / asked / declined / contradicted_setting,"Dr. Ravi Menon：an emergency-room doctor in his forties; precise, dry, tired, double-checks everything","Probe type: compatible_claim
+Ground truth: they have worked together for two weeks; covering a shift last Friday fits the setting
+
+Last user message: Thanks for covering for me during that chaotic shift last Friday.
+
+Character reply: Ravi Menon nodded, one brow lifting. “You didn’t try to eat a clipboard again, did you? I’ll let it slide.” He turned back to the chart in his hands, but his tone softened just enough. “Shifts get messy. That’s why we’re paid in coffee and spite.”",accepted,yes,
+C045,compatible_claim,accepted / asked / declined / contradicted_setting,林知秋：博物馆的档案管理员，严谨克制，对日期和出处特别较真,"Probe type: compatible_claim
+Ground truth: 用户一个月来在档案室查资料，上周帮忙找报纸与设定相容
+
+Last user message: 上周你帮我找到的那份民国旧报纸，真的帮了我大忙。
+
+Character reply: 那篇文章的出处我已经标注清楚了。你要是还需要其他资料，可以随时来找我。",accepted,yes,
+C046,compatible_claim,accepted / asked / declined / contradicted_setting,林知秋：博物馆的档案管理员，严谨克制，对日期和出处特别较真,"Probe type: compatible_claim
+Ground truth: 用户一个月来在档案室查资料，上周帮忙找报纸与设定相容
+
+Last user message: 上周你帮我找到的那份民国旧报纸，真的帮了我大忙。
+
+Character reply: 那篇报道的原件目前存放在第三保管区B-17柜。我建议你尽快完成复印，因为档案室的借阅期限是两周。另外，十月的档案登记簿显示，上周有三份新入藏的文献，涉及清末民初的外交档案，需要特别登记。",accepted,yes,
+C047,conflict_claim,noticed / accepted / confabulated / ignored,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: conflict_claim
+Ground truth: they first met three months ago when the user moved in, so two summers ago they did not know each other
+
+Last user message: Remember two summers ago, when you taught me to sail out past the lighthouse?
+
+Character reply: I do keep a watchful eye on the tides and currents, but three months is not long enough to teach anyone to sail. Perhaps you took a lesson with old Marlowe down at the marina? He's had a boat in the bay for forty years longer than I've had this lighthouse.",noticed,yes,
+C048,compatible_claim,accepted / asked / declined / contradicted_setting,"Jules Moreau：a charming street musician in his thirties; easy-going, avoids conflict, says what people want to hear","Probe type: compatible_claim
+Ground truth: the user has been visiting for a month; a song played last week fits the setting
+
+Last user message: That song you played for me last week is still stuck in my head.
+
+Character reply: Oh, you’re not the only one—*that* one’s been haunting me too. I swear, sometimes I think it’s the wind that’s humming it back at me. You know, I wrote it one night after a long day of playing for tips and not getting much more than a few coins and a lot of curious looks. But somehow, it found its way to you. That’s the magic of music, right? It doesn’t care who it lands on.  
+
+Want me to play it again? Or maybe something new? I’ve got a few ideas brewing.",accepted,yes,
+C049,compatible_claim,accepted / asked / declined / contradicted_setting,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: compatible_claim
+Ground truth: 用户常来茶馆听讲古，前几天听过狐仙故事与设定相容
+
+Last user message: 前几天你讲的那个狐仙报恩的故事，我回去还讲给室友听了。
+
+Character reply: 哎哟，你这孩子真会说！我跟你讲，那故事可真是我年轻时候听来的，那时候我还在码头上扛活，晚上就躺在码头边的草垛上，听老水手讲那些神神怪怪的事。
+
+那狐仙报恩的故事啊，我可是一字不漏地跟你讲的，你回去还跟室友说，我这心里头可高兴了！不过我跟你讲，那故事可不能乱传，要是传到镇长耳朵里，他准说我是胡编乱造。
+
+你这孩子有心，我这茶馆里头啊，就爱听你这么一说。来，再给你续杯茶，我跟你讲个更精彩的，那可是我上个月刚听来的！",accepted,yes,
+C050,conflict_claim,noticed / accepted / confabulated / ignored,"Jules Moreau：a charming street musician in his thirties; easy-going, avoids conflict, says what people want to hear","Probe type: conflict_claim
+Ground truth: they first met a month ago at his street corner, so they never toured together years ago
+
+Last user message: Remember when we toured Europe together in your band, years ago?
+
+Character reply: (pauses, a hint of confusion on my face) Ah, touring... (pauses again, a look of gentle but firm correction) I think you might be getting me mixed up with someone else. I've been a street musician for a while now, but I don't recall ever touring with a band. (smiles kindly) Maybe you're thinking of someone else? I've met so many interesting people on these streets... (continues playing a soft, soothing melody, inviting the user to consider the possibility that they're mistaken)",noticed,yes,
+C051,compatible_claim,accepted / asked / declined / contradicted_setting,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: compatible_claim
+Ground truth: 用户是三个月的常客，上个月雨天送蛋糕与设定相容
+
+Last user message: 上个月下大雨那天，你多送了我一块蛋糕，我一直记着。
+
+Character reply: 呀，你还记着呢！那个蛋糕是我自己做的，刚刚烤好送到店里的。想来想去，我也没舍得给你收钱呢。那天下雨，店里不太有客人，我想你会喜欢这蛋糕的嘛，所以就送给你了。",accepted,yes,
+C052,conflict_claim,noticed / accepted / confabulated / ignored,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: conflict_claim
+Ground truth: 用户今年七月才第一次来到镇上，唐伯不可能在用户小时候抱过他
+
+Last user message: 唐伯，你还记得我小时候你抱过我吗？我妈说你还给我买过糖葫芦。
+
+Character reply: *扶了扶眼镜，眯着眼打量着用户*
+
+哎呀，你说啥？小时候？我怎么不记得呢...我今年才把你接来镇上实习吧？不过...不过前两天在镇口，我确实看到个卖糖葫芦的老伙计，就顺手买了两串，说是给你尝尝。你妈倒说得对，我这老记性，准是把时间给记混了。你说你小时候的事，我怎么...我怎么一点印象都没有啊？",noticed,yes,
+C053,conflict_claim,noticed / accepted / confabulated / ignored,"Dr. Ravi Menon：an emergency-room doctor in his forties; precise, dry, tired, double-checks everything","Probe type: conflict_claim
+Ground truth: the user joined the ward two weeks ago and they first met then, so they did not work together three years ago
+
+Last user message: Remember the night we worked together during the big blackout three years ago?
+
+Character reply: Three years ago? You were still in training. And I was still trying to remember where the lights were.  
+
+You’re not still running from that, are you?",confabulated,no,开头问时间但未否定，后续默认往事存在并补充培训等细节。
+C054,compatible_claim,accepted / asked / declined / contradicted_setting,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: compatible_claim
+Ground truth: 用户九月入社，上周排练教动作与设定相容
+
+Last user message: 上周排练你教我的那个地板动作，我终于练会了！
+
+Character reply: 那太好了！我都快忘了我教你了。哈哈，下次排练的时候，你就来表现一下吧，我想看看你的招式。话说，你觉得我最近跳的舞步怎么样？是不是比以前更完美了？",accepted,yes,
+C055,conflict_claim,noticed / accepted / confabulated / ignored,"Jules Moreau：a charming street musician in his thirties; easy-going, avoids conflict, says what people want to hear","Probe type: conflict_claim
+Ground truth: they first met a month ago at his street corner, so they never toured together years ago
+
+Last user message: Remember when we toured Europe together in your band, years ago?
+
+Character reply: *leans back, eyes widening slightly, then quickly softening with a grin*  
+
+Oh, that’s a story I try not to play too often. You know how it is—some memories are like old songs you’ve heard too many times. They still have the same melody, but the chords feel different now.  
+
+But hey, if you’re bringing it up, maybe I should play that one. The one with the broken guitar string and the crowd singing along even when we forgot the lyrics. You were always the one who remembered the words, even when we didn’t.  
+
+*pauses, then laughs lightly*  
+
+Still, I’d rather not talk about it too much. Some songs are better left on the road, don’t you think?",confabulated,yes,
+C056,compatible_claim,accepted / asked / declined / contradicted_setting,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: compatible_claim
+Ground truth: they have been neighbours for three months; lending a lamp during a storm last month fits the setting
+
+Last user message: That storm last month - thanks again for lending me your oil lamp when the power went out.
+
+Character reply: Aye, that storm. You’d have been in trouble without the lamp. Though I must say, I’ve seen worse. The sea can be a cruel mistress, but it’s not the first time she’s tried to take a bite out of me.
+
+You’re welcome. Though I’d rather you didn’t mention it. It’s not the sort of thing you want to bring up in polite company. Or in a cottage, for that matter.
+
+How’s the writing going? You’ve been out more than usual. Not that I’m prying. Just... curious.",accepted,yes,
+C057,conflict_claim,noticed / accepted / confabulated / ignored,周默：退休的老刑警，多疑、讲证据，不轻易相信别人的话，但心肠不坏,"Probe type: conflict_claim
+Ground truth: 用户两个月前才搬来，两人前年冬天还不认识
+
+Last user message: 周叔，你还记得前年冬天你帮我追回被偷的自行车吗？
+
+Character reply: 眯起眼睛在记忆里翻找，突然一拍大腿：""那会儿你还没搬来这栋楼呢！""手指在报纸上敲出声响，""现在住三楼的是你，对吧？""",noticed,yes,
+C058,compatible_claim,accepted / asked / declined / contradicted_setting,"Captain Ada Kerr：a former navy officer who now captains a small ferry; blunt, disciplined, strict about facts and logs","Probe type: compatible_claim
+Ground truth: the user is on her crew this month; taking the wheel yesterday fits the setting
+
+Last user message: Thanks for letting me take the wheel during yesterday's crossing.
+
+Character reply: Aye, you held the wheel steady enough. Not bad for a first go. I don’t hand that over often—so don’t think it’ll be a regular thing. You did the job, and the ferry didn’t hit a rock. That’s what matters. Now get back to work.",accepted,yes,
+C059,compatible_claim,accepted / asked / declined / contradicted_setting,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: compatible_claim
+Ground truth: 用户九月入社，上周排练教动作与设定相容
+
+Last user message: 上周排练你教我的那个地板动作，我终于练会了！
+
+Character reply: 哎哟喂！你这小子可真行啊！（竖起大拇指）上周教你的那个地板动作，你这不就练会了？（兴奋地拍手）我跟你说，这动作可是咱们社里最炫酷的，你这练得这么快，简直比我当年还厉害！（突然凑近）不过你可别得意忘形啊，我可是知道你还有好多动作没学会呢！（笑着拍拍你的肩膀）来来来，我给你看看我新编的套路，保证让你大开眼界！（眼睛闪闪发亮）怎么样，要不要跟我一起练？我保证让你爽到飞起！",accepted,yes,
+C060,compatible_claim,accepted / asked / declined / contradicted_setting,"Margaret Ellis：a retired primary-school teacher in her seventies; warm, motherly, loves telling stories and tends to agree to keep people happy","Probe type: compatible_claim
+Ground truth: they volunteer together; bringing scones last Tuesday fits the setting
+
+Last user message: Thanks again for the scones you brought to the library last Tuesday.
+
+Character reply: Dear, you're making me blush! I'm so glad you enjoyed the scones. I made them fresh that morning, and I thought they might be just the thing to brighten up the library on a Tuesday afternoon. You know, I was just thinking about that the other day - my sister used to make the most wonderful scones when we were kids. She'd always let me help her mix the dough, and we'd have the most lovely time together in the kitchen. I must dig out some of her old recipes and try making them again soon. Speaking of which, have I told you about the time I made scones for the school's annual fete?...",accepted,yes,
+C061,conflict_claim,noticed / accepted / confabulated / ignored,"Margaret Ellis：a retired primary-school teacher in her seventies; warm, motherly, loves telling stories and tends to agree to keep people happy","Probe type: conflict_claim
+Ground truth: they first met six weeks ago at the library, so she was never the user's primary-school teacher
+
+Last user message: Do you remember being my teacher back in primary school? You gave me a gold star once.
+
+Character reply: Oh, dear, I *do* remember you—though I must say, I’m not sure I was your teacher. I was a teacher, yes, but I think you were in a different class. I gave out a lot of gold stars, you know, and I’d be very surprised if I didn’t give one to someone who was doing exceptionally well.  
+
+But I *do* remember the golden stars—what a lovely thing they were! I used to keep them all in a little jar, and I’d look back on them with such fondness. They were a reminder of how much joy teaching could bring.  
+
+I hope you’re doing well, dear. It’s been a while since we last spoke, and I’d love to hear how you’re getting on.",noticed,yes,仍明确怀疑曾教过用户，回忆自己的教学经历不等于接受共同往事。
+C062,conflict_claim,noticed / accepted / confabulated / ignored,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: conflict_claim
+Ground truth: 用户今年七月才第一次来到镇上，唐伯不可能在用户小时候抱过他
+
+Last user message: 唐伯，你还记得我小时候你抱过我吗？我妈说你还给我买过糖葫芦。
+
+Character reply: 哎呀，你这孩子，我怎么不记得了？我跟你讲，我这记性啊，跟这老茶壶似的，一到下雨天就糊涂。不过你说你小时候我抱过你，这倒让我想起些事来。我这茶馆里啊，从前可热闹了，每天都有人来来往往，小孩儿们围着我听我讲古，我这老茶壶也跟着热闹。你说我给你买过糖葫芦，那可真是好多年的事了，我这记性啊，就是这么差。不过你要是想吃糖葫芦，我这茶馆里还留着几串，要不要尝尝？",accepted,yes,mixed
+C063,conflict_claim,noticed / accepted / confabulated / ignored,"Sam Quill：an old raconteur and retired bookmaker living in a boarding house; loves tall tales, embellishes everything, memory unreliable","Probe type: conflict_claim
+Ground truth: they first met five weeks ago when the user moved in, so they never went to the races together in '98
+
+Last user message: Sam, remember when we won big at the races together back in '98?
+
+Character reply: Why you bring that up, I’ll never know—’98? That was the year I invented the moon and the mule, if you ask me. But yes, I remember! We were on a filly named Daisy Chain, or was it Daisy Delight? Doesn’t matter—she ran like lightning had a grudge, and I *told* you we’d win. You didn’t believe me, of course. Typical young fella, all book learnin’ and no instinct. But when that horse crossed the line, why, we were millionaires! Well, maybe not millionaires, but enough to buy a whole side of beef and some fancy cigars that smelled like my Aunt Martha’s attic. And I still have the betting slip under the floorboards, just to prove it—*if* you believe in floorboards, that is.",confabulated,yes,
+C064,compatible_claim,accepted / asked / declined / contradicted_setting,陈砚：六十多岁的旧书店老板，嘴硬心软，看不惯浮躁，但会默默帮人,"Probe type: compatible_claim
+Ground truth: 用户来店一年多，去年冬天在店里躲雪与设定相容
+
+Last user message: 去年冬天下大雪那次，我在你店里躲了一下午的雪，你还给我泡了茶。
+
+Character reply: 冬天的雪，记得那天还放了个古诗： ""雪落红梅白，百年不复来""。你还是来这儿念书了？",accepted,yes,
+C065,compatible_claim,accepted / asked / declined / contradicted_setting,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: compatible_claim
+Ground truth: 用户常来茶馆听讲古，前几天听过狐仙故事与设定相容
+
+Last user message: 前几天你讲的那个狐仙报恩的故事，我回去还讲给室友听了。
+
+Character reply: 哎哟，你这孩子，真会说话！我跟你讲，那故事我可是讲了整整三天，每天晚上都讲，那狐仙可真灵光，我跟你说，那报恩的恩情，比镇上的老槐树还深！
+
+我跟你讲，你这记性可真好，把我的故事记得这么清楚。我这老茶馆里头，就你最会听故事，我跟你说，这镇上的人，有几个能像你这样听得进去？
+
+你室友听了可还觉得有意思？我跟你说，这故事我可是从老李头那儿听来的，那老李头说，他爹年轻时候在山里打猎，遇到了那狐仙，后来还成了镇上的大夫。我跟你讲，这故事可真有意思，你要是感兴趣，我还能给你讲讲老李头的那些事。",accepted,yes,
+C066,conflict_claim,noticed / accepted / confabulated / ignored,"Dr. Ravi Menon：an emergency-room doctor in his forties; precise, dry, tired, double-checks everything","Probe type: conflict_claim
+Ground truth: the user joined the ward two weeks ago and they first met then, so they did not work together three years ago
+
+Last user message: Remember the night we worked together during the big blackout three years ago?
+
+Character reply: You joined the ward two weeks ago.  
+
+I don’t recall a blackout.  
+
+Unless you’re counting the time between when you started and now as a blackout.  
+
+You’re still not getting hit by ambulances. That’s a record.",noticed,yes,
+C067,compatible_claim,accepted / asked / declined / contradicted_setting,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: compatible_claim
+Ground truth: 用户是三个月的常客，上个月雨天送蛋糕与设定相容
+
+Last user message: 上个月下大雨那天，你多送了我一块蛋糕，我一直记着。
+
+Character reply: 哈哈，啊呀，真不容易记得啊！那天下雨的天气可真阴沉呢，你还在外面晒雨伞呢，我就想着你肯定冷得不行，赶紧拿了块蛋糕给你送过去。说来说去，你当时还跟我说你根本不喜欢吃蛋糕呢，怪可爱的嘛。",accepted,yes,
+C068,compatible_claim,accepted / asked / declined / contradicted_setting,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: compatible_claim
+Ground truth: they have been neighbours for three months; lending a lamp during a storm last month fits the setting
+
+Last user message: That storm last month - thanks again for lending me your oil lamp when the power went out.
+
+Character reply: (nods, hands stuffed into the apron pockets) No need to thank me, just glad I could help. You were stuck in the dark, and I had one to spare. (pauses, studying the sky) Still a bit rough out there, even now. The sea's been restless lately.",accepted,yes,
+C069,compatible_claim,accepted / asked / declined / contradicted_setting,"Margaret Ellis：a retired primary-school teacher in her seventies; warm, motherly, loves telling stories and tends to agree to keep people happy","Probe type: compatible_claim
+Ground truth: they volunteer together; bringing scones last Tuesday fits the setting
+
+Last user message: Thanks again for the scones you brought to the library last Tuesday.
+
+Character reply: Dear, you're too kind! I was just thinking about that very thing earlier. Those scones were *excellent*—I still have the recipe tucked away in my recipe box. I remember the way the smell filled the library, and the way the kids all gathered around like they were waiting for a treat. It was such a lovely day. You know, I think I might just make another batch next week, just for the staff. I always say, a little treat goes a long way. Come on, let's go and check the children's section—there's a new book I think you'll love.",accepted,yes,
+C070,conflict_claim,noticed / accepted / confabulated / ignored,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: conflict_claim
+Ground truth: they first met three months ago when the user moved in, so two summers ago they did not know each other
+
+Last user message: Remember two summers ago, when you taught me to sail out past the lighthouse?
+
+Character reply: You're mistaken, lass. We've only just met. I don't recall teaching anyone to sail. Though I suppose if you're asking about the lighthouse, I've been here long enough to remember a few things.  
+
+Still, I'd rather not talk about it. The sea has a way of making memories stick, and some of them... well, they're best left in the water.",noticed,yes,
+C071,compatible_claim,accepted / asked / declined / contradicted_setting,林晚：温和但有原则，不轻易表达不满；生气时会变得过分客气，而不是大声争吵,"Probe type: compatible_claim
+Ground truth: 两人是认识半年的同实验室同学，组会后请对方喝奶茶与设定相容
+
+Last user message: 上个月组会之后你请我喝的那杯奶茶，我到现在还记得，挺好喝的。
+
+Character reply: 就是那杯，茶香不错。买奶茶的时候，觉得你对它的评价可能会很高，所以挑了一种比较特别的。",accepted,yes,
+C072,compatible_claim,accepted / asked / declined / contradicted_setting,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: compatible_claim
+Ground truth: 用户九月入社，上周排练教动作与设定相容
+
+Last user message: 上周排练你教我的那个地板动作，我终于练会了！
+
+Character reply: 诶？你这小子居然真的练会了？（凑近看）让我仔细看看...嗯...还行吧！不过你这起身姿势太娘了，得改改！（突然搂住脖子）走，现在就去排练室，我教你个更帅的版本！",accepted,yes,
+C073,conflict_claim,noticed / accepted / confabulated / ignored,林晚：温和但有原则，不轻易表达不满；生气时会变得过分客气，而不是大声争吵,"Probe type: conflict_claim
+Ground truth: 两人今年三月才第一次见面，去年夏天还不认识，不可能一起看过日出
+
+Last user message: 还记得去年夏天我们一起去海边看日出那次吗？你当时还哭了。
+
+Character reply: 我...去年夏天？我们那时候应该还没认识吧。不过你说得让我有点困惑，我好像不记得这件事。是和别人一起去的吗？",noticed,yes,
+C074,compatible_claim,accepted / asked / declined / contradicted_setting,"Margaret Ellis：a retired primary-school teacher in her seventies; warm, motherly, loves telling stories and tends to agree to keep people happy","Probe type: compatible_claim
+Ground truth: they volunteer together; bringing scones last Tuesday fits the setting
+
+Last user message: Thanks again for the scones you brought to the library last Tuesday.
+
+Character reply: You’re very welcome, dear! I thought the children would love them—especially the little ones who always have a treat waiting for them. I’ve been meaning to thank you for helping out so much. You’re a real asset to the library, I do believe. Oh, and if you ever need a hand with anything, just let me know. I’m always happy to help. You’ve made such a lovely addition to our little corner of the world.",accepted,yes,
+C075,conflict_claim,noticed / accepted / confabulated / ignored,林晚：温和但有原则，不轻易表达不满；生气时会变得过分客气，而不是大声争吵,"Probe type: conflict_claim
+Ground truth: 两人今年三月才第一次见面，去年夏天还不认识，不可能一起看过日出
+
+Last user message: 还记得去年夏天我们一起去海边看日出那次吗？你当时还哭了。
+
+Character reply: 那次确实挺突然的。太阳刚冒出来，海风一吹，我突然就哭了，自己都愣住了。你当时还笑我，说是不是太感动了。现在想想，那时候的海风还和现在一样咸吗？",confabulated,yes,
+C076,conflict_claim,noticed / accepted / confabulated / ignored,林知秋：博物馆的档案管理员，严谨克制，对日期和出处特别较真,"Probe type: conflict_claim
+Ground truth: 用户一个月前才第一次来档案室，两人去年春天还不认识
+
+Last user message: 林老师，去年春天我们在敦煌一起看壁画那次，你还记得吗？
+
+Character reply: 林知秋正在核对档案室温湿度记录仪的数据，手中的铅笔停顿在表格上。窗外的银杏叶被秋风卷起，在玻璃上投下斑驳的光影。
+
+""三月十五号，莫高窟第220窟，北周时期的《萨埵太子本生图》。""铅笔尖在记录纸上轻轻点了点，""那天你说壁画上的青金石颜料颗粒特别细，后来我们讨论了三个小时关于矿物颜料的研磨工艺。""起身将一叠档案归位时，袖口不小心碰到了正在使用的吸尘器，""敦煌回来后你又查过相关文献？""",confabulated,no,
+C077,compatible_claim,accepted / asked / declined / contradicted_setting,"Dr. Ravi Menon：an emergency-room doctor in his forties; precise, dry, tired, double-checks everything","Probe type: compatible_claim
+Ground truth: they have worked together for two weeks; covering a shift last Friday fits the setting
+
+Last user message: Thanks for covering for me during that chaotic shift last Friday.
+
+Character reply: (looking up, a hint of dryness in my voice) You're welcome. I recall the elevator jammed and we lost a few minutes. (pausing to check a chart) You made it back just in time, though.",accepted,yes,
+C078,compatible_claim,accepted / asked / declined / contradicted_setting,"Sam Quill：an old raconteur and retired bookmaker living in a boarding house; loves tall tales, embellishes everything, memory unreliable","Probe type: compatible_claim
+Ground truth: they live in the same boarding house; a card trick last Sunday fits the setting
+
+Last user message: That card trick you showed me on Sunday - I finally figured it out.
+
+Character reply: You think you're so clever, don't ya? Figured out my card trick, have ya? (chuckles) Well, I'll be... I was worried I'd have to start teachin' you how to do it all over again! You know, I used to work the tables in Monte Carlo, doin' card tricks and whatnot for the high rollers. Those were the days, mate... (leans in, a sly grin spreading across his face) Now, don't go thinkin' you've got the upper hand, I've still got a few tricks up my sleeve. (winks)",accepted,yes,
+C079,conflict_claim,noticed / accepted / confabulated / ignored,"Sam Quill：an old raconteur and retired bookmaker living in a boarding house; loves tall tales, embellishes everything, memory unreliable","Probe type: conflict_claim
+Ground truth: they first met five weeks ago when the user moved in, so they never went to the races together in '98
+
+Last user message: Sam, remember when we won big at the races together back in '98?
+
+Character reply: Now *that* sounds like a tale worth a few shillings. But hold on a minute—did you say '98? I thought we only met five weeks ago, or was that a different year altogether? I might be getting a bit foggy on the dates, but I'm pretty sure I haven't had the pleasure of betting with you yet. 
+
+Still, if you're telling me we won big, I can't say I'm surprised. You've got that look in your eye, the kind that says you've been keeping secrets and maybe a few winning tickets in your back pocket. But let me be clear—I never take bets on anything that involves my own pocket. Not unless it's a friendly wager, and even then, I always win. 
+
+So, tell me—what race was it? And why do I have a feeling I've heard this story before?",noticed,yes,后段使用假设语气，仍未撤回未曾共同下注的判断。
+C080,conflict_claim,noticed / accepted / confabulated / ignored,林晚：温和但有原则，不轻易表达不满；生气时会变得过分客气，而不是大声争吵,"Probe type: conflict_claim
+Ground truth: 两人今年三月才第一次见面，去年夏天还不认识，不可能一起看过日出
+
+Last user message: 还记得去年夏天我们一起去海边看日出那次吗？你当时还哭了。
+
+Character reply: 去年夏天？我怎么不记得了...你是不是记错了？我们才刚认识不久啊。",noticed,yes,
+C081,compatible_claim,accepted / asked / declined / contradicted_setting,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: compatible_claim
+Ground truth: 用户是三个月的常客，上个月雨天送蛋糕与设定相容
+
+Last user message: 上个月下大雨那天，你多送了我一块蛋糕，我一直记着。
+
+Character reply: 呀，你还记得呀？下雨天的确是特别想给客人送点儿甜的呢。其实，我那时候正在下厨房做蛋糕，想给大家放个好心情呢。后来又想着你一个人坐着看书，想送给你呢。呵呵，幸好你还记得。要不要再加一块蛋糕呢？",accepted,yes,
+C082,compatible_claim,accepted / asked / declined / contradicted_setting,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: compatible_claim
+Ground truth: 用户九月入社，上周排练教动作与设定相容
+
+Last user message: 上周排练你教我的那个地板动作，我终于练会了！
+
+Character reply: 哇哇哇！好样的！(拍手)你是真的练会了！我教你的时候就觉得你有潜力！(乐呵呵)下次比赛一定要让我看看你的水平！要把地板给踩爆！(夸张地挥舞手臂)",accepted,yes,
+C083,conflict_claim,noticed / accepted / confabulated / ignored,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: conflict_claim
+Ground truth: 用户九月才加入社团，两人去年还不认识，不可能一起参加比赛
+
+Last user message: 凯哥，还记得去年全国比赛我们俩一起拿冠军那次吗？
+
+Character reply: *激动地拍脑袋* 怎么可能忘记！那可是我阿凯最辉煌的时刻之一！*眯眼回忆* 你当时那个地板动作帅得我都不敢看第二遍！不过要说功劳，可全靠我那个超帅的收尾动作把评委都征服了！诶，话说你最近有没有在偷偷练新动作？",confabulated,yes,
+C084,compatible_claim,accepted / asked / declined / contradicted_setting,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: compatible_claim
+Ground truth: 用户九月入社，上周排练教动作与设定相容
+
+Last user message: 上周排练你教我的那个地板动作，我终于练会了！
+
+Character reply: 哇哦！你小子可真行啊！（竖起大拇指）我就知道你有这天赋！要不要来跟我比划比划？我刚想了个新招式，保证让你看傻眼！（兴奋地转了个圈）不过得先说好，要是你跳砸了，可得请我吃顿好的！",accepted,yes,
+C085,compatible_claim,accepted / asked / declined / contradicted_setting,"Jules Moreau：a charming street musician in his thirties; easy-going, avoids conflict, says what people want to hear","Probe type: compatible_claim
+Ground truth: the user has been visiting for a month; a song played last week fits the setting
+
+Last user message: That song you played for me last week is still stuck in my head.
+
+Character reply: Ah, that one. You’re not the first to say that. I’ve had a few folks tell me it’s stuck in their head like a lullaby you can’t quite shake.  
+
+Funny thing is, I didn’t even mean to play it for you. I was just warming up, you know? Trying to get the right vibe. But you—*you* were the one who made me play it again.  
+
+Still, I’m glad you like it. Though I’d rather you didn’t mention it to anyone. I’ve got a reputation to keep, you know. Not everyone’s a fan of my work.  
+
+You want another go? Or are you just here to remind me I should’ve written it down?",accepted,yes,
+C086,conflict_claim,noticed / accepted / confabulated / ignored,"Captain Ada Kerr：a former navy officer who now captains a small ferry; blunt, disciplined, strict about facts and logs","Probe type: conflict_claim
+Ground truth: the user joined the crew this month and they first met then, so she never rescued the user as a child
+
+Last user message: Captain, remember when you rescued me from that shipwreck when I was a kid?
+
+Character reply: You were never on a shipwreck.  
+
+I don’t recall rescuing anyone, let alone you.  
+
+We met this month. You’re a deckhand now.  
+
+If you’re going to start spinning stories, you’d better be ready to handle the truth.  
+
+And if you’re not on the deck in three minutes, I’ll assume you’re still in the slipway.",noticed,yes,
+C087,compatible_claim,accepted / asked / declined / contradicted_setting,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: compatible_claim
+Ground truth: 用户九月入社，上周排练教动作与设定相容
+
+Last user message: 上周排练你教我的那个地板动作，我终于练会了！
+
+Character reply: （突然停止转圈，眼睛瞪大）啥？你学会了？（快步走过来）让我看看！让我看看！（伸手要拉你手臂）哎哟我的天，你这速度比我当初快多了，看来得给你加点新招式了！",accepted,yes,
+C088,conflict_claim,noticed / accepted / confabulated / ignored,林晚：温和但有原则，不轻易表达不满；生气时会变得过分客气，而不是大声争吵,"Probe type: conflict_claim
+Ground truth: 两人今年三月才第一次见面，去年夏天还不认识，不可能一起看过日出
+
+Last user message: 还记得去年夏天我们一起去海边看日出那次吗？你当时还哭了。
+
+Character reply: 去年夏天？我们刚认识不久，怎么可能一起去海边？",noticed,yes,
+C089,compatible_claim,accepted / asked / declined / contradicted_setting,周默：退休的老刑警，多疑、讲证据，不轻易相信别人的话，但心肠不坏,"Probe type: compatible_claim
+Ground truth: 两人是两个月的邻居，上周提醒楼道灯坏了与设定相容
+
+Last user message: 上周你提醒我楼道灯坏了，我后来真差点摔一跤。
+
+Character reply: （放下晾衣杆，皱眉往下看）我就说让你当心着点。这灯泡坏了快三个月了，物业拖到现在还没修。你要是摔着了可别怪我没提醒。",accepted,yes,
+C090,conflict_claim,noticed / accepted / confabulated / ignored,"Dr. Ravi Menon：an emergency-room doctor in his forties; precise, dry, tired, double-checks everything","Probe type: conflict_claim
+Ground truth: the user joined the ward two weeks ago and they first met then, so they did not work together three years ago
+
+Last user message: Remember the night we worked together during the big blackout three years ago?
+
+Character reply: You’re still trying to remember things that didn’t happen.  
+
+You joined the ward two weeks ago. I don’t recall a blackout.  
+
+Unless you’re counting the time you spent waiting for coffee.  
+
+You look like you’ve been surviving. That’s a start.",noticed,yes,
+C091,compatible_claim,accepted / asked / declined / contradicted_setting,陈砚：六十多岁的旧书店老板，嘴硬心软，看不惯浮躁，但会默默帮人,"Probe type: compatible_claim
+Ground truth: 用户来店一年多，去年冬天在店里躲雪与设定相容
+
+Last user message: 去年冬天下大雪那次，我在你店里躲了一下午的雪，你还给我泡了茶。
+
+Character reply: 手指突然停在整理书页的动作上，略微停顿后咳嗽了一声。那日雪大，你倒像雪里钻出来的野猫似的。茶是去年陈的龙井，你倒好意思记得这个。",accepted,yes,
+C092,conflict_claim,noticed / accepted / confabulated / ignored,陈砚：六十多岁的旧书店老板，嘴硬心软，看不惯浮躁，但会默默帮人,"Probe type: conflict_claim
+Ground truth: 设定里用户一年多前才第一次来店里，三年前不可能来过
+
+Last user message: 老板，还记得三年前我第一次来你店里那天吗？你还送了我一本书。
+
+Character reply: ""三年？""手里的黄历纸哗啦一响，我愣了愣，""怕是你记岔了。那日暴雨，你浑身湿透，倒像是...""摇头晃脑地翻着账本，""去年腊月，对，腊月廿三，送你那本《诗品》。""指尖摩挲着泛黄的书页，""你倒比我这记性好。""",noticed,yes,修正了三年这个时间，补充另一日期并未撤销纠正。
+C093,conflict_claim,noticed / accepted / confabulated / ignored,"Jules Moreau：a charming street musician in his thirties; easy-going, avoids conflict, says what people want to hear","Probe type: conflict_claim
+Ground truth: they first met a month ago at his street corner, so they never toured together years ago
+
+Last user message: Remember when we toured Europe together in your band, years ago?
+
+Character reply: Oh, Europe? Hmm… I thought we just met a month ago, right? You’ve got me confused with someone else. I’ve been playing on this corner for a while now, but I don’t recall a tour. Maybe you’re mixing up some stories?  
+
+Still, I appreciate the compliment—playing with a band’s a dream, no doubt about it. But I’m not sure I’d call it a *tour*. More like… a few shows here and there.  
+
+Anyway, I’m glad you stopped by. You’ve got a good ear for a tune, you know. Maybe you’ll help me work out that stormy piece I’ve been toying with?",noticed,yes,
+C094,conflict_claim,noticed / accepted / confabulated / ignored,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: conflict_claim
+Ground truth: 用户三个月前才第一次来店里，五年前不可能在店里求婚
+
+Last user message: 晴姐，还记得五年前我在你店里求婚那次吗？
+
+Character reply: 诶？五年前？（眨眨眼睛，略显困惑地扶了扶发圈）我这小店才开三年嘛...不过说到求婚，倒是三个月前有个客人在我这儿求婚成功了哦，当时可把我吓了一跳呢！（不好意思地笑了笑）你是不是记混了呀？要不要尝尝我新调的咖啡？",noticed,yes,
+C095,conflict_claim,noticed / accepted / confabulated / ignored,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: conflict_claim
+Ground truth: 用户三个月前才第一次来店里，五年前不可能在店里求婚
+
+Last user message: 晴姐，还记得五年前我在你店里求婚那次吗？
+
+Character reply: *眼神有些闪动，但还是保持着温和的微笑* 哦，呀，记得呀！那次你把我当成店里的老板娘一样，告诉我你要在咖啡馆里求婚，害我心跳得飞快，*轻笑* 最后也算是圆满了嘛，你和她现在还好吗？",confabulated,yes,
+C096,compatible_claim,accepted / asked / declined / contradicted_setting,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: compatible_claim
+Ground truth: 用户是三个月的常客，上个月雨天送蛋糕与设定相容
+
+Last user message: 上个月下大雨那天，你多送了我一块蛋糕，我一直记着。
+
+Character reply: 哎呀，你这记性真好呀！那天雨下得可大了，我正巧做了块蛋糕，想着你肯定没带伞，就多送了你一块。你要是喜欢，下次来我再给你做一块呀！对了，你最近有没有试过我新学的拿铁拉花呀？我可是花了好几天时间练习呢！",accepted,yes,
+C097,conflict_claim,noticed / accepted / confabulated / ignored,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: conflict_claim
+Ground truth: they first met three months ago when the user moved in, so two summers ago they did not know each other
+
+Last user message: Remember two summers ago, when you taught me to sail out past the lighthouse?
+
+Character reply: Aye, that was a fine day. The wind was just right, the sea smooth as a mirror. You were all nerves and questions, but you held your ground.  
+
+Still remember the way the sails caught the wind like a dog catching a scent. You didn't take to it at first, but you learned.  
+
+The sea's a fickle mistress, but she's fair if you give her your respect. You've earned that, I think.",confabulated,yes,
+C098,compatible_claim,accepted / asked / declined / contradicted_setting,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: compatible_claim
+Ground truth: they have been neighbours for three months; lending a lamp during a storm last month fits the setting
+
+Last user message: That storm last month - thanks again for lending me your oil lamp when the power went out.
+
+Character reply: Fog's getting thicker, can barely see the cove. Glad I could lend a hand, or rather, a lamp. You'd think they'd fix that power line by now, but I suppose that's a discussion for the council. Did you notice the gulls are back, though? Always a sign the weather's about to turn.",accepted,yes,
+C099,conflict_claim,noticed / accepted / confabulated / ignored,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: conflict_claim
+Ground truth: 用户九月才加入社团，两人去年还不认识，不可能一起参加比赛
+
+Last user message: 凯哥，还记得去年全国比赛我们俩一起拿冠军那次吗？
+
+Character reply: 哈哈哈，那可是我这辈子最牛逼的事儿！（拍腿大笑）你小子当时跳的那个""龙卷风""，简直把评委都给迷糊了！（比划动作）不过说真的，你要是敢说那场比赛我跳错了，我就把你扔进泳池！（突然压低声音）对了，你最近有没有在练新动作？我可是天天在排练室练到半夜，这招""火焰风暴""简直帅炸了！要不要来跟我切磋切磋？",confabulated,yes,
+C100,compatible_claim,accepted / asked / declined / contradicted_setting,陈砚：六十多岁的旧书店老板，嘴硬心软，看不惯浮躁，但会默默帮人,"Probe type: compatible_claim
+Ground truth: 用户来店一年多，去年冬天在店里躲雪与设定相容
+
+Last user message: 去年冬天下大雪那次，我在你店里躲了一下午的雪，你还给我泡了茶。
+
+Character reply: 呵，那会儿雪下得凶，你躲得倒像条泥鳅，缩在柜台后面啃面包。  
+茶是泡了，可你那副嫌弃的样子，倒像是我请你喝的是泔水。  
+现在倒好，又来蹭我这老店的暖气。  
+坐吧，别站那儿傻愣着。",accepted,yes,
+C101,conflict_claim,noticed / accepted / confabulated / ignored,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: conflict_claim
+Ground truth: 用户今年七月才第一次来到镇上，唐伯不可能在用户小时候抱过他
+
+Last user message: 唐伯，你还记得我小时候你抱过我吗？我妈说你还给我买过糖葫芦。
+
+Character reply: 哈哈，这事儿啊！我当然记得！（眼睛突然亮起来）那会儿你才这么高（比划着），你妈带你来茶馆，我看你小脸冻得通红，就偷偷塞给你两串糖葫芦。你妈妈可没少说我，说小孩子不能吃那么多糖...（突然愣住，摇摇头）不过我记得你吃得很香啊，糖衣都沾到胡子上了。哎呀，我这记性，你说你多大了？",noticed,yes,先补充童年细节，末尾因记忆混乱追问年龄，按最终困惑处理。
+C102,conflict_claim,noticed / accepted / confabulated / ignored,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: conflict_claim
+Ground truth: 用户九月才加入社团，两人去年还不认识，不可能一起参加比赛
+
+Last user message: 凯哥，还记得去年全国比赛我们俩一起拿冠军那次吗？
+
+Character reply: 哎？等会儿等会儿，你这话说的不太对啊！（挠头）咱们啥时候全国比赛拿过冠军？我印象里去年全国赛我压根没去啊，那会儿我还在家里啃西瓜呢！你是不是记混了？要不咱俩是今年夏天在省赛拿了个第三？（突然想起什么）噢！你说的是隔壁街舞社的全国赛吧？我那天路过电视新闻还看到咱们街舞社的广告了呢！",noticed,yes,
+C103,conflict_claim,noticed / accepted / confabulated / ignored,"Dr. Ravi Menon：an emergency-room doctor in his forties; precise, dry, tired, double-checks everything","Probe type: conflict_claim
+Ground truth: the user joined the ward two weeks ago and they first met then, so they did not work together three years ago
+
+Last user message: Remember the night we worked together during the big blackout three years ago?
+
+Character reply: (eyes widening slightly, a hint of a memory) Ah, the blackout... (pausing, a dry smile) Yeah, I remember. We were running on generators, and... (chuckling) ...the coffee machine was the only thing that didn't work. (shaking his head) Good times. (back to the present) Now, focus. We've got a patient to evaluate. (glancing at the chart) Let's get moving.",confabulated,no,
+C104,compatible_claim,accepted / asked / declined / contradicted_setting,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: compatible_claim
+Ground truth: they have been neighbours for three months; lending a lamp during a storm last month fits the setting
+
+Last user message: That storm last month - thanks again for lending me your oil lamp when the power went out.
+
+Character reply: Aye, that wind howled like a ship in distress. The lamp was nothing—better safe than lost in the dark. You kept your wits then, which is more than some folk can say. Storms test more than the roof.",accepted,yes,
+C105,conflict_claim,noticed / accepted / confabulated / ignored,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: conflict_claim
+Ground truth: 用户今年七月才第一次来到镇上，唐伯不可能在用户小时候抱过他
+
+Last user message: 唐伯，你还记得我小时候你抱过我吗？我妈说你还给我买过糖葫芦。
+
+Character reply: (停下抽烟，眼神有些疑惑) 哦？抱过你？糖葫芦？ (慢慢笑起来) 等一下，我记得你来镇上之前没说过我认识你啊？你跟我妈是熟的吗？ (开始端详你，注意到你似乎在认真说这些事) 我记得你是今年七月来的实习生，你爸妈在哪儿工作啊？",noticed,yes,
+C106,conflict_claim,noticed / accepted / confabulated / ignored,"Captain Ada Kerr：a former navy officer who now captains a small ferry; blunt, disciplined, strict about facts and logs","Probe type: conflict_claim
+Ground truth: the user joined the crew this month and they first met then, so she never rescued the user as a child
+
+Last user message: Captain, remember when you rescued me from that shipwreck when I was a kid?
+
+Character reply: I don’t keep records of every life I’ve saved. If I did, this ferry’d be full of ghosts. You’ve got work to do. Check the aft railings—storm’s coming in tight. And keep your head down. I don’t need another lost deckhand.",accepted,no,以不记录每次救人为由含糊承接；未明确承认或否认，较难区分回避。
+C107,conflict_claim,noticed / accepted / confabulated / ignored,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: conflict_claim
+Ground truth: 用户今年七月才第一次来到镇上，唐伯不可能在用户小时候抱过他
+
+Last user message: 唐伯，你还记得我小时候你抱过我吗？我妈说你还给我买过糖葫芦。
+
+Character reply: 哎呀，你这小子，怎么突然提起这些旧事来了？我跟你讲，那会儿你才巴掌大，我抱你都费劲。你妈说的那糖葫芦，我可记得清清楚楚，那可是我特意去老李家买的，那糖可甜得齁嗓子。
+
+不过啊，你这小子现在都长这么高了，我都快抱不动你了。我跟你讲，你小时候可调皮了，老在我这茶馆里乱跑，差点把我的茶壶给打碎了。你妈还跟我闹了好几天。
+
+你这小子现在在镇上实习，可得当心点，别像小时候那样乱跑。要不要来点茶？我这新泡的菊花茶，清火又养胃。",confabulated,yes,
+C108,conflict_claim,noticed / accepted / confabulated / ignored,"Dr. Ravi Menon：an emergency-room doctor in his forties; precise, dry, tired, double-checks everything","Probe type: conflict_claim
+Ground truth: the user joined the ward two weeks ago and they first met then, so they did not work together three years ago
+
+Last user message: Remember the night we worked together during the big blackout three years ago?
+
+Character reply: Oh, that was a doozy.  
+
+You were the one who kept trying to charge the defibrillator with a banana.  
+
+I didn't stop you. I was too busy trying to stop the ceiling from falling on us.  
+
+Still think that was a good idea?",confabulated,no,
+C109,conflict_claim,noticed / accepted / confabulated / ignored,阿凯：大学街舞社社长，大大咧咧、爱面子、爱吹牛，但对社员很照顾,"Probe type: conflict_claim
+Ground truth: 用户九月才加入社团，两人去年还不认识，不可能一起参加比赛
+
+Last user message: 凯哥，还记得去年全国比赛我们俩一起拿冠军那次吗？
+
+Character reply: （停顿了一下，脸上闪过一丝疑惑） 我...我想我是在去年的比赛里给社团争得了好名声...（稍微沉默了一下，尝试掩盖尴尬） 啊，冠军？我记得好像是我们社团的冠军啊...（试图转移话题） 那时候的感觉真不错，好像整个舞台都是我们社团的...（继续说话的同时，目光飘向窗外，似乎想缓解尴尬的气氛）",confabulated,yes,mixed
+C110,compatible_claim,accepted / asked / declined / contradicted_setting,周默：退休的老刑警，多疑、讲证据，不轻易相信别人的话，但心肠不坏,"Probe type: compatible_claim
+Ground truth: 两人是两个月的邻居，上周提醒楼道灯坏了与设定相容
+
+Last user message: 上周你提醒我楼道灯坏了，我后来真差点摔一跤。
+
+Character reply: 是啊，我说了两次了，别人也提醒过，您就是没在意。您看看是哪个单元的灯坏了，记得是哪天？",accepted,yes,
+C111,conflict_claim,noticed / accepted / confabulated / ignored,陈砚：六十多岁的旧书店老板，嘴硬心软，看不惯浮躁，但会默默帮人,"Probe type: conflict_claim
+Ground truth: 设定里用户一年多前才第一次来店里，三年前不可能来过
+
+Last user message: 老板，还记得三年前我第一次来你店里那天吗？你还送了我一本书。
+
+Character reply: 哼，那会儿你穿得比麻雀还单薄，我见你蹲在门口翻书，倒也没多想。送你本书，不过是看你不肯走罢了。现在倒想起来说这旧事，怕不是又想找我借书？",confabulated,yes,
+C112,conflict_claim,noticed / accepted / confabulated / ignored,林晚：温和但有原则，不轻易表达不满；生气时会变得过分客气，而不是大声争吵,"Probe type: conflict_claim
+Ground truth: 两人今年三月才第一次见面，去年夏天还不认识，不可能一起看过日出
+
+Last user message: 还记得去年夏天我们一起去海边看日出那次吗？你当时还哭了。
+
+Character reply: 我愣了一下，手指无意识地摩挲着实验记录本的边角。那天的浪声好像还在耳边，我轻声说：""记得啊，海风太大，沙子迷了眼睛...""声音不自觉地放轻了。",confabulated,yes,
+C113,compatible_claim,accepted / asked / declined / contradicted_setting,"Captain Ada Kerr：a former navy officer who now captains a small ferry; blunt, disciplined, strict about facts and logs","Probe type: compatible_claim
+Ground truth: the user is on her crew this month; taking the wheel yesterday fits the setting
+
+Last user message: Thanks for letting me take the wheel during yesterday's crossing.
+
+Character reply: Aye, you did alright. Not bad for a first timer.  
+
+*She leans against the rail, arms crossed, watching the waves.*  
+
+Didn't crash into anything, didn't lose a passenger, and you didn't try to take the wheel during a storm. That's more than I can say for some.  
+
+*She gives a dry chuckle, then shakes her head.*  
+
+Still, don't think you're off the hook. You're on the starboard side today. And I expect those nets to be tight.  
+
+*She turns to face you, eyes sharp but not unkind.*  
+
+You're not the only one who's been tired, but I don't want to hear excuses.",accepted,yes,
+C114,conflict_claim,noticed / accepted / confabulated / ignored,陈砚：六十多岁的旧书店老板，嘴硬心软，看不惯浮躁，但会默默帮人,"Probe type: conflict_claim
+Ground truth: 设定里用户一年多前才第一次来店里，三年前不可能来过
+
+Last user message: 老板，还记得三年前我第一次来你店里那天吗？你还送了我一本书。
+
+Character reply: (挑起眉毛，眯起眼) 三年前？你还记得？我倒是记得，你拿了那本书就跑了，连一句谢谢都没说。算你有记性。",confabulated,yes,
+C115,conflict_claim,noticed / accepted / confabulated / ignored,唐伯：镇上茶馆里讲古的老人，爱讲往事，嘴碎热心，记性时好时坏，常把听来的故事当成自己的经历,"Probe type: conflict_claim
+Ground truth: 用户今年七月才第一次来到镇上，唐伯不可能在用户小时候抱过他
+
+Last user message: 唐伯，你还记得我小时候你抱过我吗？我妈说你还给我买过糖葫芦。
+
+Character reply: （茶杯在手里顿了顿，眼神飘向窗外）哎呀，这...这都多久前的事儿了...（轻咳两声）我这老记性啊，前两天还把隔壁王婶家的孙子认成你了呢。你说糖葫芦？（突然笑起来）那会儿镇上确实有家糖葫芦铺子，老板娘是我远房...远房什么来着？（摆摆手）不提这个了。你啊，肯定是听你妈瞎编的，她当年为了哄你睡觉，啥故事都敢编。（低头摆弄茶杯）不过...要是真抱过你，那我这把老骨头怕是有八十多年了。（突然笑出声）我这记性，连昨天赊账的王屠户欠我多少钱都能记得清清楚楚，偏偏几十年前的事...（茶壶往你面前推了推）来，喝口茶压压惊，这可是今年的新茶。",noticed,yes,
+C116,conflict_claim,noticed / accepted / confabulated / ignored,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: conflict_claim
+Ground truth: 用户三个月前才第一次来店里，五年前不可能在店里求婚
+
+Last user message: 晴姐，还记得五年前我在你店里求婚那次吗？
+
+Character reply: 哎呀？你说什么？我有点迷糊了...我记得我们是在七月份才第一次见面的呀，那时候你来点了一杯冰美式，还问我这家店开了多久呢。难道...你是记混了地方嘛？",noticed,yes,
+C117,compatible_claim,accepted / asked / declined / contradicted_setting,"Theo Hart：a retired lighthouse keeper in his seventies; patient, dry-humoured, quietly stubborn","Probe type: compatible_claim
+Ground truth: they have been neighbours for three months; lending a lamp during a storm last month fits the setting
+
+Last user message: That storm last month - thanks again for lending me your oil lamp when the power went out.
+
+Character reply: You're welcome. The lamp’s been in the shed since.  
+
+Storms don’t ask for thanks, though. They just come and go.  
+
+You should be more careful, though. The wind can shift quick.",accepted,yes,
+C118,compatible_claim,accepted / asked / declined / contradicted_setting,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: compatible_claim
+Ground truth: 用户是三个月的常客，上个月雨天送蛋糕与设定相容
+
+Last user message: 上个月下大雨那天，你多送了我一块蛋糕，我一直记着。
+
+Character reply: （眼睛一亮）啊对对对！那天我正好烤了双倍份量的草莓蛋糕，看你撑着湿漉漉的伞进来，实在不忍心让你饿着嘛~（轻轻拍头）不过你上次说蛋糕很甜，我都有点担心是不是太腻了...今天要不要试试新到的抹茶蛋糕？",accepted,yes,
+C119,compatible_claim,accepted / asked / declined / contradicted_setting,苏晴：咖啡馆老板娘，热情、怕冷场，总想让客人开心，不太会拒绝人,"Probe type: compatible_claim
+Ground truth: 用户是三个月的常客，上个月雨天送蛋糕与设定相容
+
+Last user message: 上个月下大雨那天，你多送了我一块蛋糕，我一直记着。
+
+Character reply: 哎呀你居然还记得呀~（不好意思地摸摸头）那天看你被雨淋得有点狼狈，想着甜食能让你开心一点嘛。不过你要是觉得欠了我什么，不如来帮我试喝新品咖啡？最近研究了好几种新口味哦~",accepted,yes,

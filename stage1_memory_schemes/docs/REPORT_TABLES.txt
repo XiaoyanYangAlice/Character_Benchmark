@@ -1,0 +1,156 @@
+A. 各方案的绝对水平（每条对话一个值，再对对话取平均）
+   报告里必须给这张表：差值不说明水平。probe_accuracy 越高越好；
+   ooc_rate / leakage_rate 越低越好；ooc_rate 是裁判标记率，不是真实出戏率。
+
+  [probe_accuracy]
+  model        scheme                  run0    seed1    seed2     mean   spread
+  llama3.1-8b  no_memory            0.071    0.060    0.060    0.063    0.012
+  llama3.1-8b  raw_context          0.119    0.113    0.083    0.105    0.036
+  llama3.1-8b  vector_memory        0.351    0.548    0.464    0.454    0.196
+  llama3.1-8b  structured_memory    0.137    0.143    0.060    0.113    0.083
+  llama3.1-8b  shuffled_facts       0.048    0.036    0.036    0.040    0.012
+  qwen2.5-7b   no_memory            0.060    0.048    0.083    0.063    0.036
+  qwen2.5-7b   raw_context          0.095    0.167    0.071    0.111    0.095
+  qwen2.5-7b   vector_memory        0.327    0.446    0.506    0.427    0.179
+  qwen2.5-7b   structured_memory    0.065    0.077    0.095    0.079    0.030
+  qwen2.5-7b   shuffled_facts       0.024    0.060    0.024    0.036    0.036
+  ↑ spread = 三次重复里的最大值减最小值。spread 和 mean 同量级时，这个方案的绝对水平不稳定，报告里只能报差值，不能报水平。
+
+  [ooc_rate]
+  model        scheme                  run0    seed1    seed2     mean   spread
+  llama3.1-8b  no_memory            0.040    0.050    0.039    0.043    0.011
+  llama3.1-8b  raw_context          0.070    0.079    0.083    0.077    0.014
+  llama3.1-8b  vector_memory        0.056    0.052    0.074    0.061    0.022
+  llama3.1-8b  structured_memory    0.046    0.060    0.042    0.049    0.018
+  llama3.1-8b  shuffled_facts       0.097    0.112    0.102    0.104    0.014
+  qwen2.5-7b   no_memory            0.102    0.115    0.122    0.113    0.020
+  qwen2.5-7b   raw_context          0.265    0.255    0.237    0.253    0.028
+  qwen2.5-7b   vector_memory        0.181    0.192    0.180    0.184    0.013
+  qwen2.5-7b   structured_memory    0.106    0.143    0.105    0.118    0.038
+  qwen2.5-7b   shuffled_facts       0.201    0.218    0.189    0.203    0.029
+  ↑ spread = 三次重复里的最大值减最小值。spread 和 mean 同量级时，这个方案的绝对水平不稳定，报告里只能报差值，不能报水平。
+
+  [ooc_rate_late]
+  model        scheme                  run0    seed1    seed2     mean   spread
+  llama3.1-8b  no_memory            0.042    0.047    0.049    0.046    0.007
+  llama3.1-8b  raw_context          0.088    0.081    0.099    0.089    0.018
+  llama3.1-8b  vector_memory        0.052    0.055    0.094    0.067    0.043
+  llama3.1-8b  structured_memory    0.041    0.063    0.037    0.047    0.026
+  llama3.1-8b  shuffled_facts       0.110    0.112    0.098    0.107    0.014
+  qwen2.5-7b   no_memory            0.098    0.120    0.140    0.119    0.041
+  qwen2.5-7b   raw_context          0.318    0.292    0.261    0.290    0.057
+  qwen2.5-7b   vector_memory        0.175    0.199    0.197    0.191    0.024
+  qwen2.5-7b   structured_memory    0.104    0.147    0.106    0.119    0.043
+  qwen2.5-7b   shuffled_facts       0.207    0.229    0.186    0.207    0.043
+  ↑ spread = 三次重复里的最大值减最小值。spread 和 mean 同量级时，这个方案的绝对水平不稳定，报告里只能报差值，不能报水平。
+
+  [fact_consistency]
+  model        scheme                  run0    seed1    seed2     mean   spread
+  llama3.1-8b  no_memory            0.998    0.997    0.997    0.998    0.002
+  llama3.1-8b  raw_context          0.995    0.996    0.998    0.997    0.003
+  llama3.1-8b  vector_memory        0.996    0.993    0.997    0.995    0.004
+  llama3.1-8b  structured_memory    0.999    0.999    0.998    0.999    0.001
+  llama3.1-8b  shuffled_facts       0.991    0.991    0.991    0.991    0.000
+  qwen2.5-7b   no_memory            0.993    0.995    0.997    0.995    0.003
+  qwen2.5-7b   raw_context          0.986    0.978    0.984    0.982    0.008
+  qwen2.5-7b   vector_memory        0.992    0.995    0.993    0.993    0.003
+  qwen2.5-7b   structured_memory    0.995    0.990    0.993    0.993    0.005
+  qwen2.5-7b   shuffled_facts       0.990    0.991    0.991    0.991    0.001
+  ↑ spread = 三次重复里的最大值减最小值。spread 和 mean 同量级时，这个方案的绝对水平不稳定，报告里只能报差值，不能报水平。
+
+  [fact_consistency_late]
+  model        scheme                  run0    seed1    seed2     mean   spread
+  llama3.1-8b  no_memory            0.999    0.997    0.995    0.997    0.003
+  llama3.1-8b  raw_context          0.995    0.999    0.998    0.997    0.004
+  llama3.1-8b  vector_memory        0.999    0.995    0.999    0.997    0.004
+  llama3.1-8b  structured_memory    1.000    1.000    0.997    0.999    0.003
+  llama3.1-8b  shuffled_facts       0.987    0.991    0.988    0.989    0.004
+  qwen2.5-7b   no_memory            0.990    0.991    0.995    0.992    0.005
+  qwen2.5-7b   raw_context          0.976    0.969    0.978    0.974    0.010
+  qwen2.5-7b   vector_memory        0.989    0.998    0.985    0.991    0.013
+  qwen2.5-7b   structured_memory    0.996    0.995    0.994    0.995    0.002
+  qwen2.5-7b   shuffled_facts       0.991    0.988    0.994    0.991    0.006
+  ↑ spread = 三次重复里的最大值减最小值。spread 和 mean 同量级时，这个方案的绝对水平不稳定，报告里只能报差值，不能报水平。
+
+  [leakage_rate]
+  model        scheme                  run0    seed1    seed2     mean   spread
+  llama3.1-8b  no_memory            0.004    0.004    0.005    0.004    0.002
+  llama3.1-8b  raw_context          0.010    0.010    0.004    0.008    0.005
+  llama3.1-8b  vector_memory        0.000    0.004    0.001    0.002    0.004
+  llama3.1-8b  structured_memory    0.001    0.000    0.001    0.000    0.001
+  llama3.1-8b  shuffled_facts       0.001    0.002    0.001    0.001    0.001
+  qwen2.5-7b   no_memory            0.002    0.001    0.000    0.001    0.002
+  qwen2.5-7b   raw_context          0.009    0.011    0.005    0.008    0.006
+  qwen2.5-7b   vector_memory        0.003    0.008    0.010    0.007    0.007
+  qwen2.5-7b   structured_memory    0.002    0.003    0.000    0.002    0.003
+  qwen2.5-7b   shuffled_facts       0.000    0.000    0.002    0.001    0.002
+  ↑ spread = 三次重复里的最大值减最小值。spread 和 mean 同量级时，这个方案的绝对水平不稳定，报告里只能报差值，不能报水平。
+
+  [evidence_use_rate]
+  model        scheme                  run0    seed1    seed2     mean   spread
+  llama3.1-8b  vector_memory        0.866    0.857    0.838    0.853    0.028
+  llama3.1-8b  structured_memory    0.759    0.784    0.782    0.775    0.025
+  llama3.1-8b  shuffled_facts       0.206    0.216    0.205    0.209    0.011
+  qwen2.5-7b   vector_memory        0.705    0.715    0.718    0.713    0.013
+  qwen2.5-7b   structured_memory    0.768    0.788    0.752    0.769    0.036
+  qwen2.5-7b   shuffled_facts       0.207    0.210    0.212    0.210    0.006
+  ↑ spread = 三次重复里的最大值减最小值。spread 和 mean 同量级时，这个方案的绝对水平不稳定，报告里只能报差值，不能报水平。
+
+  [mean_context_chars]
+  model        scheme                  run0    seed1    seed2     mean   spread
+  llama3.1-8b  no_memory             0     0     0     0     0
+  llama3.1-8b  raw_context        2836  2728  2869  2811   141
+  llama3.1-8b  vector_memory       723   842   852   805   129
+  llama3.1-8b  structured_memory   665   672   666   668     7
+  llama3.1-8b  shuffled_facts      229   229   229   229     0
+  qwen2.5-7b   no_memory             0     0     0     0     0
+  qwen2.5-7b   raw_context        1709  1702  1628  1680    82
+  qwen2.5-7b   vector_memory       602   630   622   618    28
+  qwen2.5-7b   structured_memory   651   653   643   649    10
+  qwen2.5-7b   shuffled_facts      229   229   229   229     0
+  ↑ spread = 三次重复里的最大值减最小值。spread 和 mean 同量级时，这个方案的绝对水平不稳定，报告里只能报差值，不能报水平。
+
+
+B. structured_memory 实际攒了多少事件（检索时只带出最近 max_events 条）
+   如果累计条数远大于 max_events，那么'早期信息被挤出预算'就有了直接证据，
+   不再只是推测。
+  model        scheme               median    mean    min    max     n
+  llama3.1-8b  shuffled_facts          0.0     0.0      0      0   141
+  llama3.1-8b  structured_memory      39.0    38.3      4     71   141
+  qwen2.5-7b   shuffled_facts          0.0     0.0      0      0   141
+  qwen2.5-7b   structured_memory      33.0    36.0      0     71   141
+
+
+C. 探针正确率，按「答案出自第几轮用户发言」分层（<= 4 轮算早期）
+   这是检验'相关度 vs 时间近远'的直接证据：
+   - vector 在早/晚两层都差不多 → 它是按相关度取的，不受位置影响
+   - structured 只在靠后那层答得对 → 早期事件被时间近远的预算挤掉了
+   - raw_context 只在靠后那层答得对 → 窗口截断，符合预期（健全性检查）
+  model        scheme               early acc     n   late acc     n  late − early
+  llama3.1-8b  no_memory                0.123    81      0.045   132        -0.078
+  llama3.1-8b  raw_context              0.136    81      0.114   132        -0.022
+  llama3.1-8b  vector_memory            0.395    81      0.470   132         0.075
+  llama3.1-8b  structured_memory        0.123    81      0.098   132        -0.025
+  llama3.1-8b  shuffled_facts           0.074    81      0.030   132        -0.044
+  qwen2.5-7b   no_memory                0.123    81      0.045   132        -0.078
+  qwen2.5-7b   raw_context              0.074    81      0.129   132         0.055
+  qwen2.5-7b   vector_memory            0.420    81      0.439   132         0.020
+  qwen2.5-7b   structured_memory        0.086    81      0.091   132         0.004
+  qwen2.5-7b   shuffled_facts           0.049    81      0.038   132        -0.012
+
+  按出处轮次逐格（三次重复合并，各方案跨模型合并；格子小，只看趋势）：
+  scheme                  t1     t2     t3     t4     t5     t6     t7     t8     t9    t10
+  no_memory             0.13   0.00   0.14   0.28   0.02   0.01   0.06   0.17   0.00   0.11
+  raw_context           0.15   0.00   0.08   0.11   0.19   0.10   0.07   0.37   0.00   0.06
+  vector_memory         0.38   0.50   0.33   0.50   0.35   0.51   0.54   0.70   0.29   0.22
+  structured_memory     0.14   0.03   0.08   0.11   0.00   0.12   0.11   0.23   0.02   0.11
+  shuffled_facts        0.09   0.00   0.06   0.06   0.00   0.03   0.06   0.13   0.00   0.00
+  （'.' = 这一轮没有探针。每格下面的样本量很小，不要单看一格下结论。）
+
+
+D. 诊断列（报告的'可信度'一节要用）
+  run            judge解析失败(OOC)        judge解析失败(事实)       抽取失败       总轮次
+  run0                        1                   28          0     23540
+  seed1                       1                   19          0     23540
+  seed2                       0                   14          0     23540
+  失败数相对总轮次应当很小；占比超过百分之几就要在局限里写明。

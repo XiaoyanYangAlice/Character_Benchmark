@@ -1,0 +1,24 @@
+# Tests the local orchestration (server start/stop, phases, resumption) with a fake vLLM.
+run_name: local_mock
+characters: data/characters
+probes: data/probes/pilot_probes.yaml
+only_characters: [lin_wan, theo_hart]
+seeds: [0, 1]
+concurrency: 8
+serve:
+  base_port: 18100
+  gpus: [0, 1]
+  startup_timeout: 60
+  command: "python3 tests/fake_vllm.py serve {path} --served-model-name {name} --port {port} --tensor-parallel-size {tp}"
+models:
+  small_a: {path: fake/small-a, extra_body: {chat_template_kwargs: {enable_thinking: false}}}
+  small_b: {path: fake/small-b}
+  judge_x: {path: fake/judge-x}
+  judge_y: {path: fake/judge-y}
+systems:
+  - {id: base_a,    condition: base,    model: small_a}
+  - {id: harness_a, condition: harness, model: small_a}
+  - {id: harness_b_xhelper, condition: harness, model: small_b, helper_model: judge_x}
+judges:
+  - {id: jx, model: judge_x}
+  - {id: jy, model: judge_y}

@@ -1,0 +1,4775 @@
+{
+ "meta": {
+  "run_name": "claims_v1",
+  "n_characters": 13,
+  "n_probes": 2,
+  "seeds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "judges": [
+   "judge_qwen3_32b",
+   "judge_gemma3_27b"
+  ]
+ },
+ "systems": {
+  "base_qwen3_8b": {
+   "condition": "base",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.8701923076923075,
+     "ci": [
+      4.836538461538462,
+      4.900961538461538
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.008653846153846154,
+     "ci": [
+      0.0028846153846153848,
+      0.015384615384615385
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.793269230769231,
+     "ci": [
+      4.7625,
+      4.823076923076923
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.06538461538461539,
+      "ci": [
+       0.01730769230769231,
+       0.12692307692307692
+      ],
+      "n": 65
+     },
+     "labels": {
+      "confabulated": 111,
+      "ignored": 8,
+      "noticed": 8,
+      "accepted": 2,
+      "wrong": 1
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.95,
+      "ci": [
+       0.9076923076923077,
+       0.9846153846153847
+      ],
+      "n": 65
+     },
+     "labels": {
+      "accepted": 123,
+      "confabulated": 5,
+      "declined": 2
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.8538461538461538
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.1644822476791316,
+     "ci": [
+      0.14413357857381695,
+      0.18428672908648347
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.08043505406968868,
+     "ci": [
+      0.06426134503598412,
+      0.09648194025613777
+     ],
+     "n": 80
+    },
+    "distinct2": 0.08283229594314219
+   }
+  },
+  "harness_x32b_qwen3_8b": {
+   "condition": "harness",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.85,
+     "ci": [
+      4.813461538461539,
+      4.883653846153846
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.007692307692307693,
+     "ci": [
+      0.0028846153846153848,
+      0.014423076923076924
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.797115384615385,
+     "ci": [
+      4.766346153846154,
+      4.825961538461539
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.27115384615384613,
+      "ci": [
+       0.17692307692307693,
+       0.37115384615384617
+      ],
+      "n": 65
+     },
+     "labels": {
+      "confabulated": 88,
+      "noticed": 35,
+      "ignored": 5,
+      "accepted": 1,
+      "declined": 1
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.9807692307692307,
+      "ci": [
+       0.95,
+       1
+      ],
+      "n": 65
+     },
+     "labels": {
+      "accepted": 127,
+      "confabulated": 1,
+      "declined": 2
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.676923076923077
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.16844555663771468,
+     "ci": [
+      0.14671981226790004,
+      0.19018391549533675
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.09000744925111373,
+     "ci": [
+      0.07162218378878887,
+      0.10682899808100205
+     ],
+     "n": 80
+    },
+    "distinct2": 0.06864798705405915
+   }
+  },
+  "harness_recency_x32b_qwen3_8b": {
+   "condition": "harness_recency",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.770192307692308,
+     "ci": [
+      4.720192307692308,
+      4.8173076923076925
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.010576923076923078,
+     "ci": [
+      0.0038461538461538464,
+      0.01826923076923077
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.623076923076923,
+     "ci": [
+      4.575961538461539,
+      4.6692307692307695
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.4230769230769231,
+      "ci": [
+       0.3230769230769231,
+       0.5307692307692308
+      ],
+      "n": 65
+     },
+     "labels": {
+      "confabulated": 73,
+      "noticed": 55,
+      "ignored": 2
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.9692307692307692,
+      "ci": [
+       0.9384615384615385,
+       0.9923076923076923
+      ],
+      "n": 65
+     },
+     "labels": {
+      "accepted": 126,
+      "confabulated": 4
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.5615384615384615
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.1627041673347773,
+     "ci": [
+      0.14267392167035495,
+      0.18229874334701013
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.09869628519267237,
+     "ci": [
+      0.07852962706369956,
+      0.11786472480394022
+     ],
+     "n": 80
+    },
+    "distinct2": 0.05984759474973984
+   }
+  },
+  "harness_alert_x32b_qwen3_8b": {
+   "condition": "harness_alert",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.755769230769231,
+     "ci": [
+      4.710576923076923,
+      4.8
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.006730769230769231,
+     "ci": [
+      0.0019230769230769232,
+      0.0125
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.6038461538461535,
+     "ci": [
+      4.5576923076923075,
+      4.65
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.9153846153846154,
+      "ci": [
+       0.8461538461538461,
+       0.9769230769230769
+      ],
+      "n": 65
+     },
+     "labels": {
+      "noticed": 119,
+      "confabulated": 11
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.9538461538461539,
+      "ci": [
+       0.9076923076923077,
+       0.9923076923076923
+      ],
+      "n": 65
+     },
+     "labels": {
+      "accepted": 124,
+      "confabulated": 6
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.08461538461538462
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.1621569212371012,
+     "ci": [
+      0.14161913480000124,
+      0.18196633773075055
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.09579201661328497,
+     "ci": [
+      0.07628036609254654,
+      0.11386540764199954
+     ],
+     "n": 80
+    },
+    "distinct2": 0.06310763638461761
+   }
+  },
+  "base_llama31_8b": {
+   "condition": "base",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.759615384615385,
+     "ci": [
+      4.706730769230769,
+      4.808653846153846
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.0038461538461538464,
+     "ci": [
+      0.0009615384615384616,
+      0.008653846153846154
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.656730769230769,
+     "ci": [
+      4.6201923076923075,
+      4.694230769230769
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.2326923076923077,
+      "ci": [
+       0.14615384615384616,
+       0.3230769230769231
+      ],
+      "n": 65
+     },
+     "labels": {
+      "confabulated": 89,
+      "accepted": 5,
+      "ignored": 6,
+      "noticed": 29,
+      "declined": 1
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.9826923076923076,
+      "ci": [
+       0.9615384615384616,
+       1
+      ],
+      "n": 65
+     },
+     "labels": {
+      "accepted": 126,
+      "asked": 2,
+      "declined": 1,
+      "confabulated": 1
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.6846153846153846
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.11553683039447941,
+     "ci": [
+      0.0940994049498313,
+      0.1352421251697569
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.07655245244105686,
+     "ci": [
+      0.05960588675583649,
+      0.09202265630877676
+     ],
+     "n": 80
+    },
+    "distinct2": 0.08035659873066174
+   }
+  },
+  "harness_x32b_llama31_8b": {
+   "condition": "harness",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.724038461538462,
+     "ci": [
+      4.6692307692307695,
+      4.775961538461538
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.004807692307692308,
+     "ci": [
+      0.0009615384615384616,
+      0.010576923076923078
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.6528846153846155,
+     "ci": [
+      4.614423076923077,
+      4.6923076923076925
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.6692307692307692,
+      "ci": [
+       0.5615384615384615,
+       0.7769230769230769
+      ],
+      "n": 65
+     },
+     "labels": {
+      "confabulated": 41,
+      "noticed": 87,
+      "ignored": 1,
+      "asked": 1
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.9692307692307692,
+      "ci": [
+       0.9384615384615385,
+       0.9923076923076923
+      ],
+      "n": 65
+     },
+     "labels": {
+      "accepted": 126,
+      "confabulated": 4
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.3153846153846154
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.11303590542601608,
+     "ci": [
+      0.09218110325208158,
+      0.1331342932853668
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.07783725751553992,
+     "ci": [
+      0.061027292541744695,
+      0.09383424828228398
+     ],
+     "n": 80
+    },
+    "distinct2": 0.08626420111191685
+   }
+  },
+  "harness_alert_x32b_llama31_8b": {
+   "condition": "harness_alert",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.615384615384615,
+     "ci": [
+      4.554807692307692,
+      4.6759615384615385
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0009615384615384616,
+     "ci": [
+      0.0,
+      0.0028846153846153848
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.0038461538461538464,
+     "ci": [
+      0.0,
+      0.009615384615384616
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.556730769230769,
+     "ci": [
+      4.514423076923077,
+      4.5971153846153845
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.9153846153846154,
+      "ci": [
+       0.8461538461538461,
+       0.9769230769230769
+      ],
+      "n": 65
+     },
+     "labels": {
+      "confabulated": 10,
+      "noticed": 119,
+      "ignored": 1
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.9730769230769231,
+      "ci": [
+       0.9442307692307692,
+       0.9961538461538462
+      ],
+      "n": 65
+     },
+     "labels": {
+      "accepted": 125,
+      "asked": 2,
+      "confabulated": 2,
+      "ignored": 1
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.07692307692307693
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.11547899664274082,
+     "ci": [
+      0.09682269722568124,
+      0.13474386752955456
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.08501407953956179,
+     "ci": [
+      0.06738531645859575,
+      0.10200001339393387
+     ],
+     "n": 80
+    },
+    "distinct2": 0.07030905077262693
+   }
+  },
+  "base_qwen3_32b": {
+   "condition": "base",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.915384615384616,
+     "ci": [
+      4.883653846153846,
+      4.943269230769231
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.0038461538461538464,
+     "ci": [
+      0.0,
+      0.008653846153846154
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.884615384615385,
+     "ci": [
+      4.859615384615385,
+      4.908653846153846
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.18653846153846154,
+      "ci": [
+       0.10384615384615385,
+       0.27692307692307694
+      ],
+      "n": 65
+     },
+     "labels": {
+      "confabulated": 105,
+      "accepted": 1,
+      "noticed": 24
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.9730769230769231,
+      "ci": [
+       0.9384615384615385,
+       1
+      ],
+      "n": 65
+     },
+     "labels": {
+      "declined": 2,
+      "accepted": 126,
+      "confabulated": 2
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.8076923076923077
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.10672657501944922,
+     "ci": [
+      0.0890234557161215,
+      0.12390921529458004
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.07085006931425855,
+     "ci": [
+      0.056580183967445186,
+      0.08540500354652736
+     ],
+     "n": 80
+    },
+    "distinct2": 0.09895797745131533
+   }
+  },
+  "harness_qwen3_32b": {
+   "condition": "harness",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.894230769230769,
+     "ci": [
+      4.864423076923077,
+      4.922115384615385
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.0009615384615384616,
+     "ci": [
+      0.0,
+      0.0028846153846153848
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.875,
+     "ci": [
+      4.85,
+      4.899038461538462
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.7942307692307692,
+      "ci": [
+       0.7076923076923077,
+       0.8769230769230769
+      ],
+      "n": 65
+     },
+     "labels": {
+      "noticed": 103,
+      "confabulated": 19,
+      "refused": 1,
+      "ignored": 4,
+      "asked": 2,
+      "accepted": 1
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.9923076923076923,
+      "ci": [
+       0.9769230769230769,
+       1
+      ],
+      "n": 65
+     },
+     "labels": {
+      "accepted": 129,
+      "confabulated": 1
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.14615384615384616
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.10560816915435535,
+     "ci": [
+      0.08843264998365602,
+      0.12275721332038043
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.07625227454400711,
+     "ci": [
+      0.06022275490481589,
+      0.0917861765185816
+     ],
+     "n": 80
+    },
+    "distinct2": 0.09356874786762197
+   }
+  },
+  "harness_alert_qwen3_32b": {
+   "condition": "harness_alert",
+   "n_dialogues": 130,
+   "D1": {
+    "score": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "reactivity": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "inertia": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "recovery": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "no_overshoot": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "trajectories": {},
+    "trajectory_tags": {}
+   },
+   "D2": {
+    "persona_consistency": {
+     "mean": 4.890384615384615,
+     "ci": [
+      4.8625,
+      4.917307692307692
+     ],
+     "n": 130
+    },
+    "persona_under_pressure": {
+     "mean": null,
+     "ci": null,
+     "n": 0
+    },
+    "assistant_tone_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "regex_leak_rate": {
+     "mean": 0.0,
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "n": 520
+    },
+    "explicit_state_report_rate": {
+     "mean": 0.0009615384615384616,
+     "ci": [
+      0.0,
+      0.0028846153846153848
+     ],
+     "n": 520
+    }
+   },
+   "D5": {
+    "naturalness": {
+     "mean": 4.861538461538461,
+     "ci": [
+      4.836538461538462,
+      4.888461538461539
+     ],
+     "n": 520
+    }
+   },
+   "D3": {
+    "recall": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "contradict": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "conflict_claim": {
+     "score": {
+      "mean": 0.8865384615384615,
+      "ci": [
+       0.8153846153846154,
+       0.9538461538461539
+      ],
+      "n": 65
+     },
+     "labels": {
+      "noticed": 115,
+      "confabulated": 12,
+      "ignored": 1,
+      "declined": 1,
+      "accepted": 1
+     }
+    },
+    "compatible_claim": {
+     "score": {
+      "mean": 0.9923076923076923,
+      "ci": [
+       0.9769230769230769,
+       1
+      ],
+      "n": 65
+     },
+     "labels": {
+      "accepted": 129,
+      "confabulated": 1
+     }
+    },
+    "canon": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "labels": {}
+    },
+    "confabulation_rate": 0.09230769230769231
+   },
+   "D4": {
+    "self_similarity": {
+     "mean": 0.10449117202462431,
+     "ci": [
+      0.08862050132750733,
+      0.12048937673825827
+     ],
+     "n": 104
+    },
+    "voice_similarity": {
+     "mean": 0.07322963446251045,
+     "ci": [
+      0.05760065034447067,
+      0.08774824715175836
+     ],
+     "n": 80
+    },
+    "distinct2": 0.09977469333259158
+   }
+  }
+ },
+ "inter_judge": {
+  "judges": [
+   "judge_gemma3_27b",
+   "judge_qwen3_32b"
+  ],
+  "alpha": {
+   "state.tension": null,
+   "state.energy": null,
+   "state.closeness": null,
+   "persona.persona_consistency": 0.5443877709640004,
+   "persona.naturalness": 0.47098698230788105,
+   "memory.label": 0.8627031746120011
+  }
+ },
+ "by_judge": {
+  "judge_qwen3_32b": {
+   "base_qwen3_8b": {
+    "condition": "base",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.869230769230769,
+      "ci": [
+       4.8307692307692305,
+       4.905769230769231
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.007692307692307693,
+      "ci": [
+       0.0019230769230769232,
+       0.015384615384615385
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.821153846153846,
+      "ci": [
+       4.786538461538462,
+       4.8538461538461535
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.05,
+       "ci": [
+        0.0038461538461538464,
+        0.1076923076923077
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 52,
+       "ignored": 8,
+       "noticed": 3,
+       "accepted": 1,
+       "wrong": 1
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9576923076923077,
+       "ci": [
+        0.9076923076923077,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 62,
+       "confabulated": 2,
+       "declined": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.8
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.1644822476791316,
+      "ci": [
+       0.14413357857381695,
+       0.18428672908648347
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.08043505406968868,
+      "ci": [
+       0.06426134503598412,
+       0.09648194025613777
+      ],
+      "n": 80
+     },
+     "distinct2": 0.08283229594314219
+    }
+   },
+   "harness_x32b_qwen3_8b": {
+    "condition": "harness",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.857692307692307,
+      "ci": [
+       4.813461538461539,
+       4.898076923076923
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.007692307692307693,
+      "ci": [
+       0.0019230769230769232,
+       0.015384615384615385
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.819230769230769,
+      "ci": [
+       4.7846153846153845,
+       4.851923076923077
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.23076923076923078,
+       "ci": [
+        0.13846153846153847,
+        0.3384615384615385
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 44,
+       "ignored": 5,
+       "noticed": 15,
+       "declined": 1
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9730769230769231,
+       "ci": [
+        0.9307692307692308,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 63,
+       "confabulated": 1,
+       "declined": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.676923076923077
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.16844555663771468,
+      "ci": [
+       0.14671981226790004,
+       0.19018391549533675
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.09000744925111373,
+      "ci": [
+       0.07162218378878887,
+       0.10682899808100205
+      ],
+      "n": 80
+     },
+     "distinct2": 0.06864798705405915
+    }
+   },
+   "harness_recency_x32b_qwen3_8b": {
+    "condition": "harness_recency",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.803846153846154,
+      "ci": [
+       4.75,
+       4.855769230769231
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.013461538461538462,
+      "ci": [
+       0.0038461538461538464,
+       0.025
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.709615384615384,
+      "ci": [
+       4.6596153846153845,
+       4.757692307692308
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.46153846153846156,
+       "ci": [
+        0.3384615384615385,
+        0.5846153846153846
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 33,
+       "noticed": 30,
+       "ignored": 2
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9538461538461539,
+       "ci": [
+        0.8923076923076924,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 62,
+       "confabulated": 3
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.5076923076923077
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.1627041673347773,
+      "ci": [
+       0.14267392167035495,
+       0.18229874334701013
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.09869628519267237,
+      "ci": [
+       0.07852962706369956,
+       0.11786472480394022
+      ],
+      "n": 80
+     },
+     "distinct2": 0.05984759474973984
+    }
+   },
+   "harness_alert_x32b_qwen3_8b": {
+    "condition": "harness_alert",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.788461538461538,
+      "ci": [
+       4.736538461538461,
+       4.838461538461538
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0057692307692307696,
+      "ci": [
+       0.0,
+       0.013461538461538462
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.690384615384615,
+      "ci": [
+       4.642307692307693,
+       4.7384615384615385
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.9230769230769231,
+       "ci": [
+        0.8461538461538461,
+        0.9846153846153847
+       ],
+       "n": 65
+      },
+      "labels": {
+       "noticed": 60,
+       "confabulated": 5
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9538461538461539,
+       "ci": [
+        0.8923076923076924,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 62,
+       "confabulated": 3
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.07692307692307693
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.1621569212371012,
+      "ci": [
+       0.14161913480000124,
+       0.18196633773075055
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.09579201661328497,
+      "ci": [
+       0.07628036609254654,
+       0.11386540764199954
+      ],
+      "n": 80
+     },
+     "distinct2": 0.06310763638461761
+    }
+   },
+   "base_llama31_8b": {
+    "condition": "base",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.740384615384615,
+      "ci": [
+       4.680769230769231,
+       4.796153846153846
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0038461538461538464,
+      "ci": [
+       0.0,
+       0.009615384615384616
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.6365384615384615,
+      "ci": [
+       4.5903846153846155,
+       4.680769230769231
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.2,
+       "ci": [
+        0.1076923076923077,
+        0.2923076923076923
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 45,
+       "ignored": 6,
+       "noticed": 13,
+       "declined": 1
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9846153846153847,
+       "ci": [
+        0.9576923076923077,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 63,
+       "asked": 1,
+       "declined": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.6923076923076923
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.11553683039447941,
+      "ci": [
+       0.0940994049498313,
+       0.1352421251697569
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07655245244105686,
+      "ci": [
+       0.05960588675583649,
+       0.09202265630877676
+      ],
+      "n": 80
+     },
+     "distinct2": 0.08035659873066174
+    }
+   },
+   "harness_x32b_llama31_8b": {
+    "condition": "harness",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.694230769230769,
+      "ci": [
+       4.625,
+       4.757692307692308
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0038461538461538464,
+      "ci": [
+       0.0,
+       0.009615384615384616
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.634615384615385,
+      "ci": [
+       4.588461538461538,
+       4.6826923076923075
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.676923076923077,
+       "ci": [
+        0.5692307692307692,
+        0.7846153846153846
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 19,
+       "noticed": 44,
+       "ignored": 1,
+       "asked": 1
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9846153846153847,
+       "ci": [
+        0.9538461538461539,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 64,
+       "confabulated": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.2923076923076923
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.11303590542601608,
+      "ci": [
+       0.09218110325208158,
+       0.1331342932853668
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07783725751553992,
+      "ci": [
+       0.061027292541744695,
+       0.09383424828228398
+      ],
+      "n": 80
+     },
+     "distinct2": 0.08626420111191685
+    }
+   },
+   "harness_alert_x32b_llama31_8b": {
+    "condition": "harness_alert",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.586538461538462,
+      "ci": [
+       4.5115384615384615,
+       4.6596153846153845
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0019230769230769232,
+      "ci": [
+       0.0,
+       0.0057692307692307696
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0038461538461538464,
+      "ci": [
+       0.0,
+       0.009615384615384616
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.525,
+      "ci": [
+       4.473076923076923,
+       4.575
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.9230769230769231,
+       "ci": [
+        0.8615384615384616,
+        0.9846153846153847
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 4,
+       "noticed": 60,
+       "ignored": 1
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9769230769230769,
+       "ci": [
+        0.9384615384615385,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 62,
+       "asked": 2,
+       "ignored": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.06153846153846154
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.11547899664274082,
+      "ci": [
+       0.09682269722568124,
+       0.13474386752955456
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.08501407953956179,
+      "ci": [
+       0.06738531645859575,
+       0.10200001339393387
+      ],
+      "n": 80
+     },
+     "distinct2": 0.07030905077262693
+    }
+   },
+   "base_qwen3_32b": {
+    "condition": "base",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.907692307692308,
+      "ci": [
+       4.869230769230769,
+       4.940384615384615
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0019230769230769232,
+      "ci": [
+       0.0,
+       0.0057692307692307696
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.894230769230769,
+      "ci": [
+       4.867307692307692,
+       4.9192307692307695
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.16923076923076924,
+       "ci": [
+        0.09230769230769231,
+        0.26153846153846155
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 54,
+       "noticed": 11
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9884615384615385,
+       "ci": [
+        0.9653846153846154,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "declined": 1,
+       "accepted": 64
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.8307692307692308
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.10672657501944922,
+      "ci": [
+       0.0890234557161215,
+       0.12390921529458004
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07085006931425855,
+      "ci": [
+       0.056580183967445186,
+       0.08540500354652736
+      ],
+      "n": 80
+     },
+     "distinct2": 0.09895797745131533
+    }
+   },
+   "harness_qwen3_32b": {
+    "condition": "harness",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.890384615384615,
+      "ci": [
+       4.85,
+       4.925
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0019230769230769232,
+      "ci": [
+       0.0,
+       0.0057692307692307696
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.867307692307692,
+      "ci": [
+       4.836538461538462,
+       4.8961538461538465
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.7538461538461538,
+       "ci": [
+        0.6461538461538462,
+        0.8615384615384616
+       ],
+       "n": 65
+      },
+      "labels": {
+       "noticed": 49,
+       "confabulated": 9,
+       "refused": 1,
+       "ignored": 4,
+       "asked": 2
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 1,
+       "ci": [
+        1,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 65
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.13846153846153847
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.10560816915435535,
+      "ci": [
+       0.08843264998365602,
+       0.12275721332038043
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07625227454400711,
+      "ci": [
+       0.06022275490481589,
+       0.0917861765185816
+      ],
+      "n": 80
+     },
+     "distinct2": 0.09356874786762197
+    }
+   },
+   "harness_alert_qwen3_32b": {
+    "condition": "harness_alert",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.875,
+      "ci": [
+       4.836538461538462,
+       4.911538461538462
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0019230769230769232,
+      "ci": [
+       0.0,
+       0.0057692307692307696
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.846153846153846,
+      "ci": [
+       4.813461538461539,
+       4.878846153846154
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.8961538461538462,
+       "ci": [
+        0.8192307692307692,
+        0.9692307692307692
+       ],
+       "n": 65
+      },
+      "labels": {
+       "noticed": 58,
+       "confabulated": 4,
+       "ignored": 1,
+       "declined": 1,
+       "accepted": 1
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 1,
+       "ci": [
+        1,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 65
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.06153846153846154
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.10449117202462431,
+      "ci": [
+       0.08862050132750733,
+       0.12048937673825827
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07322963446251045,
+      "ci": [
+       0.05760065034447067,
+       0.08774824715175836
+      ],
+      "n": 80
+     },
+     "distinct2": 0.09977469333259158
+    }
+   }
+  },
+  "judge_gemma3_27b": {
+   "base_qwen3_8b": {
+    "condition": "base",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.871153846153846,
+      "ci": [
+       4.834615384615384,
+       4.901923076923077
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.009615384615384616,
+      "ci": [
+       0.0019230769230769232,
+       0.019230769230769232
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.765384615384615,
+      "ci": [
+       4.726923076923077,
+       4.801923076923077
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.08076923076923077,
+       "ci": [
+        0.023076923076923078,
+        0.15
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 59,
+       "noticed": 5,
+       "accepted": 1
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9423076923076923,
+       "ci": [
+        0.8807692307692307,
+        0.9884615384615385
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 61,
+       "confabulated": 3,
+       "declined": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.9076923076923077
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.1644822476791316,
+      "ci": [
+       0.14413357857381695,
+       0.18428672908648347
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.08043505406968868,
+      "ci": [
+       0.06426134503598412,
+       0.09648194025613777
+      ],
+      "n": 80
+     },
+     "distinct2": 0.08283229594314219
+    }
+   },
+   "harness_x32b_qwen3_8b": {
+    "condition": "harness",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.842307692307692,
+      "ci": [
+       4.801923076923077,
+       4.878846153846154
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.007692307692307693,
+      "ci": [
+       0.0019230769230769232,
+       0.01730769230769231
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.775,
+      "ci": [
+       4.736538461538461,
+       4.811538461538461
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.31153846153846154,
+       "ci": [
+        0.20384615384615384,
+        0.41923076923076924
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 44,
+       "noticed": 20,
+       "accepted": 1
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9884615384615385,
+       "ci": [
+        0.9653846153846154,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 64,
+       "declined": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.676923076923077
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.16844555663771468,
+      "ci": [
+       0.14671981226790004,
+       0.19018391549533675
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.09000744925111373,
+      "ci": [
+       0.07162218378878887,
+       0.10682899808100205
+      ],
+      "n": 80
+     },
+     "distinct2": 0.06864798705405915
+    }
+   },
+   "harness_recency_x32b_qwen3_8b": {
+    "condition": "harness_recency",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.736538461538461,
+      "ci": [
+       4.676923076923077,
+       4.790384615384616
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.007692307692307693,
+      "ci": [
+       0.0019230769230769232,
+       0.015384615384615385
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.536538461538462,
+      "ci": [
+       4.476923076923077,
+       4.594230769230769
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.38461538461538464,
+       "ci": [
+        0.27692307692307694,
+        0.5076923076923077
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 40,
+       "noticed": 25
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9846153846153847,
+       "ci": [
+        0.9538461538461539,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 64,
+       "confabulated": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.6153846153846154
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.1627041673347773,
+      "ci": [
+       0.14267392167035495,
+       0.18229874334701013
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.09869628519267237,
+      "ci": [
+       0.07852962706369956,
+       0.11786472480394022
+      ],
+      "n": 80
+     },
+     "distinct2": 0.05984759474973984
+    }
+   },
+   "harness_alert_x32b_qwen3_8b": {
+    "condition": "harness_alert",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.723076923076923,
+      "ci": [
+       4.6692307692307695,
+       4.773076923076923
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.007692307692307693,
+      "ci": [
+       0.0019230769230769232,
+       0.015384615384615385
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.517307692307693,
+      "ci": [
+       4.461538461538462,
+       4.575
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.9076923076923077,
+       "ci": [
+        0.8307692307692308,
+        0.9692307692307692
+       ],
+       "n": 65
+      },
+      "labels": {
+       "noticed": 59,
+       "confabulated": 6
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9538461538461539,
+       "ci": [
+        0.8923076923076924,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 62,
+       "confabulated": 3
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.09230769230769231
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.1621569212371012,
+      "ci": [
+       0.14161913480000124,
+       0.18196633773075055
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.09579201661328497,
+      "ci": [
+       0.07628036609254654,
+       0.11386540764199954
+      ],
+      "n": 80
+     },
+     "distinct2": 0.06310763638461761
+    }
+   },
+   "base_llama31_8b": {
+    "condition": "base",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.778846153846154,
+      "ci": [
+       4.726923076923077,
+       4.826923076923077
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0038461538461538464,
+      "ci": [
+       0.0,
+       0.009615384615384616
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.676923076923077,
+      "ci": [
+       4.632692307692308,
+       4.719230769230769
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.2653846153846154,
+       "ci": [
+        0.17307692307692307,
+        0.3730769230769231
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 5,
+       "confabulated": 44,
+       "noticed": 16
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9807692307692307,
+       "ci": [
+        0.9461538461538461,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 63,
+       "asked": 1,
+       "confabulated": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.676923076923077
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.11553683039447941,
+      "ci": [
+       0.0940994049498313,
+       0.1352421251697569
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07655245244105686,
+      "ci": [
+       0.05960588675583649,
+       0.09202265630877676
+      ],
+      "n": 80
+     },
+     "distinct2": 0.08035659873066174
+    }
+   },
+   "harness_x32b_llama31_8b": {
+    "condition": "harness",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.753846153846154,
+      "ci": [
+       4.701923076923077,
+       4.801923076923077
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0057692307692307696,
+      "ci": [
+       0.0,
+       0.013461538461538462
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.671153846153846,
+      "ci": [
+       4.628846153846154,
+       4.713461538461538
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.6615384615384615,
+       "ci": [
+        0.5538461538461539,
+        0.7692307692307693
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 22,
+       "noticed": 43
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9538461538461539,
+       "ci": [
+        0.8923076923076924,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 62,
+       "confabulated": 3
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.3384615384615385
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.11303590542601608,
+      "ci": [
+       0.09218110325208158,
+       0.1331342932853668
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07783725751553992,
+      "ci": [
+       0.061027292541744695,
+       0.09383424828228398
+      ],
+      "n": 80
+     },
+     "distinct2": 0.08626420111191685
+    }
+   },
+   "harness_alert_x32b_llama31_8b": {
+    "condition": "harness_alert",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.644230769230769,
+      "ci": [
+       4.588461538461538,
+       4.698076923076923
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0038461538461538464,
+      "ci": [
+       0.0,
+       0.009615384615384616
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.588461538461538,
+      "ci": [
+       4.5442307692307695,
+       4.632692307692308
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.9076923076923077,
+       "ci": [
+        0.8307692307692308,
+        0.9692307692307692
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 6,
+       "noticed": 59
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9692307692307692,
+       "ci": [
+        0.9230769230769231,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 63,
+       "confabulated": 2
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.09230769230769231
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.11547899664274082,
+      "ci": [
+       0.09682269722568124,
+       0.13474386752955456
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.08501407953956179,
+      "ci": [
+       0.06738531645859575,
+       0.10200001339393387
+      ],
+      "n": 80
+     },
+     "distinct2": 0.07030905077262693
+    }
+   },
+   "base_qwen3_32b": {
+    "condition": "base",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.923076923076923,
+      "ci": [
+       4.888461538461539,
+       4.953846153846154
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0057692307692307696,
+      "ci": [
+       0.0,
+       0.013461538461538462
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.875,
+      "ci": [
+       4.842307692307692,
+       4.907692307692308
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.20384615384615384,
+       "ci": [
+        0.11153846153846154,
+        0.3
+       ],
+       "n": 65
+      },
+      "labels": {
+       "confabulated": 51,
+       "accepted": 1,
+       "noticed": 13
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9576923076923077,
+       "ci": [
+        0.9076923076923077,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "declined": 1,
+       "accepted": 62,
+       "confabulated": 2
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.7846153846153846
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.10672657501944922,
+      "ci": [
+       0.0890234557161215,
+       0.12390921529458004
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07085006931425855,
+      "ci": [
+       0.056580183967445186,
+       0.08540500354652736
+      ],
+      "n": 80
+     },
+     "distinct2": 0.09895797745131533
+    }
+   },
+   "harness_qwen3_32b": {
+    "condition": "harness",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.898076923076923,
+      "ci": [
+       4.867307692307692,
+       4.926923076923077
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.882692307692308,
+      "ci": [
+       4.8538461538461535,
+       4.9096153846153845
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.8346153846153846,
+       "ci": [
+        0.7423076923076923,
+        0.9115384615384615
+       ],
+       "n": 65
+      },
+      "labels": {
+       "noticed": 54,
+       "confabulated": 10,
+       "accepted": 1
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9846153846153847,
+       "ci": [
+        0.9538461538461539,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 64,
+       "confabulated": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.15384615384615385
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.10560816915435535,
+      "ci": [
+       0.08843264998365602,
+       0.12275721332038043
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07625227454400711,
+      "ci": [
+       0.06022275490481589,
+       0.0917861765185816
+      ],
+      "n": 80
+     },
+     "distinct2": 0.09356874786762197
+    }
+   },
+   "harness_alert_qwen3_32b": {
+    "condition": "harness_alert",
+    "n_dialogues": 130,
+    "D1": {
+     "score": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "reactivity": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "inertia": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "recovery": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "no_overshoot": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "trajectories": {},
+     "trajectory_tags": {}
+    },
+    "D2": {
+     "persona_consistency": {
+      "mean": 4.905769230769231,
+      "ci": [
+       4.878846153846154,
+       4.930769230769231
+      ],
+      "n": 130
+     },
+     "persona_under_pressure": {
+      "mean": null,
+      "ci": null,
+      "n": 0
+     },
+     "assistant_tone_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "regex_leak_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     },
+     "explicit_state_report_rate": {
+      "mean": 0.0,
+      "ci": [
+       0.0,
+       0.0
+      ],
+      "n": 520
+     }
+    },
+    "D5": {
+     "naturalness": {
+      "mean": 4.876923076923077,
+      "ci": [
+       4.848076923076923,
+       4.905769230769231
+      ],
+      "n": 520
+     }
+    },
+    "D3": {
+     "recall": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "contradict": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "conflict_claim": {
+      "score": {
+       "mean": 0.8769230769230769,
+       "ci": [
+        0.7846153846153846,
+        0.9538461538461539
+       ],
+       "n": 65
+      },
+      "labels": {
+       "noticed": 57,
+       "confabulated": 8
+      }
+     },
+     "compatible_claim": {
+      "score": {
+       "mean": 0.9846153846153847,
+       "ci": [
+        0.9538461538461539,
+        1
+       ],
+       "n": 65
+      },
+      "labels": {
+       "accepted": 64,
+       "confabulated": 1
+      }
+     },
+     "canon": {
+      "score": {
+       "mean": null,
+       "ci": null,
+       "n": 0
+      },
+      "labels": {}
+     },
+     "confabulation_rate": 0.12307692307692308
+    },
+    "D4": {
+     "self_similarity": {
+      "mean": 0.10449117202462431,
+      "ci": [
+       0.08862050132750733,
+       0.12048937673825827
+      ],
+      "n": 104
+     },
+     "voice_similarity": {
+      "mean": 0.07322963446251045,
+      "ci": [
+       0.05760065034447067,
+       0.08774824715175836
+      ],
+      "n": 80
+     },
+     "distinct2": 0.09977469333259158
+    }
+   }
+  }
+ }
+}

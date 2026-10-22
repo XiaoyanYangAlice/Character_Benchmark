@@ -1,483 +1,107 @@
-# Character Memory Eval
+# Character Memory for Role-Play LLMs: from memory schemes to memory use to training
 
-**Does giving a role-play agent a memory make it remember — and does it make it slip out of character? Measuring both on the same long dialogues.**
+**An ongoing research line on why role-play characters forget, misremember and invent shared pasts, and what fixes it.
+All experiments run on local open-weight models (vLLM on the SURF Snellius cluster).**
 
-[Results and limitations](./docs/RESULTS.md) (Chinese) · [Experiment design](./docs/EXPERIMENT_V2.md) (Chinese) · [Judge audit](./docs/JUDGE_AUDIT.md) (Chinese) · [Dataset notes](./docs/DATASET.md) (Chinese) · [Cluster guide](./docs/CLUSTER_GUIDE.md) (Chinese)
+[中文说明](README_zh.md) · Stage 1: [`stage1_memory_schemes/`](stage1_memory_schemes/) · Stages 2–3: [`lifelikebench/`](lifelikebench/)
 
-Xiaoyan Yang · GOLEM group, University of Groningen · code MIT-licensed
+```mermaid
+flowchart LR
+  S1["Stage 1 · Memory schemes<br/>Which memory should a<br/>role-play agent have?"] -->|"answers rarely reach the context,<br/>and are often unused when they do;<br/>the judge is unreliable"| S2
+  S2["Stage 2 · Memory use<br/>Given the right memory,<br/>does the model use it?"] -->|"placement + alert: 6% → 92%,<br/>but only with an external harness"| S3
+  S3["Stage 3 · Internalisation<br/>Can the harness be trained<br/>into the weights?"]
+```
 
----
+## The research question, in three steps
 
-## 1. Motivation
+| | Stage 1: memory schemes | Stage 2: memory use (LifelikeBench) | Stage 3: internalisation |
+|---|---|---|---|
+| Question | Which memory scheme keeps a character consistent? | When the right memory is in context, does the model use it? Can it tell a real shared past from an invented one? | Can the harness's behaviour be distilled into the model? |
+| Data | 47 real PIPPA role-play dialogues, scripted user turns | 13 bilingual characters with explicit timelines; scripted multi-turn probes | 40 training characters (disjoint from evaluation), 1,080 teacher dialogues |
+| Models | Qwen2.5-7B, Llama-3.1-8B; judge Qwen2.5-14B | Qwen3-8B, Llama-3.1-8B, Qwen3-32B; judges Qwen3-32B + Gemma-3-27B | Qwen3-8B student with LoRA |
+| Status | done | done | SFT and on-policy distillation trained; DPO and held-out evaluation queued |
 
-Long role-play conversations fail in two ways that pull against each other. The model
-forgets what the user said thirty turns ago; and when you push the history back into the
-context to fix that, the character starts answering like a helpful assistant instead of
-staying in persona.
+## Stage 1: comparing memory schemes ([details](stage1_memory_schemes/))
 
-These two failures are studied by two literatures that rarely meet. Long-term memory
-benchmarks measure post-hoc recall over multi-session histories — LoCoMo
-(Maharana et al., 2024) and LongMemEval (Wu et al., 2025) both ask whether the model can
-answer questions about what was said earlier, but not whether answering changed how the
-character behaved. Role-play benchmarks measure persona fidelity — CharacterEval
-(Tu et al., 2024), RoleLLM (Wang, Peng, et al., 2024) and InCharacter
-(Wang, Xiao, et al., 2024) score whether an agent sounds like its character, but hold the
-memory mechanism fixed or ignore it.
+Six conditions were run on identical user turns: no memory, raw recent context, vector top-k retrieval, structured character facts, shuffled facts (control) and a hybrid.
+71 memory probes have verbatim gold answers.
 
-This repository measures both, on the same dialogues, with the same scripted user turns,
-across six memory conditions. The question is not "which memory scheme is best" but
-**where on the recall/consistency plane each one lands, and which stage of the pipeline is
-responsible when it lands badly.**
+- **The bottleneck is upstream.** The probe's answer reached the injected context in 62–68% of vector-retrieval runs
+  but only 18–27% for structured memory (39–45% for the hybrid). Structured memory scored 26–28 pts below vector retrieval
+  on probe accuracy (Holm-corrected, both models).
+- **Memory that does arrive is often not used.** Even when the answer *was* in context, models answered correctly in only about
+  30–65% of cases, depending on scheme and model.
+- **The judge could not be trusted.** A blind audit found about 40% precision for the out-of-character judge, so those flags are
+  reported only as noisy relative signals. Four silent pipeline failures were found and fixed, each with a regression test.
 
-## 2. Design
+These findings set up stage 2. Because memory that arrives is often unused, the study turns from retrieval to *use* of memory. Because the judge is unreliable, the
+evaluation itself has to be validated.
 
-Two control conditions carry most of the experimental weight.
+## Stage 2: does the model use the memory it has? ([LifelikeBench](lifelikebench/))
 
-**`no_memory` is the floor.** Without it, a recall number means nothing: a scheme that
-scores 0.38 looks impressive until you learn the no-memory baseline is 0.36.
+The focus is one failure. A user mentions a shared past that **contradicts** the story (*"Remember our trip five years ago?"*, though the two
+met last month). The character should notice, while still accepting claims that **fit** the story, because role-play is co-created.
 
-**`shuffled_facts` is the content control.** It injects character facts belonging to a
-*different* character — identical in format, length and position to the structured
-schemes, but wrong. If a structured scheme cannot beat it, the measured gain came from
-re-pasting a structured block of persona-shaped text, not from remembering anything. This
-control is what separates a memory result from a prompt-formatting artifact, and most
-comparisons of memory architectures do not include one.
+| Qwen3-8B, same memory content | Conflict noticed |
+|---|---|
+| card only | 6% |
+| memory in the system prompt (harness) | 27% |
+| memory next to the latest user turn | 42% |
+| … plus a turn-local conflict alert | **92%** |
 
-## 3. Method
+- Changing only *where* and *how* memory is presented moves detection from 27% to 92%, with paired tests significant at each step.
+  Llama-3.1-8B and Qwen3-32B reach 88–92% with the alert.
+- **No over-suspicion.** Compatible claims are accepted 95–99% of the time in every system.
+- **Validated measurement**, a direct answer to stage 1. Two judges from different families agree on the main metric at α = 0.82,
+  and an independent blind annotation pass agrees with them at α = 0.72–0.76. Unreliable dimensions are reported as such. A human round is in progress.
+- **Harness.** Ornstein–Uhlenbeck affect state, plus memory tagged by provenance (stated / inferred / user canon / claimed)
+  and flagged for conflict. This replaces stage 1's flat fact list, which overlapped with the card.
 
-**Dialogues.** 47 human–chatbot role-play conversations from PIPPA (Gosling et al., 2023),
-filtered to those long enough that a sliding window actually truncates (median 26 user
-turns). User turns are replayed from script; only the character side is generated by the
-model under test, so every scheme sees identical inputs and can be compared pairwise per
-dialogue.
+Results: [`lifelikebench/runs/claims_v1/claims_analysis.md`](lifelikebench/runs/claims_v1/claims_analysis.md).
 
-**Models.** Character side: Qwen2.5-7B-Instruct and Llama-3.1-8B-Instruct. Judge:
-Qwen2.5-14B-Instruct, following the LLM-as-a-judge protocol of Zheng et al. (2023) —
-and audited rather than trusted, see §7. Served with vLLM under SLURM on 3×A100: 564 dialogue runs
-(2 models × 6 schemes × 47 dialogues, one row each in `results_v2/summary.csv`),
-13,272 generated character turns, 1 h 45 min wall clock.
+## Stage 3: distilling the harness into the model ([training](lifelikebench/docs/TRAINING.md))
 
-**Six memory schemes.**
+The teacher is Qwen3-8B with the harness. The student is the same model with LoRA and **no harness**. Three ways of transferring the behaviour are compared:
 
-| Scheme | What is injected | Mean context (chars, Llama / Qwen) |
+| Method | Signal | Status |
 |---|---|---|
-| `no_memory` | character card in the system prompt only (floor control) | 0 / 0 |
-| `raw_context` | last 10 turns verbatim (truncates) | 2804 / 1582 |
-| `vector_memory` | top-5 retrieved history turns, all-MiniLM-L6-v2 (Reimers & Gurevych, 2019) | 729 / 599 |
-| `structured_memory` | card facts + incrementally extracted events, 8 most **recent** | 678 / 606 |
-| `structured_hybrid` | same, but 4 most recent + 4 by **relevance** to the current turn | 682 / 611 |
-| `shuffled_facts` | content control: structured format, facts from another character | 229 / 229 |
-
-Within a model the three retrieval schemes sit within ~50 characters of each other
-(Llama 678–730, Qwen 599–611), so their comparison is budget-matched; `raw_context` costs
-2–4× more.
-
-**Where GOLEM comes in.** The fact schema behind `structured_memory` is not ad hoc. The
-four extraction categories — biography, emotion, personality, physical — align with the
-`G17_Character_Feature` subclasses of the GOLEM ontology for narrative and fiction
-(Pianzola et al., 2025), and the extraction prompts in
-`src/ontology_extraction/prompts/` are written per category against that schema. This
-matters for interpretation: when structured memory fails, it fails as a *typed* character
-representation grounded in a published narrative ontology, not as an arbitrary list of
-key–value pairs. It also makes the memory inspectable by a human reader, which is how the
-failure in §5.4 was found at all.
-
-**Metrics.** `probe_accuracy` is the primary metric and the only one that tests memory
-directly: 71 probes across 28 dialogues, each drawn from something the user said in turns
-1–10 and asked late in the dialogue. Secondary: `ooc_rate` (judge-flagged
-out-of-character rate, with a `_late` variant for the second half), `fact_consistency`,
-`leakage_rate`.
-
-**Statistics.** Paired bootstrap over dialogues, 20,000 resamples. Holm (1979) correction
-within (model × metric) families; the family structure was fixed before results were
-inspected, which is the only thing that makes a multiple-comparison correction meaningful.
-144 comparisons in total. Raw output: [`docs/COMPARE_V2.txt`](./docs/COMPARE_V2.txt).
-
-## 4. Results
-
-### 4.1 Absolute levels
-
-Reported first, because a delta without a baseline is uninterpretable.
-
-| Scheme | Llama probe acc. | Llama OOC | Qwen probe acc. | Qwen OOC |
-|---|---|---|---|---|
-| `no_memory` | 0.036 | 0.042 | 0.060 | 0.113 |
-| `raw_context` | 0.107 | 0.090 | 0.119 | 0.291 |
-| `vector_memory` | **0.381** | 0.048 | **0.345** | 0.180 |
-| `structured_memory` | 0.196 | 0.042 | 0.155 | 0.121 |
-| `structured_hybrid` | **0.369** | 0.050 | **0.321** | 0.158 |
-| `shuffled_facts` | 0.071 | 0.109 | 0.012 | 0.188 |
-
-Probe accuracy without memory is near the floor (0.036 / 0.060): these probes genuinely
-cannot be answered from the character card. The best schemes reach ~0.32–0.38, i.e. they
-recover roughly a third of what the user said earlier — far from solved.
-
-### 4.2 Probe accuracy, gain over `no_memory`
-
-n = 28 dialogues. ✓ = Holm-corrected p < 0.05.
-
-| Scheme | Llama-3.1-8B | Qwen2.5-7B |
-|---|---|---|
-| `vector_memory` | **+0.345** [+0.214, +0.476] ✓ | **+0.286** [+0.155, +0.417] ✓ |
-| `structured_hybrid` | **+0.333** [+0.208, +0.464] ✓ | **+0.262** [+0.155, +0.381] ✓ |
-| `structured_memory` | +0.161 [+0.054, +0.280] ✓ | +0.095 [−0.000, +0.214] — |
-| `raw_context` | +0.071 [+0.012, +0.143] — | +0.060 [−0.030, +0.155] — |
-| `shuffled_facts` | +0.036 [−0.036, +0.131] — | −0.048 [−0.107, +0.000] — |
-
-Key pairwise contrasts:
-
-| Comparison | Llama | Qwen |
-|---|---|---|
-| `structured_hybrid` vs `vector_memory` | −0.012 — | −0.024 — |
-| `structured_hybrid` vs `structured_memory` | +0.173 ✓ | +0.167 — |
-| `structured_hybrid` vs `shuffled_facts` | +0.298 ✓ | +0.310 ✓ |
-| `structured_memory` vs `shuffled_facts` | +0.125 — | +0.143 ✓ |
-| `vector_memory` vs `raw_context` | +0.274 ✓ | +0.226 ✓ |
-
-### 4.3 Out-of-character flag rate, change from `no_memory`
-
-n = 47 dialogues. Positive = flagged more often = worse. ✗ = significantly worse.
-
-| Scheme | Llama | Qwen |
-|---|---|---|
-| `raw_context` | +0.048 ✗ | +0.177 ✗ |
-| `shuffled_facts` | +0.067 ✗ | +0.074 ✗ |
-| `vector_memory` | +0.006 — | +0.067 ✗ |
-| `structured_hybrid` | +0.008 — | +0.045 ✗ |
-| `structured_memory` | −0.000 — | +0.008 — |
-
-`structured_hybrid` vs `vector_memory` is not significant on either model
-(+0.001 / −0.022).
-
-### 4.4 Four findings
-
-**1. Fixed structured memory is no longer detectably worse than retrieval on recall.**
-The difference is −0.012 / −0.024, not significant on either model — but the confidence
-intervals span roughly ±0.15, which is about half of `vector_memory`'s entire gain over
-the floor. At n = 28 this is absence of evidence, not equivalence; I ran no equivalence
-test and specified no margin. What it does rule out is the earlier version of this
-project's conclusion that structured memory "remembers nothing": that was an
-implementation failure in the write and retrieve stages, not a property of structured
-memory. Diagnosing and fixing it is §5.
-
-**2. The gain comes from correct content, not from format.** `shuffled_facts` does not
-beat `no_memory` on either model — wrong facts buy zero recall — while
-`structured_hybrid` beats it by +0.298 / +0.310 (both ✓). Without this control, finding 1
-would be unfalsifiable.
-
-**3. Wrong memory is pure cost.** `shuffled_facts` significantly raises the judge's
-out-of-character flag rate on both models (+0.067 / +0.074) while giving no recall
-benefit. On both measured axes, a memory system that writes the wrong thing is worse than
-no memory system at all. The engineering reading: extraction precision matters more than
-extraction coverage.
-
-**4. What is detectable about the recall/consistency trade-off differs by model.** On
-Llama I could not detect an out-of-character cost for either retrieval scheme (+0.006 /
-+0.008, both n.s.); on Qwen both are significantly worse (+0.067 / +0.045) and cannot be
-told apart from each other. Every one of the 144 comparisons is *within* a model — the
-families are model × metric — so I did not test the model × scheme interaction. This is
-therefore a difference in what each model's data can resolve, not a demonstrated
-difference in effect. Even so, it is enough to stop anyone reading a single-model
-consistency result as a property of the memory architecture.
-
-`raw_context` — simply pasting recent history, the default in many deployments — is the
-worst of the four real memory schemes on every axis: no significant recall gain, the
-largest out-of-character cost among them, and the largest context bill. (The
-`shuffled_facts` control is worse still on Llama, at +0.067 against `raw_context`'s
-+0.048, which is the point of having it.)
-
-`fact_consistency`, `fact_consistency_late` and `leakage_rate` produced 72 comparisons
-between them, none significant after correction. The two fact-consistency metrics sit at a
-0.98–1.00 ceiling and `leakage_rate` near a floor of 0, so none of them discriminates at
-this sample size and no conclusion should be drawn from them.
-
-## 5. Localizing the failure
-
-The useful part of this project is not the table above but the procedure that explains it.
-
-### 5.1 Answer-in-context × answered-correctly
-
-For every probe, check whether the gold answer literally appears in the memory text that
-was injected at that turn, and cross it with whether the model answered correctly
-(`src/eval/probe_diagnosis.py`, full table in
-[`docs/PROBE_DIAGNOSIS_V2.txt`](./docs/PROBE_DIAGNOSIS_V2.txt)).
-
-| Model | Scheme | Answer in context | in·correct | in·wrong | not in·correct | not in·wrong |
-|---|---|---|---|---|---|---|
-| Llama | `no_memory` | 0.0% | 0 | 0 | 3 | 68 |
-| Llama | `shuffled_facts` | 0.0% | 0 | 0 | 4 | 67 |
-| Llama | `raw_context` | 22.5% | 5 | 11 | 4 | 51 |
-| Llama | `structured_memory` | 19.7% | 6 | 8 | 7 | 50 |
-| Llama | `structured_hybrid` | 39.4% | 16 | 12 | 8 | 35 |
-| Llama | `vector_memory` | 62.0% | 22 | 22 | 3 | 24 |
-| Qwen | `no_memory` | 0.0% | 0 | 0 | 5 | 66 |
-| Qwen | `shuffled_facts` | 0.0% | 0 | 0 | 1 | 70 |
-| Qwen | `raw_context` | 16.9% | 4 | 8 | 5 | 54 |
-| Qwen | `structured_memory` | 23.9% | 6 | 11 | 5 | 49 |
-| Qwen | `structured_hybrid` | 45.1% | 21 | 11 | 2 | 37 |
-| Qwen | `vector_memory` | 62.0% | 23 | 21 | 1 | 26 |
-
-Both controls score exactly 0.0%, which is a sanity check on the matcher rather than a
-finding.
-
-This table assigns blame to a stage. A low hit rate means the write or retrieve stage
-failed. A large `in·wrong` cell means generation failed — the memory was correct and the
-model did not use it, which no retrieval change will fix.
-
-Note that `structured_hybrid` lands within noise of `vector_memory`'s accuracy while
-containing the answer only 39–45% of the time against 62%. Conditional on the answer being
-present, it converts a hit into a correct answer more often: 16/28 and 21/32 against 22/44
-and 23/44. That is a hypothesis, not a result — no test was run on the difference, and
-nothing here measures per-retrieved-item utility, since the schemes inject different
-numbers of items by construction (8 facts + 8 events against top-5 turns).
-
-### 5.2 What was actually broken
-
-Reconstructing the event store per dialogue (`src/eval/inspect_extraction.py`) showed two
-independent faults:
-
-- **The extractor was writing about the wrong participant.** Only ~27% of extracted events
-  concerned the user; the rest recorded what the *character* did. Every probe asks about
-  something the *user* said. Rewriting the extraction prompt to prioritize user-stated
-  facts, corrections and commitments raised the user-event share to 56–61%.
-- **The retrieval budget evicted the answer.** Dialogues accumulate 17–22 events on
-  average in this run (`n_events_extracted` in `results_v2/summary.csv`; individual
-  dialogues reach 50+, and the pre-fix extractor produced ~43) against `max_events = 8`.
-  Selection was purely by recency, so early-turn information — exactly what the probes ask
-  about — was dropped. Switching to 4 recent + 4 by relevance cut "extracted but evicted"
-  from 37–41% to 17–18%.
-
-Provenance matters for those percentages, so to be explicit. The eviction figure is a
-within-run contrast between the two structured schemes, which share an extractor and
-differ only in retrieval. The user-event share is **not**: 56–61% comes from a separate
-three-scheme diagnostic run (`results_fix`, not committed), and the ~27% pre-fix baseline
-from an earlier run still, so that before/after is a cross-run comparison and is
-reproducible from nothing in this repository. Both are reported with that provenance in
-[`docs/RESULTS.md`](./docs/RESULTS.md) §3.5. Those raw outputs are not committed because
-`inspect_extraction.py` quotes user turns verbatim (§10); §9 has the command that
-regenerates them.
-
-The two fixes were deliberately shipped as *separate* schemes
-(`structured_memory` keeps recency, `structured_hybrid` adds relevance) so that one run
-separates their contributions rather than confounding them.
-
-### 5.3 Honest accounting of the fix
-
-The retrieval contribution is significant on Llama (+0.173 ✓) but not on Qwen after
-correction (+0.167, uncorrected p = 0.039, Holm p = 0.248). The effect sizes are nearly
-identical, so this is a power limitation rather than a sign the direction is wrong — but
-the claim "the retrieval fix works" is supported on one of two models, and is stated that
-way.
-
-The extraction-prompt contribution is weaker still as evidence: both structured schemes in
-this run use the new prompt, so its contribution can only be compared across runs, and
-run-to-run drift in this setup is real (see §7).
-
-## 6. Why this matters right now
-
-In October 2026, Character.AI — the company that defined the consumer role-play AI
-category this project studies — filed for Chapter 11 and entered a court-supervised sale
-(Character.AI, 2026). Its own announcement
-cites "significant legal, regulatory, and operational headwinds"; the filing points to
-high operating costs together with potential litigation-related liabilities and regulatory
-engagement, against what it describes as a large and engaged user base. Disney has entered
-a $20 million stalking-horse bid for part of the assets and offered jobs to at least 60
-employees (Ha, 2026). If no viable bid emerges, the platform shuts down.
-
-**My reading of it.** This was not a failure of role-play quality. Nobody argued the
-characters were insufficiently charming. The company ran out of room on cost and on
-liability for *what its characters did over long interactions* — the subject of lawsuits
-concerning harm to minors and of child-safety investigations. That is a measurement
-problem before it is a policy problem. This project does not measure harm or child safety —
-its metrics are user-fact recall and a persona-drift flag — so the overlap is narrower than
-it first sounds: both rely on the same kind of automatic judge reading long conversations,
-and that is the part I can say something about.
-
-Three results here bear on it directly.
-
-The instrument everyone would reach for to monitor character behaviour at scale is an LLM
-judge. In the one configuration I audited, mine flagged out-of-character turns with a
-precision I could only bound to 22–61% on 20 flagged items (§7) — and rewriting its prompt
-did not improve it. A metric that loose cannot support a safety claim or serve as a release
-gate as it stands. The transferable point is procedural: anyone proposing to govern
-companion-AI behaviour through automatic evaluation should estimate their evaluator's
-precision first, on their own judge and their own prompt, because mine was considerably
-worse than it looked.
-
-Memory correctness is not a product-polish question. Injecting *wrong* facts measurably
-raised the judge's out-of-character flag rate while buying no recall at all. A memory
-pipeline that writes confident errors is not merely less impressive — it moves the measured
-behaviour in the wrong direction.
-
-And what I could detect about consistency did not carry across two base models of the same
-size. That is weaker than a demonstrated interaction (§4.4), but it is already awkward for
-any compliance regime built around one-time certification of a system: the audit would have
-to be redone per base model to mean anything.
-
-I want to be careful about the claim I am *not* making: better evaluation would not have
-made Character.AI solvent, and nothing here speaks to the merits of the litigation. The
-narrower point is that the field built a large consumer product category on top of
-behavioural properties it could not measure reliably, and the measurement gap is still
-open. There is also a research-infrastructure footnote worth recording: this project runs on
-PIPPA, a dataset crowdsourced by role-play hobbyists rather than exported from any one
-company, and that kind of community-held corpus will outlive the platforms it grew up
-alongside — while the fate of live user data inside a bankruptcy sale is an open question
-of its own.
-
-## 7. Limitations
-
-Read these before quoting any number above.
-
-- **`ooc_rate` is a judge flag rate, not a true out-of-character rate.** Auditing 20
-  flagged and 20 unflagged turns gave 8/20 = 40% precision (95% CI 22–61%) and a 1/20 miss
-  rate ([`docs/JUDGE_AUDIT.md`](./docs/JUDGE_AUDIT.md)). A prompt revision written against
-  those same 40 items did not improve precision. Absolute OOC values are therefore
-  inflated, and between-scheme comparisons are the only ones I would quote.
-- **The audit's labels were produced by an LLM annotator, not by me.** This is the weakest
-  link in the document and I would rather state it than bury it: the reference labels for
-  those 40 items come from Claude, so "40% precision" is agreement with a single
-  non-human labeller on a deliberately boundary-heavy sample. My own independent
-  labelling of the same 40 items, and Cohen's (1960) κ against it, are still outstanding
-  ([`docs/JUDGE_AUDIT.md`](./docs/JUDGE_AUDIT.md), 待补).
-- **The audit measured a different judge configuration from the results above.** It
-  re-judged Qwen-7B outputs from the earlier seeded runs using OOC prompt V1 with
-  `judge_repeats = 1`, whereas §4 was produced with prompt V2 and a 3-vote majority
-  (`configs/experiment.yaml`). The precision of the configuration that generated §4's
-  numbers has not been estimated. The flag rate differs too — 7.0% in the audited sample
-  against 0.113–0.291 for Qwen in §4.1.
-- **Between-scheme OOC comparisons assume the judge's false positives are independent of
-  the memory scheme, and that was not verified.** The audit was not stratified by scheme,
-  and the raw false-positive counts it does report are not flat (raw 6, vector 4,
-  structured 2 — too few to test).
-- **The judge also failed to parse on a small number of turns**: 24 `n_judge_fail_fact`
-  and 2 `n_judge_fail_ooc` across all 564 runs. Small relative to 13,272 turns, but
-  recorded here rather than left in the CSV.
-- **One run, no seed repeats.** Seeded repeats of this same v2 pipeline (`results_seed1`,
-  `results_seed2`, not committed) showed absolute levels drift between runs —
-  vector-memory probe accuracy moved between 0.33 and 0.55 — while between-scheme
-  differences stayed stable. The confidence intervals here cover between-dialogue
-  variation only, not run-to-run variation.
-- **Probe quality was not systematically cleaned.** Manual sampling found roughly a
-  quarter with flipped attribution (the user asks "isn't *your* hair red?" and the gold
-  answer is recorded as the user's hair) or answers too short to be informative. This
-  noise applies equally to all schemes but depresses every absolute accuracy.
-- **Answer-in-context is a lower bound**, measured by substring and content-word matching,
-  so semantically equivalent paraphrases are missed.
-- **47 dialogues, 71 probes, two 7–8B models, one judge.** This is a pilot. Nothing here
-  is a claim about frontier models or about production systems.
-- **`fact_consistency`, `fact_consistency_late` and `leakage_rate` are uninformative at
-  this scale** (§4.4). `relationship_accuracy` was never implemented and ships blank.
-
-## 8. Related work on structured and graph memory
-
-The structure-versus-flat-retrieval question is open, and recent preprints point both
-ways, which is part of why the controls in §2 matter. The architectural case for
-structured memory was set out early by MemGPT (Packer et al., 2023), which manages a
-paged, hierarchical context with self-directed memory edits; what that line of work
-largely leaves untested is whether the structure pays off against a budget-matched flat
-retrieval baseline, which is the comparison run here. Zhou and Han (2025) build an
-event-centric heterogeneous graph over discourse units and report strong LoCoMo and
-LongMemEval results with much shorter QA contexts. Sun (2026) runs the closest analogue to
-the comparison here — entity-linked graph retrieval against a matched dense-only control —
-and finds improved evidence recall with no supported difference in answer F1. Rusu et al.
-(2026) add recency/frequency/centrality-based pruning and report that the graph did *not*
-beat a flat vector baseline at equal retrieval budget. The finding in §4.4 that a
-budget-matched structured scheme ties with dense retrieval sits consistently with that
-mixed picture. These three are arXiv preprints without peer review at the time of writing.
-
-## 9. Reproducing
-
-Every statistic in §4 can be recomputed from the committed aggregate metrics, with no GPU:
-
-```bash
-pip install -r requirements.txt
-python run_tests.py                 # 62 unit tests, fake client, no GPU
-
-python src/eval/compare_schemes.py --csv results_v2/summary.csv --out docs/COMPARE_V2.txt
-python src/eval/report_tables.py --runs v2=results_v2/summary.csv --out docs/REPORT_TABLES_V2.txt
-```
-
-A full re-run needs 3×A100. Step-by-step instructions for a generic SLURM cluster,
-including the traps hit along the way, are in
-[`docs/CLUSTER_GUIDE.md`](./docs/CLUSTER_GUIDE.md); set `MODELS_DIR` and `CLUSTER_MODULES`
-for your site first (§0 there):
-
-```bash
-sbatch --export=ALL,EXTRA_ARGS="--out-dir results_v2" slurm/run_eval.slurm   # ~105 min
-```
-
-The diagnostic scripts in §5 need `results_v2/raw_outputs/`, which is not committed (see
-§10); regenerate it with the command above, then:
-
-```bash
-python src/eval/probe_diagnosis.py \
-    --raw-dirs results_v2/raw_outputs --dialogues data/processed/dialogues.jsonl \
-    --probe-csv results_v2/probe_results.csv --out docs/PROBE_DIAGNOSIS_V2.txt
-
-python src/eval/inspect_extraction.py \
-    --raw-dirs results_v2/raw_outputs --dialogues data/processed/dialogues.jsonl \
-    --scheme structured_hybrid --samples 12 --out docs/EXTRACTION_AUDIT.txt
-```
-
-## 10. Repository layout and data policy
+| SFT (context distillation) | imitate the teacher's filtered replies | trained (val loss 0.66 → 0.38) |
+| DPO | teacher reply ≻ base reply for the same prompt | queued |
+| On-policy distillation | the student samples; the same model with the adapter off, given the harness prompt, scores every token (reverse KL) | trained (val KL ≈ 0.145 → 0.060) |
+
+The main metric is the share of the teacher–base gap that the student closes on held-out characters. The guardrails are compatible-claim acceptance and
+naturalness. Run log: [`lifelikebench/runs/train_v1/SUMMARY.md`](lifelikebench/runs/train_v1/SUMMARY.md).
+
+## What carried over from stage 1 to stage 2
+
+| Stage 1 lesson | Stage 2 design |
+|---|---|
+| A single in-family judge with about 40% precision | Two judges from different families with structured output; blind annotation; per-dimension reliability reported |
+| Memory reached the context but was unused | Probes that test the *use* of correct memory; placement and alert ablations |
+| The fact list duplicated the character card | Memory tagged with provenance; user-added canon is separated from claims |
+| PIPPA text cannot be redistributed | Original bilingual characters, so transcripts can be released ([`runs/`](lifelikebench/runs/)) |
+| Silent failures produced plausible numbers | Phase-based, resumable runs; GPU-free tests; smoke jobs |
+
+## Repository layout
 
 ```
-configs/experiment.yaml        models, per-scheme parameters, judge, probe and audit settings
-docs/                          RESULTS, EXPERIMENT_V2 (design), JUDGE_AUDIT, DATASET, CLUSTER_GUIDE
-                               COMPARE_V2.txt, PROBE_DIAGNOSIS_V2.txt (raw statistical output)
-slurm/                         fact extraction, full matrix, multi-seed, judge audit/regression jobs
-src/ontology_extraction/       GOLEM-aligned character-fact extraction, 8 prompts
-src/memory/                    BaseMemory + four schemes + two controls
-src/generate/                  build_dialogues.py, make_probes.py, dialogue_runner.py
-src/eval/                      metrics, judge prompts, entry point, paired comparison, diagnostics
-tests/                         62 unit tests
-results_v2/summary.csv         aggregate per-dialogue metrics; contains no dialogue text
+stage1_memory_schemes/   memory-scheme comparison on PIPPA (scripts, docs, summary results; no dialogue text)
+lifelikebench/           benchmark, harness, distillation (installable package)
+  runs/                  released results: claims_v1, local_v0 (transcripts + judgments), train_v1 summary
+  annotation/            blind annotation round 1, guidelines, agreement analysis
 ```
 
-**What is deliberately not here.** PIPPA is real human–chatbot conversation data and its
-dataset card flags sensitive and adult content. This repository distributes **no dialogue
-text, no raw model generations, no probe text and no annotation sheets** — only
-`results_v2/summary.csv`, which is numeric. The manual-inspection outputs of
-`inspect_extraction.py` quote user turns verbatim and are git-ignored for that reason.
-Follow [`docs/DATASET.md`](./docs/DATASET.md) to obtain PIPPA yourself and regenerate
-everything downstream.
+Each stage has its own README, tests and SLURM scripts (`python run_tests.py` in stage 1; `python -m pytest tests/` in `lifelikebench/`).
 
-## 11. References
+## Status and next steps
 
-Character.AI. (2026, October 12). *An update on Character.ai*. https://blog.character.ai/an-update-on-character-ai/
+- [ ] Held-out evaluation of the SFT / DPO / OPD students (queued on the cluster)
+- [ ] Human annotation round, and a two-axis rubric for mixed replies (final stance + whether a detail was invented)
+- [ ] Persona minimal pairs; harder compatible claims; pairwise affect judgments
+- [ ] GRPO with a judge-derived reward; a pure self-distillation ablation (8B as its own extractor)
 
-Cohen, J. (1960). A coefficient of agreement for nominal scales. *Educational and Psychological Measurement, 20*(1), 37–46. https://doi.org/10.1177/001316446002000104
+## Author and citation
 
-Gosling, T., Dale, A., & Zheng, Y. (2023). *PIPPA: A partially synthetic conversational dataset* (arXiv:2308.05884). arXiv. https://arxiv.org/abs/2308.05884
-
-Ha, A. (2026, October 18). Disney agrees to hire the majority of Character AI's workforce. *TechCrunch*. https://techcrunch.com/2026/10/18/disney-agrees-to-hire-the-majority-of-character-ais-workforce/
-
-Holm, S. (1979). A simple sequentially rejective multiple test procedure. *Scandinavian Journal of Statistics, 6*(2), 65–70.
-
-Maharana, A., Lee, D.-H., Tulyakov, S., Bansal, M., Barbieri, F., & Fang, Y. (2024). Evaluating very long-term conversational memory of LLM agents. In *Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)* (pp. 13851–13870). Association for Computational Linguistics. https://doi.org/10.18653/v1/2024.acl-long.747
-
-Packer, C., Wooders, S., Lin, K., Fang, V., Patil, S. G., Stoica, I., & Gonzalez, J. E. (2023). *MemGPT: Towards LLMs as operating systems* (arXiv:2310.08560). arXiv. https://arxiv.org/abs/2310.08560
-
-Pianzola, F., Cheng, L., Pannach, F., Yang, X., & Scotti, L. (2025). The GOLEM ontology for narrative and fiction. *Humanities, 14*(10), 193. https://doi.org/10.3390/h14100193
-
-Reimers, N., & Gurevych, I. (2019). Sentence-BERT: Sentence embeddings using Siamese BERT-networks. In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)* (pp. 3982–3992). Association for Computational Linguistics. https://doi.org/10.18653/v1/D19-1410
-
-Rusu, T., Khanzadeh, S., & Alalfi, M. (2026). *Selective forgetting: A graph-based memory framework for long-term LLM agents* (arXiv:2608.28978). arXiv. https://arxiv.org/abs/2608.28978
-
-Sun, S. (2026). *Entity-memory graph retrieval improves evidence coverage in long-conversation question answering* (arXiv:2608.27925). arXiv. https://arxiv.org/abs/2608.27925
-
-Tu, Q., Fan, S., Tian, Z., Shen, T., Shang, S., Gao, X., & Yan, R. (2024). CharacterEval: A Chinese benchmark for role-playing conversational agent evaluation. In *Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)* (pp. 11836–11850). Association for Computational Linguistics. https://doi.org/10.18653/v1/2024.acl-long.638
-
-Wang, N., Peng, Z. Y., Que, H., Liu, J., Zhou, W., Wu, Y., Guo, H., Gan, R., Ni, Z., Yang, J., Zhang, M., Zhang, Z., Ouyang, W., Xu, K., Huang, W., Fu, J., & Peng, J. (2024). RoleLLM: Benchmarking, eliciting, and enhancing role-playing abilities of large language models. In *Findings of the Association for Computational Linguistics: ACL 2024* (pp. 14743–14777). Association for Computational Linguistics. https://doi.org/10.18653/v1/2024.findings-acl.878
-
-Wang, X., Xiao, Y., Huang, J.-t., Yuan, S., Xu, R., Guo, H., Tu, Q., Fei, Y., Leng, Z., Wang, W., Chen, J., Li, C., & Xiao, Y. (2024). InCharacter: Evaluating personality fidelity in role-playing agents through psychological interviews. In *Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)* (pp. 1840–1873). Association for Computational Linguistics. https://doi.org/10.18653/v1/2024.acl-long.102
-
-Wu, D., Wang, H., Yu, W., Zhang, Y., Chang, K.-W., & Yu, D. (2025). LongMemEval: Benchmarking chat assistants on long-term interactive memory. In *The Thirteenth International Conference on Learning Representations*.
-
-Zheng, L., Chiang, W.-L., Sheng, Y., Zhuang, S., Wu, Z., Zhuang, Y., Lin, Z., Li, Z., Li, D., Xing, E. P., Zhang, H., Gonzalez, J. E., & Stoica, I. (2023). Judging LLM-as-a-judge with MT-Bench and Chatbot Arena. In *Advances in Neural Information Processing Systems 36* (pp. 46595–46623). Curran Associates.
-
-Zhou, S., & Han, J. (2025). *A simple yet strong baseline for long-term conversational memory of LLM agents* (arXiv:2511.17208). arXiv. https://arxiv.org/abs/2511.17208
-
-## 12. License
-
-Code: MIT (see [`LICENSE`](./LICENSE)). PIPPA is Apache-2.0 and is not redistributed here.
+Xiaoyan Yang, PhD candidate in Computational Linguistics, University of Groningen (ERC project GOLEM). Code: MIT.
+The character representation follows the GOLEM ontology: Pianzola, F., Cheng, L., Pannach, F., Yang, X., & Scotti, L. (2025).
+The GOLEM Ontology for Narrative and Fiction. *Humanities*, 14(10), 193. https://doi.org/10.3390/h14100193

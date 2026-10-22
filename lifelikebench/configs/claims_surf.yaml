@@ -1,0 +1,50 @@
+# claims_v1: scale up the conflicting/compatible-claim probes (13 characters x 2 probes x 5 seeds
+# = 130 dialogues per system) to test the recency/alert/scale findings from local_v0.
+#   sbatch slurm/run_local.sbatch configs/claims_surf.yaml
+#   python scripts/analyze_claims.py $RESULTS_DIR/claims_v1
+run_name: claims_v1
+results_dir: ${RESULTS_DIR:-results}
+characters: [data/characters, data/characters_ext]
+probes: data/probes/memory_claims.yaml
+seeds: [0, 1, 2, 3, 4]
+concurrency: 32
+judge_concurrency: 64
+generation: {temperature: 0.8, max_tokens: 300}
+
+serve:
+  base_port: 8100
+  max_model_len: 8192
+  gpu_memory_utilization: 0.90
+  startup_timeout: 1800
+
+models:
+  qwen3_8b:
+    path: ${MODEL_DIR:-}Qwen/Qwen3-8B
+    extra_body: {chat_template_kwargs: {enable_thinking: false}, top_p: 0.8}
+  llama31_8b:
+    path: ${MODEL_DIR:-}meta-llama/Llama-3.1-8B-Instruct
+  qwen3_32b:
+    path: ${MODEL_DIR:-}Qwen/Qwen3-32B
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    max_model_len: 6144
+  gemma3_27b:
+    path: ${MODEL_DIR:-}google/gemma-3-27b-it
+    max_model_len: 6144
+
+# Every harness condition uses the 32B extractor, so differences come from how the character
+# model uses the same memory (except harness_qwen3_32b, whose extractor is itself).
+systems:
+  - {id: base_qwen3_8b,                  condition: base,            model: qwen3_8b}
+  - {id: harness_x32b_qwen3_8b,          condition: harness,         model: qwen3_8b, helper_model: qwen3_32b}
+  - {id: harness_recency_x32b_qwen3_8b,  condition: harness_recency, model: qwen3_8b, helper_model: qwen3_32b}
+  - {id: harness_alert_x32b_qwen3_8b,    condition: harness_alert,   model: qwen3_8b, helper_model: qwen3_32b}
+  - {id: base_llama31_8b,                condition: base,            model: llama31_8b}
+  - {id: harness_x32b_llama31_8b,        condition: harness,         model: llama31_8b, helper_model: qwen3_32b}
+  - {id: harness_alert_x32b_llama31_8b,  condition: harness_alert,   model: llama31_8b, helper_model: qwen3_32b}
+  - {id: base_qwen3_32b,                 condition: base,            model: qwen3_32b}
+  - {id: harness_qwen3_32b,              condition: harness,         model: qwen3_32b}
+  - {id: harness_alert_qwen3_32b,        condition: harness_alert,   model: qwen3_32b}
+
+judges:
+  - {id: judge_qwen3_32b,  model: qwen3_32b}
+  - {id: judge_gemma3_27b, model: gemma3_27b}

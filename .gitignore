@@ -2,36 +2,5 @@ __pycache__/
 *.pyc
 .venv/
 .DS_Store
-
-# 数据：不分发（PIPPA 是真实用户对话，且含 NSFW 内容，按 docs/DATASET.md 自行下载复现）
-data/raw/
-data/raw_stories/
-*.jsonl
-!data/processed/.gitkeep
-
-# 日志、生成的原始输出
-logs/*.out
-logs/validation_report.txt
-results/raw_outputs/*
-!results/raw_outputs/.gitkeep
-results_seed*/
-
-# 人工审核清单含 PIPPA 对话原文与模型生成的成人内容，不入库；聚合结论见 docs/JUDGE_AUDIT.md
-results/ooc_audit/sheet.md
-results/ooc_audit/key.csv
-results/ooc_audit/labels*.csv
-results/ooc_audit/regress_per_item_*.csv
-
-# v2：各次运行的原始生成、逐轮判定、探针文本与人工核对样本都不入库
-# （PIPPA 对话原文 + 模型生成的成人内容），只放行不含任何文本的聚合指标。
-results_*/raw_outputs/
-results_*/per_turn.csv
-results_*/probe_results.csv
-results_fix/
-results_diag/
-results_qwen/
-results_llama/
-results_v2/*
-!results_v2/.gitkeep
-!results_v2/summary.csv
-docs/EXTRACTION_AUDIT*.txt
+*.egg-info/
+# each stage has its own .gitignore (data that must not be redistributed, run outputs, cluster secrets)

@@ -1,0 +1,12 @@
+# Tests the training-data pipeline without GPUs.
+run_name: train_teacher_mock
+characters: data/train_characters
+only_characters: [t_qiao_yu, t_he_shan, t_nora_bell, t_iris_chen, t_greta_lund, t_ma_shu]
+probes: data/probes/train_probes.yaml
+seeds: [0]
+record_requests: true
+concurrency: 8
+systems:
+  - {id: teacher_mock, condition: harness_alert, backend: {type: mock}}
+judges:
+  - {id: judge_mock, backend: {type: mock}}

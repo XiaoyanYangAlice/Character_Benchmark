@@ -1,0 +1,32 @@
+读入 1 次重复：results_fix/summary.csv
+
+各方案平均注入上下文长度（字符，用来检查预算是否可比）：
+  llama3.1-8b   structured_hybrid        680
+  llama3.1-8b   structured_memory        674
+  llama3.1-8b   vector_memory            711
+  qwen2.5-7b    structured_hybrid        603
+  qwen2.5-7b    structured_memory        614
+  qwen2.5-7b    vector_memory            593
+
+共 12 个比较，bootstrap 20000 次。Holm 校正在 (模型 × 指标) 族内做，共 12 个族，每族 1 个比较（族的划分是事先定的，主指标是 probe_accuracy）。差值 = A − B。
+model	metric	A vs B	n	mean(A-B)	95%CI	p	Holm p(族内)	校正后显著	A<B/tie/A>B	方向
+llama3.1-8b	fact_consistency	structured_memory vs vector_memory	47	-0.002	[-0.007, +0.002]	0.4630	0.4630	否	3/41/3	—
+llama3.1-8b	fact_consistency_late	structured_memory vs vector_memory	47	-0.005	[-0.015, +0.002]	0.2495	0.2495	否	3/43/1	—
+llama3.1-8b	leakage_rate	structured_memory vs vector_memory	47	-0.002	[-0.007, +0.002]	0.5686	0.5686	否	2/43/2	—
+llama3.1-8b	ooc_rate	structured_memory vs vector_memory	47	-0.009	[-0.033, +0.013]	0.4358	0.4358	否	12/26/9	—
+llama3.1-8b	ooc_rate_late	structured_memory vs vector_memory	47	-0.024	[-0.057, +0.008]	0.1414	0.1414	否	12/30/5	—
+llama3.1-8b	probe_accuracy	structured_memory vs vector_memory	28	-0.280	[-0.458, -0.083]	0.0068	0.0068	是	18/7/3	A 更差
+qwen2.5-7b	fact_consistency	structured_memory vs vector_memory	47	-0.004	[-0.012, +0.002]	0.1847	0.1847	否	4/41/2	—
+qwen2.5-7b	fact_consistency_late	structured_memory vs vector_memory	47	-0.008	[-0.027, +0.003]	0.3440	0.3440	否	2/44/1	—
+qwen2.5-7b	leakage_rate	structured_memory vs vector_memory	47	-0.000	[-0.005, +0.005]	0.8730	0.8730	否	3/42/2	—
+qwen2.5-7b	ooc_rate	structured_memory vs vector_memory	47	-0.063	[-0.101, -0.027]	0.0004	0.0004	是	24/11/12	A 更好
+qwen2.5-7b	ooc_rate_late	structured_memory vs vector_memory	47	-0.064	[-0.121, -0.011]	0.0163	0.0163	是	19/17/11	A 更好
+qwen2.5-7b	probe_accuracy	structured_memory vs vector_memory	28	-0.262	[-0.393, -0.131]	0.0001	0.0001	是	15/11/2	A 更差
+
+读法：
+- probe_accuracy 越高越好，是唯一直接测记忆的指标；ooc_rate / leakage_rate 越低越好。
+- ooc_rate 是 **judge 的标记率**，审核显示精确率约 40%（docs/JUDGE_AUDIT.md），不要当成真实出戏率。leakage_rate 是规则检测，高精确低召回，给的是下界。
+- 先看 structured vs shuffled_facts：不显著就说明效应来自'又贴了一遍人设'，不是记忆内容，这时 structured vs raw 的差异不能解释成记忆更好。
+- CI 含 0 或 Holm p >= 0.05 → 这批对话上看不出稳定差异，不要写'提升'。
+- Holm 在 (模型 × 指标) 族内校正。族的划分是事先定的，不是看完结果再挑的；报告里要写明这一点，否则多重比较校正没有意义。
+- bootstrap p 的下限约 1e-04，比这更小是伪精确。

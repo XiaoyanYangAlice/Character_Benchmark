@@ -1,0 +1,17 @@
+# Off-policy context distillation baseline: LoRA-SFT the 8B student on the (filtered) replies of
+# the 8B + alert-harness teacher, with the harness removed from the prompt.
+#   sbatch slurm/train.sbatch sft configs/train_sft.yaml            (add --smoke for a 5-minute check)
+base_model: ${MODEL_DIR:-}Qwen/Qwen3-8B
+train_file: ${RESULTS_DIR:-results}/train_teacher_v1/data/sft_train.jsonl
+val_file: ${RESULTS_DIR:-results}/train_teacher_v1/data/sft_val.jsonl
+output_dir: ${RESULTS_DIR:-results}/train/student_sft
+seed: 0
+max_len: 4096
+epochs: 2
+grad_accum: 16          # one assistant turn per micro-batch -> effective batch 16 turns
+lr: 1.0e-4
+warmup_ratio: 0.05
+max_grad_norm: 1.0
+log_every: 10
+max_val_examples: 400
+lora: {r: 64, alpha: 128, dropout: 0.05}

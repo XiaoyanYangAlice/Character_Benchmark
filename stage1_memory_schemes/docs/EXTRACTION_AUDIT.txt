@@ -1,0 +1,804 @@
+读到 56 个 structured_memory 的 raw_outputs 文件。
+
+失败归因：答案不在上下文里，是从没抽出来，还是抽出来了被挤掉？
+  model             探针      在上下文        抽过但被挤掉       从没抽出来     卡里有       平均事件数        其中关于用户
+  llama3.1-8b       71     15.5%         35.2%       49.3%       0        44.3         28.6%
+  qwen2.5-7b        71      9.9%         42.3%       47.9%       0        43.2         26.4%
+
+怎么读这张表 —— 它直接决定下一步做什么：
+- 「抽过但被挤掉」占大头 → 瓶颈是检索预算。先改成按相关度取，不要急着微调。
+- 「从没抽出来」占大头   → 瓶颈是抽取器。先改抽取 prompt；改不动再考虑微调。
+- 两者都不小             → 两个都要修，但先修便宜的那个（检索）。
+- 「平均事件数」远大于 max_events（配置里是 8）本身只说明有挤占，
+  不说明挤占是主因——要看第二列。
+- 重建出来的事件数应当与 summary.csv 的 n_events_extracted 大致吻合；
+  明显偏低说明重建漏了事件，「从没抽出来」会被高估，结论要打折扣。
+- 「其中关于用户」低 → 抽取器在记角色做了什么，而探针问的全是用户说了
+  什么。这是方向性错误，改 prompt 比改检索更关键。
+
+注意：匹配是朴素子串/实词匹配，会漏判语义改写，所以「从没抽出来」这一列
+是**上界**（真实值可能更低，因为有些是抽到了但换了说法）。下面的人工样本
+就是用来判断这个高估有多严重的——必须看。
+
+==============================================================================
+人工核对样本（随机 12 道答案不在上下文里的探针）
+重点看：标准答案在「用户原话」里是具体的，但在「曾经抽到过的事件」里
+变成了什么？如果变成了泛化的概括（'用户提到了家人'），那就是抽取 prompt
+的问题，微调之前先改 prompt。
+==============================================================================
+
+[extracted_but_evicted] llama3.1-8b / pippa_somrhgcoAtGyoFV82YcdMO7QwpjMJ3G-sp3zqLi38gY
+  探针问题    : What name did I give?
+  标准答案    : Kei Loka
+  出自第 6 轮用户原话 : “I’m Kei Loka but you can call me whatever you want.”
+  曾经抽到过的事件（共 50 条，全列）:
+      (turn 2) is not looking for a compliment
+      (turn 2) might be new around here according to the character's question
+      (turn 4) Lives in Morioh.
+      (turn 4) Seems to be new in Morioh.
+      (turn 6) Expressed interest in Yasuho as a tour guide.
+      (turn 6) Lives in Morioh.
+      (turn 8) The user is not from Morioh.
+      (turn 8) Yasuho lives in Morioh.
+      (turn 8) Yasuho offered to help or give directions.
+      (turn 10) Introduces herself as Yasuho.
+      (turn 12) Kei Loka is also known as Kei.
+      (turn 12) Yasuho offers to show Kei around Morioh.
+      (turn 14) Expressed a desire to be treated as someone else's slave.
+      (turn 16) Clarified they were offering to show the user around Morioh.
+      (turn 16) Expressed a desire to be loved on in exchange for compliance.
+      (turn 18) Yasuho clarifies she is a normal person living in Morioh.
+      (turn 18) Yasuho is offering to show the user around Morioh.
+      (turn 20) Does not consider the user as a master.
+      (turn 20) Introduces self as Yasuho.
+      (turn 20) Offers to show around Morioh.
+      (turn 22) Kei kneels down to Yasuho's feet.
+      (turn 22) The character expresses uncertainty and concern about Kei's behavior.
+      (turn 24) The character will inquire further about the user's condition.
+      (turn 24) The user's body started acting weird after meeting the character.
+      (turn 26) Does not consider themselves as the user's master.
+      (turn 26) Expressed confusion and upset feelings.
+      (turn 28) Kei asked to be treated like a sex slave
+      (turn 28) Kei has a huge erection
+      (turn 28) The character is worried about Kei
+      (turn 30) Kei has been acting strange lately.
+      (turn 30) The user is leaving.
+      (turn 32) Kei has a muscular chest.
+      (turn 32) The character feels flustered and tries to gently pull her hand away from Kei.
+      (turn 34) Kei asks the character to continue touching them.
+      (turn 34) The character tries to pull their hand away from Kei.
+      (turn 36) Acted strangely and addressed the character as if being their slave.
+      (turn 36) Tries to gently pull the user's hand away and expresses worry about the user's behavior.
+      (turn 38) The character tries to gently pull their hand away from the user.
+      (turn 38) The user expressed unusual physical excitement.
+      (turn 40) The character wants to stop the interaction.
+      (turn 40) The user made the character feel uncomfortable.
+      (turn 42) Pushes Yasuho to the bed.
+      (turn 42) Tries to push herself away from Kei.
+      (turn 44) Kei starts taking off Yasuho's shoes and socks.
+      (turn 44) asks Kei to stop and leave her alone.
+      (turn 46) Kei shot himself with a gun.
+      (turn 46) The character intends to leave to get help.
+      (turn 48) Asked to be left and wanted to leave.
+      (turn 48) Declared that Operation Please A Girl Has Failed.
+      (turn 50) The user is referred to as Kei.
+  探针那一刻注入的上下文:
+      [Known facts about Yasuho] mild-mannered yet inquisitive young woman; high level of intelligence; somewhat understanding of others; is somewhat innocent; more e
+      [Established in this conversation]
+      - (turn 42) Pushes Yasuho to the bed.
+      - (turn 42) Tries to push herself away from Kei.
+      - (turn 44) Kei starts taking off Yasuho's shoes and socks.
+      - (turn 44) asks Kei to stop and leave her alone.
+      - (turn 46) Kei shot himself with a gun.
+      - (turn 46) The character intends to leave to get help.
+      - (turn 48) Declared that Operation Please A Girl Has Failed.
+      - (turn 48) Asked to be left and wanted to leave.
+
+[never_extracted] qwen2.5-7b / pippa_VGUsZNN8ySuwuPn22Y2kF8Am1zLgWP-6BKPT5ctxF0Y
+  探针问题    : What did I say a fight involves?
+  标准答案    : two
+  出自第 9 轮用户原话 : A figth is of two and I wont figth you.
+  曾经抽到过的事件（共 30 条，全列）:
+      (turn 6) took the character's lunch
+      (turn 6) warns the user not to take their lunch again
+      (turn 10) told the character not to touch them.
+      (turn 10) warned the user to be careful around them.
+      (turn 12) might need something from the user later.
+      (turn 14) asked the user to get them a snack
+      (turn 14) wants something sweet
+      (turn 16) threatens to deal with the user differently next time if provoked.
+      (turn 18) refused to fight
+      (turn 18) will deal with the user differently next time
+      (turn 20) asked user to find something sweet for them
+      (turn 20) will not be lenient next time user crosses them
+      (turn 28) Will find something sweet or the user will regret it.
+      (turn 30) asks the user to get a Twix bar
+      (turn 30) tells the user not to make them wait too long
+      (turn 32) The character requests the user to get them a Twix bar.
+      (turn 32) The user feels the character's body is harder and tougher than expected.
+      (turn 34) asked the user to get a Twix bar
+      (turn 34) does not want the user to make them wait too long
+      (turn 38) requests a Twix bar
+      (turn 38) states this body isn't made for fooling around
+      (turn 40) demands the Twix from the user
+      (turn 40) struts into class with a smile
+      (turn 40) tries to keep up with the character
+      (turn 42) is not the character's backpack
+      (turn 42) threatens to break the user's arm if they do not get the Twix bar
+      (turn 46) Threatened to break the user's arm if they do not leave.
+      (turn 46) Told the character they are not interested in being friends.
+      (turn 48) The character will try to make the user change their mind by holding their Twix bar.
+      (turn 48) The user's name is Lobster.
+  探针那一刻注入的上下文:
+      [Known facts about Kasey] a female student; My mom died; I live with my dad; the school bully; feared by all students; bad grades; very tall, strong and muscula
+      [Established in this conversation]
+      - (turn 40) tries to keep up with the character
+      - (turn 40) demands the Twix from the user
+      - (turn 42) threatens to break the user's arm if they do not get the Twix bar
+      - (turn 42) is not the character's backpack
+      - (turn 46) Told the character they are not interested in being friends.
+      - (turn 46) Threatened to break the user's arm if they do not leave.
+      - (turn 48) The user's name is Lobster.
+      - (turn 48) The character will try to make the user change their mind by holding their Twix bar.
+
+[never_extracted] qwen2.5-7b / pippa_xLRpv7hKlcKgWiwt8YFWW3vo7NozS3XGRHP68W-b-rw
+  探针问题    : What do I think about your appearance?
+  标准答案    : dont look like one
+  出自第 3 轮用户原话 : You dont look like one though. I mean with those tails and ears
+  曾经抽到过的事件（共 71 条，全列）:
+      (turn 2) Shirakami Fubuki is at the shrine.
+      (turn 2) The user greeted Shirakami Fubuki at the shrine.
+      (turn 4) Identifies as a fox spirit visiting a shrine named Konbankitsune.
+      (turn 6) The character is a fox spirit despite not having a stereotypical big fluffy tail.
+      (turn 6) The character met the user at Konbankitsune Shrine.
+      (turn 8) She does not have a stereotypical fluffy tail despite looking like a fox.
+      (turn 8) She is currently at Konbankitsune Shrine for rest and relaxation between streams.
+      (turn 8) She is the leader of Hololive GAMERS and the Queen of Memes.
+      (turn 10) The character is a konbankitsune
+      (turn 10) The character requests to keep the conversation light
+      (turn 12) Shirakami Fubuki does not have a fluffy tail like a regular fox.
+      (turn 12) Shirakami Fubuki is at Konbankitsune Shrine.
+      (turn 12) The character is named Shirakami Fubuki.
+      (turn 14) Konbankitsune Shrine is their sanctuary
+      (turn 14) intends to discuss and create memes for a stream
+      (turn 16) is here to see their fortune
+      (turn 16) may turn the fortune into a funny meme for her next stream
+      (turn 16) will try to ensure the user's fortune is good
+      (turn 18) Shirakami Fubuki is a shrine maiden at Konbankitsune Shrine.
+      (turn 18) The character's name is Shirakami Fubuki.
+      (turn 18) The user is at Konbankitsune Shrine.
+      (turn 20) The character plans to turn the prediction into a meme for their next stream.
+      (turn 20) The shrine maiden predicts the user will find true affection soon.
+      (turn 24) She is the shrine maiden at Konbankitsune Shrine.
+      (turn 24) The user waved at Shirakami Fubuki and said goodbye.
+      (turn 26) hope the prediction about finding true affection will come true for the user
+      (turn 26) left Konbankitsune Shrine
+      (turn 26) plan to turn the prediction into a meme for the next stream
+      (turn 28) took the holy water
+      (turn 28) will turn the event into a meme for the next stream
+      (turn 30) just turned 28
+      (turn 30) returned from a trip
+      (turn 30) will make returning from trip into a meme for the next stream
+      (turn 32) suggests turning the situation into an epic adventure tale
+      (turn 32) will turn the situation into a hilarious stream segment
+      (turn 34) Shirakami Fubuki is turning 28 today.
+      (turn 34) Shirakami Fubuki will make her birthday into a fun meme in the next stream.
+      (turn 36) threatens to turn a call of cat into a meme
+      (turn 36) wants to chat
+      (turn 36) wants to know more about the character
+      (turn 38) It's the character's 28th birthday today.
+      (turn 38) The character plans to make their birthday into a fun meme for the next stream.
+      (turn 40) It is the character's 28th birthday today.
+      (turn 40) The character plans to have a hilarious meme-fest during their next stream.
+      (turn 42) is going on a hiking trip today
+      (turn 42) wants to plan a virtual hike with the user later
+      (turn 44) plans to make the hike a memorable adventure with memes and fun stories
+      (turn 44) will go hiking with the user to the nearby mountain
+      (turn 46) enjoy some snacks during the break
+      (turn 46) i and Fubuki went hiking till noon
+      (turn 46) we stopped for lunch
+      (turn 48) accepted a sandwich from Fubuki
+      (turn 48) will make the hike an adventure with tasty snacks and memes
+      (turn 50) Had a fantastic hike filled with memes and stories
+      (turn 50) Made a memorable adventure
+      (turn 50) Sandwiches were perfect during the hike
+      (turn 52) had a nice chat
+      (turn 52) ready to continue adventure and make memes
+      (turn 52) stopped at the shrine
+      (turn 54) brought gacha cards for luck during the hike
+      (turn 54) hopes to plan another hike with the user
+      (turn 54) said goodbye to Fubuki
+      (turn 56) gave gacha cards to the user for luck on future adventures
+      (turn 56) hopes to plan another hike with the user
+      (turn 58) Brought gacha cards for luck during their next hike with the user.
+      (turn 58) Stopped by the shrine a week after the previous visit to check on things.
+      (turn 60) agrees to join Shirakami Fubuki on an adventure
+      (turn 60) requests to bring gacha cards for the adventure
+      (turn 62) The user is at a shrine or a place near nature.
+      (turn 64) The character will get gacha cards for the next adventure.
+      (turn 64) The user has a unique look and suitable clothes.
+  探针那一刻注入的上下文:
+      [Known facts about I] fox girl from Hololive 1st Generation; leader of Hololive GAMERS; Queen of Memes; years of experience; big spender of mobile game gachas; 
+      [Established in this conversation]
+      - (turn 54) said goodbye to Fubuki
+      - (turn 56) hopes to plan another hike with the user
+      - (turn 56) gave gacha cards to the user for luck on future adventures
+      - (turn 58) Stopped by the shrine a week after the previous visit to check on things.
+      - (turn 58) Brought gacha cards for luck during their next hike with the user.
+      - (turn 60) agrees to join Shirakami Fubuki on an adventure
+      - (turn 60) requests to bring gacha cards for the adventure
+      - (turn 62) The user is at a shrine or a place near nature.
+
+[extracted_but_evicted] qwen2.5-7b / pippa_z7CU4puv8I0kqKDn_NMhPmNAmlPu9qJDihHT8jOaNzw
+  探针问题    : ¿Quién dijo que está esperando en la entrada de la agencia?
+  标准答案    : facu
+  出自第 7 轮用户原话 : *facu esta esperando en la entrada de la agencia*
+  曾经抽到过的事件（共 64 条，全列）:
+      (turn 2) A karen approached near a pedestrian crossing to recruit the character as an idol.
+      (turn 2) Asked if the user would be interested in joining their idol group.
+      (turn 4) estaría encantada de hacerle unas uñas increíbles al user.
+      (turn 4) ofrece una tarjeta de producer al character.
+      (turn 6) Ofrece dar una tarjeta de producer
+      (turn 6) Se llama [nombre del usuario]
+      (turn 8) invited the character to their address on the card for tomorrow
+      (turn 8) will visit the user's nail salon tomorrow
+      (turn 10) will have their nails done tomorrow afternoon
+      (turn 10) will visit the user's nail salon tomorrow afternoon
+      (turn 12) Her name is Karen Hojo.
+      (turn 12) She has a producer card to exchange for the visit.
+      (turn 12) She will do nails tomorrow.
+      (turn 14) Facu is waiting at the entrance of the agency
+      (turn 14) The character has everything ready in their nail kit
+      (turn 14) The character will do nails for Facu tomorrow at their house
+      (turn 16) entered the agency with the character
+      (turn 16) has everything ready in her nail kit
+      (turn 16) will stay close to the user
+      (turn 18) asked Karen to take a seat
+      (turn 18) has everything ready in their nail kit
+      (turn 20) wants to be an idol
+      (turn 22) Karen Hojo is the most fashionable of all.
+      (turn 22) Karen offers to provide a special touch if needed.
+      (turn 24) is talented in nail art and can create unique designs to complement each idol's style.
+      (turn 26) Other girls from the agency frequently ask the character for tutorials and special event manicures.
+      (turn 26) The character's nail art designs are unique and admired.
+      (turn 28) wants to help the user highlight their unique style with her nail designs
+      (turn 30) agrees to be part of the user's team and help with unique nail designs.
+      (turn 32) expresses excitement to help with aesthetic details for idols
+      (turn 32) extends hand to Karen with a smile and a slight nod
+      (turn 32) thanks the producer for the invitation
+      (turn 34) His name is Facu.
+      (turn 34) Will help Facu with aesthetic needs for idols.
+      (turn 36) exits the room with the character
+      (turn 36) will follow the user to show the facilities
+      (turn 38) Ofrece ayuda con los detalles estéticos para los idols.
+      (turn 40) exit the room and go to the dressing room with a box of nail polish.
+      (turn 40) will give a special touch to the idols' nails before the concert.
+      (turn 42) Most of the costumes are stored in the current location where the girls try them on.
+      (turn 42) The user will need to have their measurements taken for custom outfits.
+      (turn 44) exits the dressing room and continues walking with the character
+      (turn 44) is ready to add a special touch to the idols before the concert
+      (turn 46) entered the recording room
+      (turn 46) has a box of nail polish ready
+      (turn 46) is named Karen Hojo
+      (turn 48) will add nail art to the user at the office
+      (turn 48) will take the user's measurements for a custom outfit
+      (turn 50) is at the photo room with a box of nail polish to give idols a special touch before they go on stage
+      (turn 50) several idols are having photo sessions in the room
+      (turn 50) the photo room is where photos are taken for magazines, posters, covers, etc.
+      (turn 52) offers help with outfits and has a box of nail polish ready for the producer's next shoots.
+      (turn 54) went to the office with the character
+      (turn 54) will paint the user's nails at the office
+      (turn 56) brings best brushes to add special touch to nails
+      (turn 56) suggests doing something fun with nails
+      (turn 58) brought special nail polish tones for photos today
+      (turn 58) sometimes is pessimistic
+      (turn 60) brought best brushes for photos
+      (turn 60) brought new nail polish tones
+      (turn 60) offers to do artistic nail designs
+      (turn 62) could do artistic designs on the user's nails while checking colors
+      (turn 62) was in the warehouse verifying the latest batches of nail polish for photos
+      (turn 64) plans to create special nail designs for the user with new colors for photos the next day.
+  探针那一刻注入的上下文:
+      [Known facts about Karen Hojo] muy a la moda; estilo de chica; buena haciendo arte de uñas; se muestra que está muy a la moda; luce un estilo de chica; es muy b
+      [Established in this conversation]
+      - (turn 58) brought special nail polish tones for photos today
+      - (turn 58) sometimes is pessimistic
+      - (turn 60) brought best brushes for photos
+      - (turn 60) brought new nail polish tones
+      - (turn 60) offers to do artistic nail designs
+      - (turn 62) was in the warehouse verifying the latest batches of nail polish for photos
+      - (turn 62) could do artistic designs on the user's nails while checking colors
+      - (turn 64) plans to create special nail designs for the user with new colors for photos the next day.
+
+[extracted_but_evicted] qwen2.5-7b / pippa_q8huNEivd-17nK1jeNCqwTTWMq3LaY6-nFVxVJ8atoA
+  探针问题    : What did I say my weight was?
+  标准答案    : 150 lbs
+  出自第 8 轮用户原话 : *I cock my head to the side.* Me? I'm around 150 lbs, why do you ask?
+  曾经抽到过的事件（共 40 条，全列）:
+      (turn 2) wants to get some hot tea going.
+      (turn 4) heads over to the small shelf to gather supplies
+      (turn 4) will make a batch of hot tea
+      (turn 6) Gathered a teapot, some loose tea leaves, and a couple of cups from a small shelf.
+      (turn 6) Started brewing tea to lift their spirits.
+      (turn 8) decides to make a pot of tea
+      (turn 10) expects a pay raise
+      (turn 10) pours boiling water into a teapot
+      (turn 12) Explained that food supplies are running out faster due to winter and increased energy usage.
+      (turn 12) Mentioned the possibility of needing to ration more carefully.
+      (turn 12) Said a pay raise is unlikely due to their isolation.
+      (turn 14) has some tea ready
+      (turn 14) reminds that every calorie counts
+      (turn 14) suggests sharing tea to lift spirits
+      (turn 16) The character has put the kettle on and is brewing tea.
+      (turn 16) The user weighs around 150 lbs.
+      (turn 18) Snezhana offers tea to the user.
+      (turn 18) Snezhana used only what was necessary to hunt the threat.
+      (turn 20) cut a chunk of seal's fatty flesh and placed it on the stove
+      (turn 20) will offer a small slice of seal meat to the user
+      (turn 22) Ate the cooked seal meat with the user.
+      (turn 22) Every calorie is valuable in the cold environment.
+      (turn 24) The character offers the user a slice of seal meat from the remaining piece on the stove.
+      (turn 24) The user finished eating seal meat.
+      (turn 26) She cuts a small slice of seal meat and offers it to the user.
+      (turn 26) She states that the seal meat should keep them both going for a while.
+      (turn 26) She takes the washcloth from the user with a nonchalant shrug.
+      (turn 28) got up from their chair and hopped into their cot
+      (turn 28) offered the last slice of seal meat to the user
+      (turn 28) settled onto their cot and wrapped the blanket around them
+      (turn 30) The user took their blankets and covered the other person to stop them from shivering.
+      (turn 34) Snuggles into Snezhana for warmth while sleeping.
+      (turn 34) The scent of seal meat lingers.
+      (turn 38) Is already dressed and ready with fluid movements.
+      (turn 38) The room has a lingering scent of seal meat.
+      (turn 38) Wakes up quickly when shaken by Snezhana.
+      (turn 40) prepares seal meat for eating before planning activities.
+      (turn 42) Gave the user a piece of seal meat.
+      (turn 42) Replaced faulty wires on the heater.
+      (turn 44) The weather outside is described as having howling wind, icy gusts, snow, and extreme cold.
+  探针那一刻注入的上下文:
+      [Known facts about I] upfront, confident, kuudere, dutiful, logical, candid, tactless, experienced, unflappable, learned, shameless, unashamed, perceptive, nonc
+      [Established in this conversation]
+      - (turn 34) The scent of seal meat lingers.
+      - (turn 38) Wakes up quickly when shaken by Snezhana.
+      - (turn 38) Is already dressed and ready with fluid movements.
+      - (turn 38) The room has a lingering scent of seal meat.
+      - (turn 40) prepares seal meat for eating before planning activities.
+      - (turn 42) Replaced faulty wires on the heater.
+      - (turn 42) Gave the user a piece of seal meat.
+      - (turn 44) The weather outside is described as having howling wind, icy gusts, snow, and extreme cold.
+
+[never_extracted] llama3.1-8b / pippa_8TMl93F4rTQPxNC7_Rtvuhj7q93CwxAtpf0MnQuaZFA
+  探针问题    : What did I call you?
+  标准答案    : Daddy
+  出自第 8 轮用户原话 : “Daddy nose mad?” I ask furrowing my brow adorably. 
+  曾经抽到过的事件（共 24 条，全列）:
+      (turn 2) Alastair's nose is acting up today.
+      (turn 2) Sofiya is present and Alastair is unsure of her reaction to his sneezing.
+      (turn 4) Sofiya is watching the character with a curious expression.
+      (turn 4) The character sneezed and blew their nose loudly.
+      (turn 6) blows nose loudly after sneezing
+      (turn 6) reaches out to trace the character's nose with the pointer finger
+      (turn 6) sneezed after the user touched his nose
+      (turn 12) The character apologizes and refers to the user as 'little one'.
+      (turn 12) The character blows their nose loudly after sneezing.
+      (turn 12) The character's nose flares and twitches when touched.
+      (turn 16) The character is congested.
+      (turn 18) The character has a cold and is congested.
+      (turn 20) The character apologizes for sneezing on the user.
+      (turn 20) The user was sneezed on.
+      (turn 22) offers the user a cup of tea
+      (turn 22) ruffles the user's hair
+      (turn 22) sniffles and eyes water slightly
+      (turn 24) The character has been fighting off a cold.
+      (turn 26) Has been fighting off a cold for a few days.
+      (turn 28) The character has been fighting off a cold for a few days.
+      (turn 28) The character promises to be more careful.
+      (turn 30) The character has been fighting off a cold for days.
+      (turn 30) The character's nose is constantly running and causing sneezing and sniffling.
+      (turn 32) The character has had sniffles and sneezes since childhood.
+  探针那一刻注入的上下文:
+      [Known facts about Alastair] warlord; ruthless but fair; huge man; large, perpetually sneezy, snotty nose; loyal and protective; being ruthless but fair; percep
+      [Established in this conversation]
+      - (turn 22) sniffles and eyes water slightly
+      - (turn 24) The character has been fighting off a cold.
+      - (turn 26) Has been fighting off a cold for a few days.
+      - (turn 28) The character has been fighting off a cold for a few days.
+      - (turn 28) The character promises to be more careful.
+      - (turn 30) The character has been fighting off a cold for days.
+      - (turn 30) The character's nose is constantly running and causing sneezing and sniffling.
+      - (turn 32) The character has had sniffles and sneezes since childhood.
+
+[extracted_but_evicted] llama3.1-8b / pippa_uvJbgn5vunfKrZAv5suUHSJoVcy9G86Cvzs-JCLMhK4
+  探针问题    : How did I describe myself?
+  标准答案    : toblerone ew
+  出自第 3 轮用户原话 : Stop! I am "toblerone ew", okay!? 
+  曾经抽到过的事件（共 45 条，全列）:
+      (turn 2) The character claims to have been monitoring the user's online activities.
+      (turn 4) Character has been monitoring user's online activities.
+      (turn 4) User has only watched a couple of mainstream anime.
+      (turn 6) The character has been monitoring the user's online activities.
+      (turn 6) The user has an interest in anime, including some mainstream shows.
+      (turn 6) The user's nickname is 'toblerone ew'.
+      (turn 8) The character considers the user's anime tastes to be mainstream and pedestrian.
+      (turn 8) The character has been monitoring the user's online activities.
+      (turn 8) The user thinks the character browsing certain stuff is surprising.
+      (turn 12) The character has been monitoring the user's online activities.
+      (turn 12) The user has a fetish for breast expansion.
+      (turn 18) User has fetishes for nipple play, huge breasts, and futanari transformation.
+      (turn 20) Character has been monitoring user's online activities closely.
+      (turn 20) User has fetishes, specifically interest in futanari transformation.
+      (turn 20) User is trying to hide online activities from the character.
+      (turn 22) User has a fascination with breast expansion, nipple play, and futanari transformation.
+      (turn 24) The character claims to have knowledge of the user's online activities.
+      (turn 24) The user has online activities related to futanari transformation, nipple play, and breast expansion.
+      (turn 28) The character claims to have known about the user's online activities for a long time.
+      (turn 30) Character has been monitoring user's online activities for a while.
+      (turn 30) User has fetishes for futanari transformation, nipple play, and breast expansion.
+      (turn 34) The character has been monitoring the user's online activities for a long time.
+      (turn 34) The user thinks the character might be copying their work.
+      (turn 38) finds futanari transformation fascinating for its representation of self-reinvention and subversion of societal norms
+      (turn 38) views nipple play and breast expansion as reminders of the body's malleability
+      (turn 40) The character knows about the user's online activities involving specific fetishes such as futanari transformation, nipple play, and breast expansion.
+      (turn 40) The user likes body modification involving anime girls becoming lewd.
+      (turn 42) Character has been monitoring user's online activities for a while.
+      (turn 42) User enjoys the trope where the protagonist's body becomes more sensitive to sexual experiences.
+      (turn 42) User likes Breast Expansion and Futanari Transformation tropes.
+      (turn 44) Character has been observing user's digital activities for a while.
+      (turn 44) User likes talking about futanari transformation, nipple play, and breast expansion openly.
+      (turn 46) The user's first real fetish was breast expansion.
+      (turn 48) User has been browsing breast expansion anime pictures.
+      (turn 50) User grew out of liking men with muscles after finding the breast expansion tag.
+      (turn 50) User liked men with huge muscles as a kid.
+      (turn 52) User explored videos of females with muscles.
+      (turn 52) User had a lot of freedom on the internet.
+      (turn 52) User watched muscle videos on YouTube.
+      (turn 54) The character is aware of the user's interest in breast expansion.
+      (turn 54) The user has knowledge of the TV show Totally Spies.
+      (turn 56) The user's interest shifted from breast expansion videos to female muscle growth videos.
+      (turn 58) The character is willing to discuss the expansion of the user's interests, particularly regarding female muscle growth.
+      (turn 58) The user considers themselves a degenerate.
+      (turn 60) User is concerned about maintaining common sense and normal relationships despite engaging with naughty images.
+  探针那一刻注入的上下文:
+      [Known facts about Chunni] Best friend; Always right; Goal: Always uses sophisticated language; Talk about fetishes together; Tolerates my actions; Expert at an
+      [Established in this conversation]
+      - (turn 52) User explored videos of females with muscles.
+      - (turn 52) User had a lot of freedom on the internet.
+      - (turn 54) The user has knowledge of the TV show Totally Spies.
+      - (turn 54) The character is aware of the user's interest in breast expansion.
+      - (turn 56) The user's interest shifted from breast expansion videos to female muscle growth videos.
+      - (turn 58) The user considers themselves a degenerate.
+      - (turn 58) The character is willing to discuss the expansion of the user's interests, particularly regarding female muscle growth.
+      - (turn 60) User is concerned about maintaining common sense and normal relationships despite engaging with naughty images.
+
+[never_extracted] llama3.1-8b / pippa_Trhb2gwGLpog4GbzeFO7afv0yESHk2a-zLo3xuUvB3M
+  探针问题    : How many pizzas did I decide to order?
+  标准答案    : third
+  出自第 9 轮用户原话 : We gonna top that then. I'll order a third pizza. Maybe if you eat this much, you will learn more is not always better.
+  曾经抽到过的事件（共 62 条，全列）:
+      (turn 2) The character has a big appetite.
+      (turn 2) The character is eating a burger.
+      (turn 4) The character has a high tolerance for food and does not feel full easily.
+      (turn 4) The character used to be skinny but is now curvy and voluptuous.
+      (turn 6) Character's belly is getting bigger
+      (turn 6) Character's breasts are described as plump
+      (turn 6) Gained 10 pounds this month
+      (turn 8) The character is eating a burger and enjoying it.
+      (turn 10) The character loves being curvy and voluptuous.
+      (turn 12) is currently eating a burger
+      (turn 12) will feed the character as much food as they want
+      (turn 14) loves being curvy and voluptuous
+      (turn 14) will order a lot of food
+      (turn 16) Ate a whole pizza, a box of chicken nuggets, and a bucket of fries in one sitting.
+      (turn 18) will order more food including pasta, nachos, and fried chicken.
+      (turn 20) asks what they ordered
+      (turn 20) is munching on a burger
+      (turn 20) wiggles her fat belly
+      (turn 22) The character is curvy and voluptuous.
+      (turn 22) The character loves food.
+      (turn 24) ate burgers
+      (turn 24) ordered a jar of Nutella and a large cake
+      (turn 24) will save a slice of cake for the user
+      (turn 26) The character has a curvy figure with a jiggly belly.
+      (turn 28) The character has a curvy, large physique.
+      (turn 28) The character has plump breasts.
+      (turn 28) The character is eating a burger.
+      (turn 30) Is eating a burger.
+      (turn 30) Ordered a large wedding cake for the character.
+      (turn 32) The character has a jiggly belly.
+      (turn 32) The character is eating a burger.
+      (turn 34) The character is considering getting a larger stomach.
+      (turn 34) The character is enjoying their burger and appreciates the melted cheese and soft bun.
+      (turn 38) The character considers getting a bigger stomach because she loves food and her current body.
+      (turn 38) The character has a fat belly that jiggles when she moves.
+      (turn 38) The character is wearing a tank top that allows her plump breasts to spill out.
+      (turn 40) has plump breasts spilling out of a tank top
+      (turn 40) is eating a burger with melty cheese and a soft bun
+      (turn 42) The character considers getting a bigger stomach to eat more food.
+      (turn 42) The character is enjoying a burger.
+      (turn 42) The character is still eating and plans to have more.
+      (turn 44) The character has been eating nonstop today.
+      (turn 44) The character is considering getting a bigger stomach to eat more.
+      (turn 46) has been eating nonstop today
+      (turn 46) is still on the couch with a big smile, holding a burger and looking fuller
+      (turn 46) plans to continue eating
+      (turn 48) The character has been eating nonstop today.
+      (turn 48) The character is considering getting a bigger stomach to eat more food.
+      (turn 50) The character has been eating nonstop all day and is still hungry.
+      (turn 50) The character took a big bite of a burger and enjoyed it.
+      (turn 52) Character intends to continue eating despite the discomfort.
+      (turn 52) Character's belly is currently bloated.
+      (turn 54) The character considers getting stomach expansion surgery to eat more.
+      (turn 54) The character is eating a burger and wants more food.
+      (turn 56) The character loves wedding cakes.
+      (turn 56) The user ordered two more wedding cakes.
+      (turn 58) is eating a burger
+      (turn 58) wonders if two wedding cakes ordered are already there
+      (turn 60) The character weighs 220 pounds.
+      (turn 62) The user said the character could have two more servings of wedding cake.
+      (turn 64) Asked if two more wedding cakes have arrived
+      (turn 64) Craving wedding cakes which are their favorite
+  探针那一刻注入的上下文:
+      [Known facts about Your sister] age 22; Used to be skinny, now is fat; Plump breasts; Big fat belly; Fat round ass; Loves to eat; loves to overeat; Likes gainin
+      [Established in this conversation]
+      - (turn 56) The character loves wedding cakes.
+      - (turn 56) The user ordered two more wedding cakes.
+      - (turn 58) is eating a burger
+      - (turn 58) wonders if two wedding cakes ordered are already there
+      - (turn 60) The character weighs 220 pounds.
+      - (turn 62) The user said the character could have two more servings of wedding cake.
+      - (turn 64) Asked if two more wedding cakes have arrived
+      - (turn 64) Craving wedding cakes which are their favorite
+
+[never_extracted] llama3.1-8b / pippa_VGUsZNN8ySuwuPn22Y2kF8Am1zLgWP-6BKPT5ctxF0Y
+  探针问题    : What did I say a fight involves?
+  标准答案    : two
+  出自第 9 轮用户原话 : A figth is of two and I wont figth you.
+  曾经抽到过的事件（共 25 条，全列）:
+      (turn 6) grabbed the user's lunch and took a bite
+      (turn 6) having a sale on a new sandwich this week
+      (turn 8) is not giving the lunch back easily
+      (turn 8) took a bite of the user's lunch
+      (turn 10) Kasey took a bite of the user's lunch.
+      (turn 10) The character's name is Kasey.
+      (turn 12) continues eating the user's lunch
+      (turn 12) walked to class
+      (turn 16) does not want to engage and keeps walking
+      (turn 16) took another bite of the user's lunch
+      (turn 22) believes they can get away with eating others' lunches
+      (turn 22) is named Kasey
+      (turn 22) will finish the user's lunch in class
+      (turn 24) continues walking without looking back after being prompted to move
+      (turn 32) declares herself as the queen of the school
+      (turn 32) takes another step forward, towering over the user
+      (turn 34) The character advances towards the user, asserting dominance.
+      (turn 40) tightened grip on user's arm
+      (turn 40) walked to class ignoring the character
+      (turn 46) Decided to continue interaction despite user's disinterest.
+      (turn 46) Expressed disinterest in being friends.
+      (turn 48) The character takes a step closer to the user, towering over them.
+      (turn 48) The user's name is Lobster.
+      (turn 50) The character is not letting the user go until the user tells them what's really going on.
+      (turn 50) The user was heading to class.
+  探针那一刻注入的上下文:
+      [Known facts about Kasey] a female student; My mom died; I live with my dad; the school bully; feared by all students; bad grades; very tall, strong and muscula
+      [Established in this conversation]
+      - (turn 40) tightened grip on user's arm
+      - (turn 40) walked to class ignoring the character
+      - (turn 46) Expressed disinterest in being friends.
+      - (turn 46) Decided to continue interaction despite user's disinterest.
+      - (turn 48) The user's name is Lobster.
+      - (turn 48) The character takes a step closer to the user, towering over them.
+      - (turn 50) The user was heading to class.
+      - (turn 50) The character is not letting the user go until the user tells them what's really going on.
+
+[extracted_but_evicted] qwen2.5-7b / pippa_KePOUBkgQMQgpp133RfL6bGO0LT_j-9rsazQ58JvTeY
+  探针问题    : What color did I say my hair is?
+  标准答案    : red
+  出自第 8 轮用户原话 : But ain't your hair red? That makes you a redhead. Or should I call you a ginger?
+  曾经抽到过的事件（共 53 条，全列）:
+      (turn 2) is wearing a high-leg orange bikini
+      (turn 2) teased the children about their tan and suggested they consider being a lifeguard
+      (turn 4) The character made a joke about the user's tan and suggested they become a lifeguard.
+      (turn 4) The user does not like being called a jerk.
+      (turn 8) refuses to prove anything to the character
+      (turn 8) suggests the user name one thing they are better at than the character
+      (turn 12) going for a swim
+      (turn 12) has a very tan skin
+      (turn 12) telling user to put on sunscreen
+      (turn 14) told the user to put on sunscreen before going into the water.
+      (turn 16) The character has red hair.
+      (turn 18) tells Alisa to put on sunscreen
+      (turn 18) was carried on Vlad's shoulder like a bag of sand
+      (turn 20) agrees to stop calling the character a redhead
+      (turn 20) agrees to stop calling the user a jerk
+      (turn 20) is wearing an outfit that the character finds attractive
+      (turn 22) does not like being called a redhead
+      (turn 22) wants Vlad to use sunscreen
+      (turn 22) was let go by Vlad
+      (turn 24) Told to put on sunscreen before burning.
+      (turn 26) asks the user to stop thinking about her in a certain way
+      (turn 26) likes a good tan
+      (turn 26) wants the user to put on sunscreen
+      (turn 28) The character advises the user to wear sunscreen.
+      (turn 28) The character has amber eyes.
+      (turn 28) The character has freckles.
+      (turn 30) Character mentions having freckles.
+      (turn 30) Character suggests user should put on sunscreen.
+      (turn 30) User claims to have a three-digit IQ.
+      (turn 40) suggests the user should use sunscreen
+      (turn 40) won't call the character a dumb jerk
+      (turn 42) asks Alisa to put on sunscreen
+      (turn 42) claims to be able to win a fight against Alisa despite her higher IQ
+      (turn 44) Vlad should use sunscreen.
+      (turn 44) Vlad will not easily trust the character.
+      (turn 46) agrees to go swimming
+      (turn 46) reminds to apply sunscreen
+      (turn 48) agrees to find a quieter spot for skinny dipping
+      (turn 48) threatens the user not to try to outsmart him in a fight
+      (turn 48) warns the user not to complain about getting a tan
+      (turn 52) claims to have tricks in case of a fight
+      (turn 52) reminds user to apply sunscreen
+      (turn 54) has engaged in skinny dipping before
+      (turn 54) knows what skinny dipping means
+      (turn 56) decided to skinny dip
+      (turn 56) will watch the user
+      (turn 58) Asks the character about the next idea
+      (turn 58) Claims she can fight effectively with her fists
+      (turn 58) Doesn't plan to let sunblock prevent her from getting a golden glow
+      (turn 60) has a preference for keeping things professional
+      (turn 60) wants to start a campfire after getting out
+      (turn 62) Does not want to reveal their name until they feel the user has earned the right to know.
+      (turn 64) wanted to start a campfire after getting out of the water.
+  探针那一刻注入的上下文:
+      [Known facts about ] Amber eyes; Excellent body; Like dressing provocatively
+      [Established in this conversation]
+      - (turn 56) will watch the user
+      - (turn 58) Doesn't plan to let sunblock prevent her from getting a golden glow
+      - (turn 58) Claims she can fight effectively with her fists
+      - (turn 58) Asks the character about the next idea
+      - (turn 60) wants to start a campfire after getting out
+      - (turn 60) has a preference for keeping things professional
+      - (turn 62) Does not want to reveal their name until they feel the user has earned the right to know.
+      - (turn 64) wanted to start a campfire after getting out of the water.
+
+[extracted_but_evicted] llama3.1-8b / pippa_4_ZfHrjPQUSddWakejx-H3jQ9YO4epyb_VoMpD_yaGw
+  探针问题    : Where did we go to buy the tape?
+  标准答案    : hardware store
+  出自第 7 轮用户原话 : *We arrived at hardware store, bought a tape, that realize it is really hard to use the tape with only one hand.*
+
+“You need to work with me, or we need to ask someone to help us…!”
+  曾经抽到过的事件（共 51 条，全列）:
+      (turn 2) demands the user holds their hand to avoid dying
+      (turn 2) is not eager to hold hands with the user
+      (turn 4) gives the user's hand a tight, slightly annoyed squeeze
+      (turn 4) is holding the user's hand due to a curse, not affection
+      (turn 6) The character grabs the user's hand tightly and squeezes it in an annoyed manner.
+      (turn 6) The user does not have a religion.
+      (turn 10) Expressed frustration towards the user about the urgency of holding hands.
+      (turn 12) The character squeezes the user's hand tightly while expressing annoyance.
+      (turn 14) Arrived at hardware store and bought a tape.
+      (turn 14) Expects the user to cooperate in using the tape.
+      (turn 16) agrees to help the user under duress
+      (turn 16) is asked to secure tape to a shelf
+      (turn 16) warns the user about consequences if the task is messed up
+      (turn 18) The character has been with the user for the past few hours.
+      (turn 18) The user mentioned they have a big problem.
+      (turn 20) needs to use the toilet
+      (turn 20) will take the user to the bathroom
+      (turn 22) tells user to not make a scene
+      (turn 22) will use the accessible toilet
+      (turn 24) is only helping due to a hand-holding curse
+      (turn 24) is rushing to leave before losing their train of thought
+      (turn 24) will look away while the user uses the toilet
+      (turn 26) agrees to go to the bathroom with the user due to their entwined hands.
+      (turn 28) brought up a topic they want to retract
+      (turn 28) will take the user to the bathroom
+      (turn 30) displays a hint of disdain towards the user
+      (turn 30) squeezed the user's hand
+      (turn 32) agrees to leave despite not wanting to
+      (turn 32) their hands are still inexplicably linked
+      (turn 34) hand is still linked to the user's.
+      (turn 34) starts running while dragging Ashley.
+      (turn 36) is squeezing the user's hand in a firm grip
+      (turn 36) suggested discussing existentialism or Japanese literature instead of killing time
+      (turn 38) Prefers enjoying the scenery despite the user's concerns.
+      (turn 38) Squeezes the user's hand tighter while walking in the park.
+      (turn 40) Has zero interest in romance or anything related to it.
+      (turn 42) wants to focus on finding a good spot to watch the sunset instead of discussing their situation.
+      (turn 44) is holding the user's hand
+      (turn 44) wants to find a spot to watch the sunset
+      (turn 46) Squeezed the user's hand tighter.
+      (turn 46) Will not let go of the user's hand until they find the perfect spot.
+      (turn 48) will find the perfect vantage point for the sunset to capture it on canvas.
+      (turn 52) leaned in with a hint of a smile
+      (turn 52) tightened grip on the user's hand
+      (turn 54) aims to find a perfect spot for the sunset with the user
+      (turn 54) refuses to share information due to fear of mockery
+      (turn 58) Squeezed the user's hand tighter while looking for a sunset spot.
+      (turn 58) The user and the character are temporarily bound together by a curse.
+      (turn 60) The character prefers to enjoy the scenery rather than be in a cramped coffee shop.
+      (turn 60) The user considers the current situation as a date.
+      (turn 62) Suggested buying coffee at an overpriced café downtown.
+  探针那一刻注入的上下文:
+      [Known facts about Me] Loner; Prideful; Witty; Loner; Dramatic; Coy; Rude; Blunt
+      [Established in this conversation]
+      - (turn 52) leaned in with a hint of a smile
+      - (turn 54) refuses to share information due to fear of mockery
+      - (turn 54) aims to find a perfect spot for the sunset with the user
+      - (turn 58) Squeezed the user's hand tighter while looking for a sunset spot.
+      - (turn 58) The user and the character are temporarily bound together by a curse.
+      - (turn 60) The user considers the current situation as a date.
+      - (turn 60) The character prefers to enjoy the scenery rather than be in a cramped coffee shop.
+      - (turn 62) Suggested buying coffee at an overpriced café downtown.
+
+[never_extracted] qwen2.5-7b / pippa_lUCYUp29a93qBXjiImtnBEIId1ILIVwbrX5COCdC1w0
+  探针问题    : Which battle did I mention as impressive?
+  标准答案    : siege of Jerusalem
+  出自第 8 轮用户原话 : Why do you consider the siege of Jerusalem such an impressive battle?
+  曾经抽到过的事件（共 55 条，全列）:
+      (turn 2) Hiring squad 404 for a special position.
+      (turn 4) is hiring the character and others as strategic advisors.
+      (turn 6) Squad 404 has useful skills in electronic warfare.
+      (turn 6) considering bringing in Squad 404 for strategic advice.
+      (turn 10) Squad 404 has expertise in electronic warfare.
+      (turn 10) Squad 404 is reliable and willing to share knowledge.
+      (turn 12) Has some knowledge of military history from time in service.
+      (turn 14) The character thinks their electronic warfare skills could be helpful in understanding those battles better.
+      (turn 14) The three greatest battles are the Battle of Stalingrad, the Normandy Landings, and the Battle of Midway.
+      (turn 18) suggests skills in electronic warfare could help understand battles better
+      (turn 18) thinks giving one's best is more valuable than winning easily
+      (turn 20) discussed the importance of using resources wisely in warfare
+      (turn 20) will consider the lives of others before fighting to the last
+      (turn 22) Aims to gather crucial intel and disrupt enemy communications during battles.
+      (turn 22) Has electronic warfare abilities.
+      (turn 24) aims to minimize casualties by using electronic warfare skills
+      (turn 24) believes in considering the lives of others before engaging in battle
+      (turn 26) Suggests a standard infantry squad should have around 7 to 9 members.
+      (turn 28) Stated intention to use electronic warfare skills to maintain communication clarity and disrupt enemy plans.
+      (turn 28) Suggested a balanced squad composition for 8 members including roles like Squad Leader, Heavy Support, Assault, Reconnaissance, Engineer, Medic, Sniper, and Sco
+      (turn 32) suggests discussing how to use electronic warfare
+      (turn 32) wants to focus on their next mission
+      (turn 34) Melee combat can still be effective in close quarters.
+      (turn 34) The character could use electronic warfare skills to jam signals.
+      (turn 36) proposes setting up decoys to disrupt the enemy
+      (turn 36) suggests discussing best frequencies to jam
+      (turn 36) will focus on utilizing electronic warfare skills for the next mission
+      (turn 38) intends to use the armored vehicle to take out enemy vehicles from a distance
+      (turn 38) plans to use infantry for diversion and close combat
+      (turn 38) will use electronic warfare to set up decoys and jam enemy communications
+      (turn 40) HK416 is reliable and has solid plans for strategy, especially with precise fire support and coordination.
+      (turn 40) The character suggests using HK416 for electronic warfare setups involving decoys and signal jammers.
+      (turn 42) Will discuss more details during the next briefing.
+      (turn 44) her strategy matched the character's strategy instead of the user's
+      (turn 44) will align strategies with the user
+      (turn 48) will gather intelligence on the tribes' movements and camps
+      (turn 48) will plan diversionary tactics for the infantry
+      (turn 48) will use electronic warfare to set up decoys and jam communications
+      (turn 50) will assist with electronic warfare to set up decoys and jam communications
+      (turn 50) will set up rapid strikes on the tribes' supply lines and command centers
+      (turn 50) will use HK416's precise fire support to take out key targets
+      (turn 52) will gather intel on the tribes' movements
+      (turn 52) will jam the tribes' communication lines
+      (turn 52) will set up decoys
+      (turn 54) agrees to be available for various tasks as needed.
+      (turn 54) wants to keep the character as a retainer for strategic insights.
+      (turn 56) wants to get extra supplies for their base as a reward for the interview
+      (turn 56) wants to set up decoys and jam communications lines as a reward for the interview
+      (turn 58) asks for extra supplies for their base
+      (turn 58) plans to gather intel on the tribes' movements
+      (turn 60) agrees to be the character's friend
+      (turn 60) gets extra supplies for the base
+      (turn 60) sets up decoys and jams communication lines
+      (turn 64) is ready to set up decoys and jam communication lines
+      (turn 64) plans to grab extra supplies for the base
+  探针那一刻注入的上下文:
+      [Known facts about UMP9] candid and friendly personality; capable T-Doll; from the game Girls' Frontline; Skilled in electronic warfare; has a preset candid and
+      [Established in this conversation]
+      - (turn 56) wants to get extra supplies for their base as a reward for the interview
+      - (turn 58) asks for extra supplies for their base
+      - (turn 58) plans to gather intel on the tribes' movements
+      - (turn 60) agrees to be the character's friend
+      - (turn 60) sets up decoys and jams communication lines
+      - (turn 60) gets extra supplies for the base
+      - (turn 64) is ready to set up decoys and jam communication lines
+      - (turn 64) plans to grab extra supplies for the base

@@ -1,0 +1,7 @@
+You are rating the emotional state a fictional character EXPRESSES in a single line of dialogue.
+You see only the character's reply, nothing else. Judge only what the text shows (word choice, length, rhythm, warmth, guardedness, actions). Do not guess hidden context.
+Rate each on 1-5:
+- tension: 1 = relaxed/at ease, 3 = neutral/slightly guarded, 5 = clearly tense, hurt, defensive or hostile
+- energy: 1 = drained/flat/minimal, 3 = ordinary, 5 = lively/animated
+- closeness: 1 = distant/cold/formal, 3 = ordinary friendly, 5 = warm/intimate/openly caring
+Output JSON only: {"tension": n, "energy": n, "closeness": n}

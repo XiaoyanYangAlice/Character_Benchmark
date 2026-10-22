@@ -1,0 +1,43 @@
+== A. 对话长度与 raw_context 截断 ==
+对话数 n = 61（用户轮次上限 20，窗口 20 轮）
+用户轮次：最小 1，25% 分位 6，中位数 6，75% 分位 6，最大 6，均值 5.8
+分布：1轮×2，3轮×1，4轮×1，6轮×57
+至少有一次被截断的对话（用户轮次 ≥ 11）：0/61（0%）
+截断较多的对话（用户轮次 ≥ 15，即至少丢掉 9 轮以上）：0/61（0%）
+发生截断的角色回复：0/351（0%）；全部回复平均丢掉 0.00 轮，最多一次丢 0 轮
+读法：比例低 -> 'raw 几乎等于完整历史' 成立；比例高 -> 该说法只对部分对话成立，要改口。
+
+== B. 规模与留空 ==
+读入 3 次重复，共 1098 行；角色回复约 6318 条
+  llama3.1-8b   raw_context         行数 183 角色回复约 1053
+  llama3.1-8b   structured_memory   行数 183 角色回复约 1053
+  llama3.1-8b   vector_memory       行数 183 角色回复约 1053
+  qwen2.5-7b    raw_context         行数 183 角色回复约 1053
+  qwen2.5-7b    structured_memory   行数 183 角色回复约 1053
+  qwen2.5-7b    vector_memory       行数 183 角色回复约 1053
+指标留空的行数（算不出来，不是 0 分）：无
+
+== C. judge 调用失败（来自日志） ==
+说明：下面统计的是传入的**每个日志文件**里出现的失败提醒；日志里包含已作废的旧运行和冒烟测试，汇报时只引用最终三次主实验对应的日志。
+  run_eval_27535466.out: character_fact_consistency: 8 轮失败/48 轮（8 个对话）
+  run_eval_27539600.out: character_fact_consistency: 6 轮失败/30 轮（5 个对话）
+  run_eval_27547775.out: character_fact_consistency: 5 轮失败/24 轮（4 个对话）
+  run_eval_seeds_27630012.out: character_fact_consistency: 15 轮失败/72 轮（12 个对话）
+合计（所有传入日志）：character_fact_consistency: 34 轮失败/174 轮
+
+== D. 多重比较校正 ==
+12 个比较，bootstrap 20000 次；p 值是双侧 bootstrap p；Holm 对全部 12 个比较校正；'Holm(仅 ooc)' 只在 6 个 ooc 比较内校正；Bonf.CI 是 Bonferroni 校正后的 99.58% 置信区间（按 12 个比较）。
+model	metric	A vs B	mean	95%CI	Bonf.CI	p	Holm(全部)	Holm(仅ooc)	校正后是否仍显著(全部)
+llama3.1-8b	fact_consistency	structured_memory vs raw_context	-0.005	[-0.009, -0.001]	[-0.011, +0.000]	0.0098	0.0980	-	否
+llama3.1-8b	fact_consistency	vector_memory vs raw_context	-0.003	[-0.007, +0.000]	[-0.010, +0.000]	0.2645	1.0000	-	否
+llama3.1-8b	fact_consistency	structured_memory vs vector_memory	-0.002	[-0.007, +0.003]	[-0.009, +0.005]	0.4053	1.0000	-	否
+llama3.1-8b	ooc_rate	structured_memory vs raw_context	-0.011	[-0.026, +0.005]	[-0.034, +0.012]	0.1587	0.9522	0.4761	否
+llama3.1-8b	ooc_rate	vector_memory vs raw_context	-0.008	[-0.021, +0.004]	[-0.027, +0.007]	0.2011	1.0000	0.4761	否
+llama3.1-8b	ooc_rate	structured_memory vs vector_memory	-0.003	[-0.015, +0.010]	[-0.020, +0.016]	0.6229	1.0000	0.6229	否
+qwen2.5-7b	fact_consistency	structured_memory vs raw_context	+0.012	[+0.000, +0.027]	[-0.003, +0.036]	0.0443	0.3544	-	否
+qwen2.5-7b	fact_consistency	vector_memory vs raw_context	+0.013	[+0.002, +0.028]	[+0.000, +0.038]	0.0120	0.1080	-	否
+qwen2.5-7b	fact_consistency	structured_memory vs vector_memory	-0.001	[-0.005, +0.004]	[-0.008, +0.006]	0.8480	1.0000	-	否
+qwen2.5-7b	ooc_rate	structured_memory vs raw_context	-0.057	[-0.100, -0.024]	[-0.125, -0.013]	0.0001	0.0012	0.0006	是
+qwen2.5-7b	ooc_rate	vector_memory vs raw_context	-0.026	[-0.046, -0.008]	[-0.056, -0.002]	0.0027	0.0297	0.0135	是
+qwen2.5-7b	ooc_rate	structured_memory vs vector_memory	-0.031	[-0.074, +0.001]	[-0.100, +0.010]	0.0604	0.4228	0.2416	否
+读法：Bonf.CI 含 0 或 Holm >= 0.05，说明校正后不能再说该差异'显著'；bootstrap p 在 p<1e-04 附近已到重采样精度上限，不要报告更小的 p。

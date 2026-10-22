@@ -1,0 +1,55 @@
+# Evaluate the distilled students on the 13 EVALUATION characters (none seen in training), with
+# every pilot probe (claims + recall/contradiction/canon + affect + persona as a regression check).
+# Train first (docs/TRAINING.md), then:
+#   sbatch slurm/run_local.sbatch configs/eval_students.yaml
+#   python scripts/analyze_claims.py $RESULTS_DIR/eval_students_v1
+#   python scripts/compare.py $RESULTS_DIR/eval_students_v1
+# The two adapters are served as LoRA modules on the base Qwen3-8B vLLM server; a system picks
+# one with `adapter:`. Systems without `adapter:` get the plain base model from the same server.
+# To drop a student you have not trained, delete its system line AND its --lora-modules entry.
+run_name: eval_students_v1
+results_dir: ${RESULTS_DIR:-results}
+characters: [data/characters, data/characters_ext]
+probes: data/probes/pilot_probes.yaml
+seeds: [0, 1, 2, 3, 4]
+concurrency: 48
+judge_concurrency: 64
+generation: {temperature: 0.8, max_tokens: 300}
+
+serve:
+  base_port: 8100
+  max_model_len: 8192
+  gpu_memory_utilization: 0.90
+  startup_timeout: 1800
+
+models:
+  qwen3_8b:
+    path: ${MODEL_DIR:-}Qwen/Qwen3-8B
+    extra_body: {chat_template_kwargs: {enable_thinking: false}, top_p: 0.8}
+    extra_args: >-
+      --enable-lora --max-lora-rank 64 --max-loras 3
+      --lora-modules student_sft=${RESULTS_DIR:-results}/train/student_sft/adapter
+      student_opd=${RESULTS_DIR:-results}/train/student_opd/adapter
+      student_dpo=${RESULTS_DIR:-results}/train/student_dpo/adapter
+  qwen3_32b:
+    path: ${MODEL_DIR:-}Qwen/Qwen3-32B
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    max_model_len: 6144
+  gemma3_27b:
+    path: ${MODEL_DIR:-}google/gemma-3-27b-it
+    max_model_len: 6144
+
+systems:
+  # lower bound / upper bound
+  - {id: base_qwen3_8b,                condition: base,          model: qwen3_8b}
+  - {id: harness_alert_x32b_qwen3_8b,  condition: harness_alert, model: qwen3_8b, helper_model: qwen3_32b}
+  # students: card + dialogue only, no harness, no extractor
+  - {id: student_sft_qwen3_8b,         condition: base,          model: qwen3_8b, adapter: student_sft}
+  - {id: student_opd_qwen3_8b,         condition: base,          model: qwen3_8b, adapter: student_opd}
+  - {id: student_dpo_qwen3_8b,         condition: base,          model: qwen3_8b, adapter: student_dpo}
+  # does the trained student still benefit from (or get confused by) the harness?
+  - {id: student_opd_alert_x32b,       condition: harness_alert, model: qwen3_8b, adapter: student_opd, helper_model: qwen3_32b}
+
+judges:
+  - {id: judge_qwen3_32b,  model: qwen3_32b}
+  - {id: judge_gemma3_27b, model: gemma3_27b}

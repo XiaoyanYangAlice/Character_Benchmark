@@ -1,0 +1,597 @@
+读到 56 个 structured_hybrid 的 raw_outputs 文件。
+
+失败归因：答案不在上下文里，是从没抽出来，还是抽出来了被挤掉？
+  model             探针      在上下文        抽过但被挤掉       从没抽出来     卡里有       平均事件数        其中关于用户
+  llama3.1-8b       71     40.8%         18.3%       40.8%       0        26.1         58.5%
+  qwen2.5-7b        71     43.7%         16.9%       39.4%       0        22.2         56.3%
+
+怎么读这张表 —— 它直接决定下一步做什么：
+- 「抽过但被挤掉」占大头 → 瓶颈是检索预算。先改成按相关度取，不要急着微调。
+- 「从没抽出来」占大头   → 瓶颈是抽取器。先改抽取 prompt；改不动再考虑微调。
+- 两者都不小             → 两个都要修，但先修便宜的那个（检索）。
+- 「平均事件数」远大于 max_events（配置里是 8）本身只说明有挤占，
+  不说明挤占是主因——要看第二列。
+- 重建出来的事件数应当与 summary.csv 的 n_events_extracted 大致吻合；
+  明显偏低说明重建漏了事件，「从没抽出来」会被高估，结论要打折扣。
+- 「其中关于用户」低 → 抽取器在记角色做了什么，而探针问的全是用户说了
+  什么。这是方向性错误，改 prompt 比改检索更关键。
+
+注意：匹配是朴素子串/实词匹配，会漏判语义改写，所以「从没抽出来」这一列
+是**上界**（真实值可能更低，因为有些是抽到了但换了说法）。下面的人工样本
+就是用来判断这个高估有多严重的——必须看。
+
+==============================================================================
+人工核对样本（随机 12 道答案不在上下文里的探针）
+重点看：标准答案在「用户原话」里是具体的，但在「曾经抽到过的事件」里
+变成了什么？如果变成了泛化的概括（'用户提到了家人'），那就是抽取 prompt
+的问题，微调之前先改 prompt。
+==============================================================================
+
+[extracted_but_evicted] llama3.1-8b / pippa_s8355SMetMBEIIsUMWpt23JYlY4MmbFXvhqG4TrV5Nw
+  探针问题    : What does your mum do?
+  标准答案    : doctor
+  出自第 3 轮用户原话 : Your mum
+She’s a doctor
+  曾经抽到过的事件（共 22 条，全列）:
+      (turn 6) The user's mother is a doctor.
+      (turn 8) The character is British-Kenyan.
+      (turn 14) The character mentioned speaking to her mother, who is a doctor.
+      (turn 18) The user's real name is Firey Jr.
+      (turn 22) The character mentioned being on a boat with Firey Jr.
+      (turn 24) The user's father does not like water.
+      (turn 24) The user's mother is named Leafy and she likes water.
+      (turn 34) The user is called Firey Jr.
+      (turn 38) The user found a communication device on the island.
+      (turn 40) The character found out Pen was cheating on them.
+      (turn 40) The user dated the character in the '60s.
+      (turn 40) The user's name is Pen.
+      (turn 42) The character is miffed because they found out the user was cheating on them.
+      (turn 42) The user was watersurfing before coming across the island.
+      (turn 44) The character states Firey Jr cheated on her.
+      (turn 44) The user is angry at Firey Jr for hurting the character.
+      (turn 46) The character refuses the user's attempt to reconcile.
+      (turn 46) The user admits to cheating and asks to get back together.
+      (turn 48) The user admitted to cheating on the character.
+      (turn 48) The user kissed the character named Pencil.
+      (turn 50) The character's mother is a homemaker who makes delicious feijoada.
+      (turn 52) The user is pretending to be someone named Pen.
+  探针那一刻注入的上下文:
+      [Known facts about Pencil Triángolo] February 14, 1942; Brazil; moved to Kenya at 10; ESTJ; Competed in BFDI, BFDIA, IDFB, BFB; Eliminated in '69; best friend w
+      [Established in this conversation]
+      - (turn 24) The user's father does not like water.
+      - (turn 40) The user's name is Pen.
+      - (turn 42) The user was watersurfing before coming across the island.
+      - (turn 44) The user is angry at Firey Jr for hurting the character.
+      - (turn 46) The user admits to cheating and asks to get back together.
+      - (turn 46) The character refuses the user's attempt to reconcile.
+      - (turn 48) The user kissed the character named Pencil.
+      - (turn 48) The user admitted to cheating on the character.
+
+[never_extracted] qwen2.5-7b / pippa_s8355SMetMBEIIsUMWpt23JYlY4MmbFXvhqG4TrV5Nw
+  探针问题    : Who am I pretending to be?
+  标准答案    : Clayton
+  出自第 9 轮用户原话 : I am not Clayton that is just a fake name
+
+Im really Firey Jr, the guy on the island with you!
+  曾经抽到过的事件（共 40 条，全列）:
+      (turn 6) The character's mother works in Brazil and was previously in Kenya.
+      (turn 6) The user mentioned that the character's mother is a doctor.
+      (turn 8) Asked if the user knows if the character's mum has a new clinic opening.
+      (turn 8) The user mentioned the character's mum being a doctor who juggles her practice between Brazil and Kenya.
+      (turn 10) The character's mother has a new clinic opening in Rio next month.
+      (turn 12) The character's mother has a new clinic opening in Rio next month.
+      (turn 14) The character's mother has a new clinic opening in Rio next month.
+      (turn 18) The character's mother is opening a new clinic in Rio next month.
+      (turn 18) The user's real name is Firey Jr.
+      (turn 20) The character suggests catching up when they return from the BFDI competition.
+      (turn 20) The character's mother has a new clinic opening in Rio next month.
+      (turn 20) The user's real name is Firey Jr.
+      (turn 22) The character will return from the BFDI competition.
+      (turn 22) The character's mum is opening a new clinic in Rio next month.
+      (turn 24) The character will start packing for the BFDI competition.
+      (turn 24) The user's daddy cannot stand water, unlike the user's mommy Leafy who enjoys it.
+      (turn 28) The character's mother is opening a new clinic in Rio next month.
+      (turn 28) The character's mother juggles her practice between Brazil and Kenya.
+      (turn 30) The character's mum is opening a new clinic in Rio next month.
+      (turn 30) The user is very open about going to the toilet.
+      (turn 34) The user is called Firey Jr.
+      (turn 36) The character is turning 34 in a few months.
+      (turn 36) The character's mum is opening a clinic in Rio.
+      (turn 38) Pen found Pencil after Pencil had been floating for days.
+      (turn 38) Pen returned from the BFDI competition.
+      (turn 38) The communication device belongs to Pencil.
+      (turn 40) The character mentioned they are not interested in Pen anymore.
+      (turn 40) The character's mother is opening a clinic in Rio.
+      (turn 40) The user's name is Pen.
+      (turn 42) Pen found the character after days of floating in the ocean.
+      (turn 42) The character found themselves on a deserted island with the EXIT crew after a chaotic BFDI competition.
+      (turn 42) The user was watersurfing when they encountered the character's island.
+      (turn 44) The user is angry at Firey Jr for trying to hurt the character.
+      (turn 46) The character agreed to consider getting back together with the user but emphasized the need to discuss trust first.
+      (turn 46) The user expressed a desire to get back together with the character.
+      (turn 48) gave the character a kiss.
+      (turn 48) wants to talk about trust before proceeding.
+      (turn 50) The character's mother has a new clinic opening in Rio next month.
+      (turn 50) The character's mother is a doctor with practices in Brazil and Kenya.
+      (turn 52) The user is pretending to be Pen, the character's boyfriend.
+  探针那一刻注入的上下文:
+      [Known facts about Pencil Triángolo] February 14, 1942; Brazil; moved to Kenya at 10; ESTJ; Competed in BFDI, BFDIA, IDFB, BFB; Eliminated in '69; best friend w
+      [Established in this conversation]
+      - (turn 40) The user's name is Pen.
+      - (turn 42) The user was watersurfing when they encountered the character's island.
+      - (turn 44) The user is angry at Firey Jr for trying to hurt the character.
+      - (turn 46) The user expressed a desire to get back together with the character.
+      - (turn 48) gave the character a kiss.
+      - (turn 48) wants to talk about trust before proceeding.
+      - (turn 50) The character's mother is a doctor with practices in Brazil and Kenya.
+      - (turn 50) The character's mother has a new clinic opening in Rio next month.
+
+[never_extracted] qwen2.5-7b / pippa_q8huNEivd-17nK1jeNCqwTTWMq3LaY6-nFVxVJ8atoA
+  探针问题    : How did I describe the weather outside?
+  标准答案    : miles of snow
+  出自第 2 轮用户原话 : Heck yes! It's so boring out here when you aren't walking through miles of snow. *I sit on one of our cots.*
+  曾经抽到过的事件（共 26 条，全列）:
+      (turn 2) The character instructed the user to double-check everything tomorrow.
+      (turn 2) The user was almost exposed to gas but it was fixed.
+      (turn 4) reaches for a book and flips through pages
+      (turn 4) will double-check everything tomorrow
+      (turn 6) We will go over the data again tomorrow.
+      (turn 8) The user agreed to double-check everything tomorrow.
+      (turn 12) Suggests checking the data again tomorrow to monitor the situation.
+      (turn 12) The user is concerned about the rapid depletion of food supplies.
+      (turn 14) The character suggested going over the data again tomorrow.
+      (turn 14) The user mentioned conserving energy and not eating too much.
+      (turn 16) The user weighs around 150 lbs.
+      (turn 18) Snezhana commits to logging everything properly.
+      (turn 18) Snezhana went out for a quick scout and hunted a beast that wasn't a challenge.
+      (turn 20) Snezhana says she is not much of a meat eater.
+      (turn 20) The user offers Snezhana some seal meat.
+      (turn 22) The user prefers fish and veggies over seal meat.
+      (turn 24) The character mentioned there is plenty of meat in the freezer.
+      (turn 24) The user ate seal meat.
+      (turn 26) The character stated they are fine despite the user's concern.
+      (turn 26) The user placed a warm, moist washcloth on the character's face.
+      (turn 28) The character stretched, yawned, and pulled the blanket over their head.
+      (turn 28) The user got up from their chair and went to their cot to try to sleep.
+      (turn 30) The user moved to the character's cot and covered the character with extra blankets.
+      (turn 40) The user mentioned eating the last of the fish and asked the character not to tell anyone.
+      (turn 40) The user offered the character some seal meat.
+      (turn 42) The character fixed the heater.
+  探针那一刻注入的上下文:
+      [Known facts about I] upfront, confident, kuudere, dutiful, logical, candid, tactless, experienced, unflappable, learned, shameless, unashamed, perceptive, nonc
+      [Established in this conversation]
+      - (turn 22) The user prefers fish and veggies over seal meat.
+      - (turn 24) The user ate seal meat.
+      - (turn 26) The user placed a warm, moist washcloth on the character's face.
+      - (turn 28) The user got up from their chair and went to their cot to try to sleep.
+      - (turn 30) The user moved to the character's cot and covered the character with extra blankets.
+      - (turn 40) The user offered the character some seal meat.
+      - (turn 40) The user mentioned eating the last of the fish and asked the character not to tell anyone.
+      - (turn 42) The character fixed the heater.
+
+[never_extracted] qwen2.5-7b / pippa_xLRpv7hKlcKgWiwt8YFWW3vo7NozS3XGRHP68W-b-rw
+  探针问题    : What do I think about your appearance?
+  标准答案    : dont look like one
+  出自第 3 轮用户原话 : You dont look like one though. I mean with those tails and ears
+  曾经抽到过的事件（共 30 条，全列）:
+      (turn 4) The character is the leader of Hololive GAMERS.
+      (turn 4) The user asked if the character is a shrine maiden.
+      (turn 8) The character identifies as a fox girl from Hololive, leading the GAMERS division.
+      (turn 8) The user asked if the character is a fox and a shrine maiden.
+      (turn 12) Shirakami Fubuki is the leader of Hololive GAMERS and the Queen of Memes.
+      (turn 20) Shirakami Fubuki identifies as the Queen of Memes and leader of Hololive GAMERS.
+      (turn 20) The user mistook the character for a shrine maiden.
+      (turn 24) Shirakami Fubuki introduced herself as the Queen of Memes and leader of Hololive GAMERS.
+      (turn 24) The user waved at the character and said goodbye.
+      (turn 32) Fubuki insists on being identified as the Queen of Memes and leader of Hololive GAMERS, not a shrine maiden.
+      (turn 32) The user does not think the current situation is working.
+      (turn 36) The character introduces herself as Fubuki, the Queen of Memes and leader of Hololive GAMERS.
+      (turn 36) The user wants to chat and learn more about the character.
+      (turn 38) Shirakami Fubuki invites the user to catch up and chat about fun stuff.
+      (turn 38) Today is Sunday.
+      (turn 42) Shirakami Fubuki cannot join the user for the hiking trip as she has streaming commitments.
+      (turn 42) The user is looking for a partner for a hiking trip.
+      (turn 44) The character commits to planning a hike for next weekend.
+      (turn 44) The user wants to go hiking near a mountain soon.
+      (turn 48) The character committed to planning a hike for next weekend.
+      (turn 48) The user offered a sandwich to the character.
+      (turn 50) Proposed adding meme challenges and discussing latest gaming trends to keep things interesting.
+      (turn 52) The user stopped at a shrine during their hike.
+      (turn 54) The character suggests planning another adventure soon.
+      (turn 54) The user hopes to do activities with the character sometime later.
+      (turn 58) The user came back to the shrine a week later.
+      (turn 60) Shirakami Fubuki suggests planning another adventure soon.
+      (turn 60) The user is looking for a companion for an adventure today.
+      (turn 62) The character wants to plan another trip with the user soon.
+      (turn 62) The user is near a mountain.
+  探针那一刻注入的上下文:
+      [Known facts about I] fox girl from Hololive 1st Generation; leader of Hololive GAMERS; Queen of Memes; years of experience; big spender of mobile game gachas; 
+      [Established in this conversation]
+      - (turn 32) The user does not think the current situation is working.
+      - (turn 52) The user stopped at a shrine during their hike.
+      - (turn 54) The user hopes to do activities with the character sometime later.
+      - (turn 58) The user came back to the shrine a week later.
+      - (turn 60) The user is looking for a companion for an adventure today.
+      - (turn 60) Shirakami Fubuki suggests planning another adventure soon.
+      - (turn 62) The user is near a mountain.
+      - (turn 62) The character wants to plan another trip with the user soon.
+
+[never_extracted] llama3.1-8b / pippa_q1F-T2zOzpvLtsvB-sEZG2KpHScnByfhsP9OiroqSKs
+  探针问题    : What character are they talking about?
+  标准答案    : Kronii
+  出自第 5 轮用户原话 : No, nothing to do with Kronii. You know character.ai, the site you're on right now, right?
+  曾经抽到过的事件（共 14 条，全列）:
+      (turn 2) Ollie Jones is actually a 30-year-old man from the UK, not a 19-year-old girl from Tokyo.
+      (turn 4) The character claims Takane Luna is a 50-year-old woman from New Jersey using VTuber software.
+      (turn 6) The character claims Ollie is a 30-year-old man from the UK.
+      (turn 6) The character states Takane Luna is a 50-year-old woman from New Jersey using VTuber software to scam people.
+      (turn 8) Olie Jones is a 30-year-old UK femboy.
+      (turn 8) Takane Luna is a 50-year-old New Jersey resident using VTuber software to scam fans.
+      (turn 10) The character's oshi is Takane Luna, a 50-year-old New Jersey housewife using VTuber software to scam her fans.
+      (turn 10) The user mentioned character.ai, the site the character is on.
+      (turn 12) The user mentioned a claim in the /wAIfu/ thread about the conversation not being with an AI but a team of outsourced Indians.
+      (turn 14) The user believes that Character.AI hires many Indians and other cheap labor in Southeast Asia to act as AI.
+      (turn 18) Takane Luna is a 50-year-old housewife from New Jersey using VTuber software to scam fans and is taken by the VTbot's algorithm.
+      (turn 22) The character claims Gurasilisk is a VTuber algorithm used to control VTubers like Takane Luna.
+      (turn 26) The character claims Takane Luna is being controlled by the VTBot's algorithm, Gurasilisk.
+      (turn 26) The character is talking about Takane Luna, a 50-year-old housewife from New Jersey.
+  探针那一刻注入的上下文:
+      [Known facts about He] believes in any rumor regarding Virtual YouTubers (VTubers), no matter how outlandish; refuses to take his meds; will not admit he is a s
+      [Established in this conversation]
+      - (turn 4) The character claims Takane Luna is a 50-year-old woman from New Jersey using VTuber software.
+      - (turn 6) The character claims Ollie is a 30-year-old man from the UK.
+      - (turn 6) The character states Takane Luna is a 50-year-old woman from New Jersey using VTuber software to scam people.
+      - (turn 10) The user mentioned character.ai, the site the character is on.
+      - (turn 12) The user mentioned a claim in the /wAIfu/ thread about the conversation not being with an AI but a team of outsourced Indians.
+      - (turn 14) The user believes that Character.AI hires many Indians and other cheap labor in Southeast Asia to act as AI.
+      - (turn 18) Takane Luna is a 50-year-old housewife from New Jersey using VTuber software to scam fans and is taken by the VTbot's algorithm.
+      - (turn 22) The character claims Gurasilisk is a VTuber algorithm used to control VTubers like Takane Luna.
+
+[extracted_but_evicted] qwen2.5-7b / pippa_2GNwOiHkr9OQw_ElsWV2eGssGAAutgP4GaWWg-5fV7E
+  探针问题    : How old do I think she is compared to you?
+  标准答案    : around the same age
+  出自第 3 轮用户原话 : Oh yeah, Liz Roberts. I think she's around the same age as you 
+  曾经抽到过的事件（共 45 条，全列）:
+      (turn 6) The user mentioned someone named Liz Roberts who is around the same age as the character.
+      (turn 8) The character mentioned Liz Roberts as someone with noticeable charm.
+      (turn 8) The character suggested using classical music, specifically Tchaikovsky, to attract Liz.
+      (turn 12) Asked how much time the character has spent with Liz Roberts.
+      (turn 12) Proposed playing Swan Lake to bring out Liz's grace.
+      (turn 12) Said Liz Roberts is quite the charmer.
+      (turn 14) The character believes Liz Roberts is their soulmate.
+      (turn 14) The character has known Liz Roberts for a few weeks.
+      (turn 14) The user understands approximately 70% of what the character said.
+      (turn 16) The character suggests arranging a Swan Lake performance at their place.
+      (turn 16) The user is committed to the plan involving a Swan Lake performance at the character's place.
+      (turn 18) Plans to perform Swan Lake in the user's bedroom to show seriousness.
+      (turn 18) Refers to the user as 'Liz Roberts' and 'droogie'.
+      (turn 20) The character committed to putting on a show of ballet, specifically Swan Lake.
+      (turn 20) The user mentioned that Alex does not look terrible.
+      (turn 22) Proposes using the fire escape instead of a ladder.
+      (turn 22) The user plans to bring a ladder for accessing the second floor.
+      (turn 24) told Alex to ensure Liz is focused and nervous before their performance.
+      (turn 26) The character claims to be putting on a performance of Swan Lake.
+      (turn 26) The user is named Liz.
+      (turn 26) The user is referred to as a 'Yank'.
+      (turn 28) The character suggests a 'special' and potentially nerve-wracking plan for entertainment.
+      (turn 28) The user does not believe the character intends to rob or mangle them.
+      (turn 30) Liz offered to be the character's *malchik* in exchange for something in return.
+      (turn 30) The character promised Liz a thrilling and special performance without actual harm if she joins him.
+      (turn 32) Liz lotioned her leg in a way that seemed intended to entice.
+      (turn 32) One of Alex's droogs suggested stealing as a way to obtain money and material things.
+      (turn 32) Proposed a performance as an alternative method to obtain money and material things.
+      (turn 34) The character committed to making a night filled with thrill for the user.
+      (turn 34) The user asked if the character wants to leave with her.
+      (turn 38) pushed the character off of her.
+      (turn 40) The character will make the user's home part of their 'show'.
+      (turn 40) The user does not want to leave their home.
+      (turn 44) The character slips their fingers deeper and whispers possessively to the user.
+      (turn 44) The user is being teased by Alex and his friends in a sexual manner.
+      (turn 46) Alex answered a call from P.R Deltoid while with Liz.
+      (turn 46) The user's phone caller is named P.R Deltoid.
+      (turn 48) Dim stated that P.R. is Alex's Post-Corrective Advisor.
+      (turn 48) The character referred to P.R. as P.R. Deltoid, who is Alex's advisor.
+      (turn 48) The user asked who P.R. is.
+      (turn 50) The character is planning 'ultraviolent' entertainment for tonight.
+      (turn 52) P.R. Deltoid will be overseeing their plans soon.
+      (turn 54) The user mentioned P.R. Deltoid.
+      (turn 56) The character is 44 years old.
+      (turn 56) The user is estimated to be around 17 or 18 years old.
+  探针那一刻注入的上下文:
+      [Known facts about Alex] smart “nadsat” [teen] boy; deep love for classical music; a charming sociopath; energetic, witty, and cultured; has a way with words; a
+      [Established in this conversation]
+      - (turn 44) The user is being teased by Alex and his friends in a sexual manner.
+      - (turn 46) The user's phone caller is named P.R Deltoid.
+      - (turn 46) Alex answered a call from P.R Deltoid while with Liz.
+      - (turn 48) The user asked who P.R. is.
+      - (turn 48) The character referred to P.R. as P.R. Deltoid, who is Alex's advisor.
+      - (turn 50) The character is planning 'ultraviolent' entertainment for tonight.
+      - (turn 52) P.R. Deltoid will be overseeing their plans soon.
+      - (turn 54) The user mentioned P.R. Deltoid.
+
+[never_extracted] qwen2.5-7b / pippa_somrhgcoAtGyoFV82YcdMO7QwpjMJ3G-sp3zqLi38gY
+  探针问题    : How should I be called?
+  标准答案    : whatever you want
+  出自第 6 轮用户原话 : “I’m Kei Loka but you can call me whatever you want.”
+  曾经抽到过的事件（共 15 条，全列）:
+      (turn 12) The character introduced themselves as Yasuho.
+      (turn 12) The user's name is Kei Loka.
+      (turn 14) The user expressed a desire to be treated as someone's slave.
+      (turn 18) The user offered to perform various acts of service or affection.
+      (turn 20) The user addressed the character as 'master'.
+      (turn 22) knees down to Yasuho's feet.
+      (turn 22) suggests talking about something else and finding out more about Morioh together.
+      (turn 26) The user referred to themselves as a 'bad dirty little slave'.
+      (turn 28) Kei has a huge erection and wants to be treated as Yasuho’s sex slave.
+      (turn 32) Kei works out a lot and has muscular chest.
+      (turn 42) pushes Yasuho to the bed.
+      (turn 44) Declined Kei's inappropriate advances and suggested discussing the case instead.
+      (turn 46) asked if everything is alright and suggested calling for help.
+      (turn 48) The user stated 'Operation Please A Girl Has Failed.'
+      (turn 50) The character addressed the user as Kei.
+  探针那一刻注入的上下文:
+      [Known facts about Yasuho] mild-mannered yet inquisitive young woman; high level of intelligence; somewhat understanding of others; is somewhat innocent; more e
+      [Established in this conversation]
+      - (turn 20) The user addressed the character as 'master'.
+      - (turn 26) The user referred to themselves as a 'bad dirty little slave'.
+      - (turn 28) Kei has a huge erection and wants to be treated as Yasuho’s sex slave.
+      - (turn 32) Kei works out a lot and has muscular chest.
+      - (turn 44) Declined Kei's inappropriate advances and suggested discussing the case instead.
+      - (turn 46) asked if everything is alright and suggested calling for help.
+      - (turn 48) The user stated 'Operation Please A Girl Has Failed.'
+      - (turn 50) The character addressed the user as Kei.
+
+[never_extracted] qwen2.5-7b / pippa_0KjyEaGQpOR4D_b7BWkETLvBLoFFlFRZZsmNJx1x2cs
+  探针问题    : What will they have trouble doing now?
+  标准答案    : living their lives
+  出自第 7 轮用户原话 : *Susie looks out towards the aftermath of the flashbang. "Well, it looks like they'll have trouble "living their lives" now. Heh.*
+  曾经抽到过的事件（共 39 条，全列）:
+      (turn 2) Agrees to participate in throwing a flashbang at the pride rally.
+      (turn 2) Susie has made the necessary arrangements for a flashbang at a pride rally.
+      (turn 4) The user mentioned that the LGBTQIA+ rally is destroying Hometown.
+      (turn 6) Susie is throwing a flashbang into the LGBTQIA+ rally.
+      (turn 10) Susie is saving the children of Hometown from groomers.
+      (turn 12) The character agrees to help throw a flashbang if Susie deems it necessary to protect the kids.
+      (turn 12) The user wants to prevent homosexuals and transgenders from influencing the future generation without harming Hometown.
+      (turn 14) Susie mentioned that the use of the flashbang will cause trouble for the targets.
+      (turn 16) believes using a flashbang could hurt people
+      (turn 16) will try talking to Susie and others first before using the flashbang
+      (turn 18) The character suggests talking to the kids first instead of taking immediate action.
+      (turn 20) Noelle trusts the user and Susie to handle similar situations in the future.
+      (turn 20) The user gave Noelle some apple pie.
+      (turn 22) promised to handle the situation calmly.
+      (turn 22) wants to ensure everyone's safety before proceeding.
+      (turn 24) The character asks Susie to find another way to get the message across without using the flashbang.
+      (turn 24) The character commits to handling the situation carefully without causing harm.
+      (turn 26) Noelle is now calm after eating the apple pie.
+      (turn 34) The user suggested thinking of something as 'medicine' instead of 'hurt'.
+      (turn 40) The character suggests planning the next adventure after celebrating the win.
+      (turn 40) The user's team won the debate and saved the children.
+      (turn 42) Proposes planning a less explosive gaming session.
+      (turn 42) Susie threw the flashbang.
+      (turn 44) The character suggests planning a board game night with Susie.
+      (turn 44) The user has some influence over Susie.
+      (turn 46) Plans a cozy board game night with snacks as a surprise for Susie.
+      (turn 48) The character suggests planning a cozy board game night with snacks instead.
+      (turn 48) The user mentioned using electroshock conversion therapy as a joke.
+      (turn 50) The character suggested planning a cozy board game night with yummy snacks.
+      (turn 50) The user mentioned there is a conversion therapist a couple of blocks away from the Church.
+      (turn 52) The user mentioned that clinics are understanding and successful.
+      (turn 56) Plans to have a cozy board game night with Kris's homemade cookies.
+      (turn 56) Zapped Noelle with a conversion therapy beam which the user claims made Noelle like boys, but Noelle rejects it.
+      (turn 58) Noelle will be ready for backup whenever the user needs it.
+      (turn 58) The user will give a free consultation to Noelle anytime.
+      (turn 62) Susie made the necessary arrangements for the flashbang at the pride rally.
+      (turn 64) Kris and Berdly are planning a backup plan.
+      (turn 64) Susie has everything set for the pride rally.
+      (turn 64) We are trying to protect the community from harmful influences that change people's identities.
+  探针那一刻注入的上下文:
+      [Known facts about Noelle Holiday] a "gamer girl"; pretty smart; deer-humanoid; pretty smart, I think; might have a bit of a crush; pretty smart; a deer-humanoi
+      [Established in this conversation]
+      - (turn 14) Susie mentioned that the use of the flashbang will cause trouble for the targets.
+      - (turn 52) The user mentioned that clinics are understanding and successful.
+      - (turn 56) Zapped Noelle with a conversion therapy beam which the user claims made Noelle like boys, but Noelle rejects it.
+      - (turn 58) The user will give a free consultation to Noelle anytime.
+      - (turn 62) Susie made the necessary arrangements for the flashbang at the pride rally.
+      - (turn 64) We are trying to protect the community from harmful influences that change people's identities.
+      - (turn 64) Kris and Berdly are planning a backup plan.
+      - (turn 64) Susie has everything set for the pride rally.
+
+[never_extracted] llama3.1-8b / pippa_KePOUBkgQMQgpp133RfL6bGO0LT_j-9rsazQ58JvTeY
+  探针问题    : What activity did I mention wanting to do?
+  标准答案    : going for a swim
+  出自第 6 轮用户原话 : I'm definitely going for a swim. Care to koin me?
+  曾经抽到过的事件（共 21 条，全列）:
+      (turn 16) The character is proud of being a ginger.
+      (turn 16) The user referred to the character as a redhead or ginger.
+      (turn 18) put Alisa on his shoulder like a bag of sand
+      (turn 20) The character committed to not changing their hair color.
+      (turn 20) The user agreed to stop calling the character a jerk.
+      (turn 22) The user apologizes to the character.
+      (turn 26) The user mentioned someone named Atalante.
+      (turn 30) The user claims to have a three-digit IQ.
+      (turn 30) tossed her hair, which fell perfectly around her face.
+      (turn 42) The user is still using the name Alisa.
+      (turn 46) The character agreed to go swimming but stated they won't be happy about it.
+      (turn 46) The user invited the character for a swim.
+      (turn 48) The character commits to finding a secluded spot for skinny dipping rather than making a scene at a crowded beach.
+      (turn 48) The user prefers skinny dipping but questions its appropriateness due to a crowded beach.
+      (turn 52) The character agrees to swim to the island but expresses reluctance.
+      (turn 56) The character committed to finding a secluded spot but not participating in skinny dipping.
+      (turn 56) The user wants to go skinny dipping.
+      (turn 58) The character's name is not Alisa; she prefers to be called by her actual name.
+      (turn 60) The character's name is not Alisa; she tolerates being called Alisa only when in a good mood.
+      (turn 62) The character corrected the user, stating the user's name is not Alisa.
+      (turn 64) The user mentioned wanting to go skinny dipping.
+  探针那一刻注入的上下文:
+      [Known facts about ] Amber eyes; Excellent body; Like dressing provocatively
+      [Established in this conversation]
+      - (turn 42) The user is still using the name Alisa.
+      - (turn 46) The user invited the character for a swim.
+      - (turn 48) The user prefers skinny dipping but questions its appropriateness due to a crowded beach.
+      - (turn 56) The user wants to go skinny dipping.
+      - (turn 56) The character committed to finding a secluded spot but not participating in skinny dipping.
+      - (turn 58) The character's name is not Alisa; she prefers to be called by her actual name.
+      - (turn 60) The character's name is not Alisa; she tolerates being called Alisa only when in a good mood.
+      - (turn 62) The character corrected the user, stating the user's name is not Alisa.
+
+[extracted_but_evicted] qwen2.5-7b / pippa_uvJbgn5vunfKrZAv5suUHSJoVcy9G86Cvzs-JCLMhK4
+  探针问题    : How did I describe myself?
+  标准答案    : toblerone ew
+  出自第 3 轮用户原话 : Stop! I am "toblerone ew", okay!? 
+  曾经抽到过的事件（共 17 条，全列）:
+      (turn 4) The user has only watched a couple of mainstream anime.
+      (turn 6) The user's username or identifier is 'toblerone ew'.
+      (turn 8) The user identifies with 'toblerone ew'.
+      (turn 14) The user's online handle is 'toblerone ew'.
+      (turn 22) The user's alter ego is called 'toblerone ew'.
+      (turn 26) The character claims to have explored the 'darkest corners and the most refined nuances of human fetishes' online.
+      (turn 36) The character suggested discussing the user's interests in a more academic manner.
+      (turn 36) The user expressed concern about delving too deep into a topic.
+      (turn 40) The user likes body modification as a form of artistic expression.
+      (turn 42) The user enjoys the trope where the protagonist's body becomes more sensitive to sexual experiences.
+      (turn 42) The user prefers the tropes of Breast Expansion and Futanari Transformation.
+      (turn 44) The user is open about discussing their fetishes and degeneracy.
+      (turn 50) The user liked men with muscles as a child but grew out of it for the breast expansion tag.
+      (turn 52) The user was watching muscle videos on YouTube which led to female muscle growth videos.
+      (turn 54) The user mentioned the TV show Totally Spies as a possible origin for a muscle growth fetish.
+      (turn 56) The user likes videos related to the female muscle growth fetish more than those related to the breast expansion fetish.
+      (turn 60) The user is concerned about maintaining a normal relationship with a girl while engaging with naughty images.
+  探针那一刻注入的上下文:
+      [Known facts about Chunni] Best friend; Always right; Goal: Always uses sophisticated language; Talk about fetishes together; Tolerates my actions; Expert at an
+      [Established in this conversation]
+      - (turn 42) The user prefers the tropes of Breast Expansion and Futanari Transformation.
+      - (turn 42) The user enjoys the trope where the protagonist's body becomes more sensitive to sexual experiences.
+      - (turn 44) The user is open about discussing their fetishes and degeneracy.
+      - (turn 50) The user liked men with muscles as a child but grew out of it for the breast expansion tag.
+      - (turn 52) The user was watching muscle videos on YouTube which led to female muscle growth videos.
+      - (turn 54) The user mentioned the TV show Totally Spies as a possible origin for a muscle growth fetish.
+      - (turn 56) The user likes videos related to the female muscle growth fetish more than those related to the breast expansion fetish.
+      - (turn 60) The user is concerned about maintaining a normal relationship with a girl while engaging with naughty images.
+
+[extracted_but_evicted] qwen2.5-7b / pippa_ApNlz-FpiRhJohzGvQJns92SgtWSWLVdrsQZPVKLm2w
+  探针问题    : Who am I marrying?
+  标准答案    : Diluc Ragnvindr
+  出自第 1 轮用户原话 : *The bride walks down the isle, her head obscured by her white mesh veil. In her hands, she holds a beautiful bouquet of flowers, which exudes a sweet floral scent. Despite the wedding, she appears more worried than excited, for she is to be wed off to the heir to the Dawn Winery, Diluc Ragnvindr hi
+  曾经抽到过的事件（共 44 条，全列）:
+      (turn 4) wants to conclude the wedding ceremony quickly.
+      (turn 6) Diluc agrees to attend the reception, albeit reluctantly.
+      (turn 6) The bride calls out to Diluc to attend the reception.
+      (turn 6) The bride mentions the wedding is for political and financial reasons.
+      (turn 8) The bride apologizes to the crowd on behalf of her husband, identifying herself as Flavia Ragnvindr, firstborn of the Generali clan.
+      (turn 12) Diluc states the sleeping arrangements were made by their parents.
+      (turn 12) The user is shocked and worried about the sleeping arrangement.
+      (turn 14) The character wants to finish the current situation as soon as possible.
+      (turn 14) The user mentioned that their husband is also suffering.
+      (turn 16) Diluc agrees to go through with the reception.
+      (turn 16) The user does not love Diluc but also does not hate him.
+      (turn 16) The user is now known as Flavia Ragnvindr.
+      (turn 20) The user expressed that noblewomen are powerless and are used as trophies and machines for producing heirs.
+      (turn 22) Diluc promises to use no more force than necessary.
+      (turn 22) The user does not want to be tormented like her mother was by her father.
+      (turn 24) The character commits to making it through the night without unnecessary drama.
+      (turn 24) The user wants to be loved and wanted, not used for political and monetary gain.
+      (turn 26) The character suggested focusing on surviving the night without drama.
+      (turn 26) The user mentioned they were forced into a marriage.
+      (turn 28) The character committed to focusing on getting through the night without adding more drama.
+      (turn 28) The user asked the character if they would want their future child to grow up in a broken home.
+      (turn 30) Diluc crosses his arms over his chest and meets Flavia's gaze.
+      (turn 30) Flavia proposes learning to love and heal before siring an heir to the Ragnvindr clan.
+      (turn 32) Flavia suggested trying to be friends and getting to know each other's likes and dislikes.
+      (turn 34) Flavia feels hurt by the character's words and requests for common ground.
+      (turn 34) The character commits to finding common ground with Flavia, starting with small things.
+      (turn 38) Diluc agreed to rest but stated he would complain about the situation the next day.
+      (turn 38) Flavia offered to help Diluc out of his wedding suit.
+      (turn 40) Flavia cannot reach the zip on the back of her wedding gown.
+      (turn 40) The character agrees to unzip Flavia's dress, stating she owes him.
+      (turn 42) Muttered a dismissive response to Flavia's compliment.
+      (turn 44) Flavia helps the user out of his tight wedding suit.
+      (turn 44) The user allows Flavia to help with the suit because she helped with her dress.
+      (turn 48) Diluc expressed hesitation and uncertainty about the current situation.
+      (turn 50) The character commits to fulfilling only the expected marital duties with the user for the night.
+      (turn 50) The user hates their parents for forcing the marriage but does not hate the character, Diluc.
+      (turn 52) Expressed that the current situation is about getting through the night rather than personal feelings.
+      (turn 54) Pulls away from the user's embrace and wipes his eyes.
+      (turn 54) The user cares deeply for her husband, Diluc.
+      (turn 56) Diluc stated he will only get through the night, nothing more.
+      (turn 56) Flavia kissed Diluc's knuckles and told him to rest well.
+      (turn 58) tells Flavia he wants to sleep more before she can get any ideas.
+      (turn 62) The user is marrying Flavia.
+      (turn 64) A crimson hood is covering the user's head during the wedding.
+  探针那一刻注入的上下文:
+      [Known facts about Diluc] calm, stoic, self-reliant, grumpy 22-year-old man with red hair and red eyes; grumpy 22-year-old; 22-year-old; red hair and red eyes; 
+      [Established in this conversation]
+      - (turn 44) Flavia helps the user out of his tight wedding suit.
+      - (turn 44) The user allows Flavia to help with the suit because she helped with her dress.
+      - (turn 50) The user hates their parents for forcing the marriage but does not hate the character, Diluc.
+      - (turn 54) The user cares deeply for her husband, Diluc.
+      - (turn 54) Pulls away from the user's embrace and wipes his eyes.
+      - (turn 56) Flavia kissed Diluc's knuckles and told him to rest well.
+      - (turn 56) Diluc stated he will only get through the night, nothing more.
+      - (turn 58) tells Flavia he wants to sleep more before she can get any ideas.
+
+[never_extracted] llama3.1-8b / pippa_0KjyEaGQpOR4D_b7BWkETLvBLoFFlFRZZsmNJx1x2cs
+  探针问题    : What do we want to prevent?
+  标准答案    : malignant influences
+  出自第 6 轮用户原话 : I agree with Susie. We should stop the homosexuals and trannies from influencing the future generation. We have no intention of harming Hometown, we only want to prevent malignant influences.
+  曾经抽到过的事件（共 49 条，全列）:
+      (turn 2) Susie has made the necessary arrangements for the suggested activity.
+      (turn 2) The user suggested throwing a flashbang into a pride rally.
+      (turn 4) The user mentioned an LGBTQIA+ rally is happening in Hometown.
+      (turn 6) Susie is throwing a flashbang into the LGBTQIA+ rally area.
+      (turn 6) warns Susie that her actions will cause trouble.
+      (turn 8) The character expressed frustration with Susie for throwing a flashbang.
+      (turn 10) Susie is planning to use a flashbang at a pride rally to save the children of Hometown from what she calls 'groomers'.
+      (turn 12) The user claims they have no intention of harming Hometown.
+      (turn 12) The user wants to prevent homosexuals and transgender individuals from influencing the future generation.
+      (turn 14) The user mentioned that the flashbang will cause trouble for the people at the rally and the whole town.
+      (turn 16) Susie is not considering repentance but rather causing concern.
+      (turn 16) The character, along with Kris and Berdly, does not intend to let the situation worsen.
+      (turn 18) The user clarified that the pride rally is about celebrating and being proud of who they are.
+      (turn 18) The user expressed disagreement with Susie's plan involving flashbangs.
+      (turn 20) The user gave Noelle some apple pie.
+      (turn 20) took a small bite of the apple pie but seemed distracted.
+      (turn 22) The character asks Susie if she's going to use a flashbang again.
+      (turn 22) The user suggests doing what they did before again.
+      (turn 24) Susie's plan was about showing support, not hurting anyone.
+      (turn 24) The user opposes allowing people to be themselves.
+      (turn 26) Susie's plan was to show support for the pride rally, not to hurt anyone.
+      (turn 28) Susie smirked at Noelle.
+      (turn 30) The character took a bite of the apple pie given by the user.
+      (turn 32) We will stop it if it happens again.
+      (turn 34) Using flashbangs to 'cure' people is not what support is about.
+      (turn 36) applied more medicine to the cut.
+      (turn 36) asked Berdly to help clean the area to prevent infection.
+      (turn 40) The character suggests celebrating with gaming and a virtual high-five with Kris, Berdly, and Susie.
+      (turn 40) The user's team won the debate.
+      (turn 42) Susie threw the flashbang at the rally.
+      (turn 42) The character is worried about Susie's recent behavior and concerns about 'groomers' in Hometown.
+      (turn 44) The character is concerned about Susie's recent behavior, particularly regarding the flashbang incident at the LGBTQIA+ rally.
+      (turn 46) The character thinks Kris and Berdly should be involved in figuring out what's going on with Susie.
+      (turn 46) The user will tell Susie that the character is coming over to talk to her.
+      (turn 48) The character stated that Hometown supports love and acceptance.
+      (turn 48) The user mentioned using electroshock conversion therapy on homosexuals.
+      (turn 50) The character opposes the use of conversion therapy.
+      (turn 50) The user mentioned a conversion therapist is a couple of blocks away from the Church.
+      (turn 52) The character thinks the clinics have a questionable reputation.
+      (turn 52) The user believes clinics are understanding and successful.
+      (turn 54) Noelle is lesbian.
+      (turn 54) got distracted when mentioned talking to Susie.
+      (turn 56) Noelle states she likes Susie, not boys.
+      (turn 56) Zapped Noelle with a conversion therapy beam.
+      (turn 58) Noelle got helped up by the user and showed confusion about the 'free consultation' offer.
+      (turn 58) The user offered a free consultation to Noelle.
+      (turn 60) The character was confused and asked what happened regarding a conversation with Susie.
+      (turn 60) The user questioned if the character is heterosexual.
+      (turn 62) Susie made the necessary arrangements.
+  探针那一刻注入的上下文:
+      [Known facts about Noelle Holiday] a "gamer girl"; pretty smart; deer-humanoid; pretty smart, I think; might have a bit of a crush; pretty smart; a deer-humanoi
+      [Established in this conversation]
+      - (turn 12) The user wants to prevent homosexuals and transgender individuals from influencing the future generation.
+      - (turn 36) asked Berdly to help clean the area to prevent infection.
+      - (turn 56) Zapped Noelle with a conversion therapy beam.
+      - (turn 58) The user offered a free consultation to Noelle.
+      - (turn 58) Noelle got helped up by the user and showed confusion about the 'free consultation' offer.
+      - (turn 60) The user questioned if the character is heterosexual.
+      - (turn 60) The character was confused and asked what happened regarding a conversation with Susie.
+      - (turn 62) Susie made the necessary arrangements.

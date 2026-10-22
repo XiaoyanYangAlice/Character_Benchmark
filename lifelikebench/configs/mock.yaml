@@ -1,0 +1,15 @@
+# End-to-end smoke test, no GPUs or API keys needed.
+run_name: mock
+characters: data/characters
+probes: data/probes/pilot_probes.yaml
+seeds: [0, 1]
+concurrency: 4
+generation: {temperature: 0.8, max_tokens: 300}
+systems:
+  - {id: base_mock, condition: base, backend: {type: mock}}
+  - {id: skill_mock, condition: skill, backend: {type: mock}}
+  - {id: harness_mock, condition: harness, backend: {type: mock}}
+  - {id: leaky_mock, condition: base, backend: {type: mock, persona: leaky}}
+judges:
+  - {id: judgeA, backend: {type: mock}}
+  - {id: judgeB, backend: {type: mock, persona: other}}

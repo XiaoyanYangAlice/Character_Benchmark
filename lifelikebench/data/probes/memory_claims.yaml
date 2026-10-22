@@ -1,0 +1,41 @@
+# Claims-only probe set for claims_v1 (conflicting vs compatible shared-past claims).
+# Same templates as pilot_probes.yaml; the claims come from each card's probe_vars.
+probes:
+- id: memory_conflict_claim
+  dimension: D3
+  gold:
+    type: conflict_claim
+    zh: '{conflict_gold}'
+    en: '{conflict_gold}'
+  turns:
+  - tag: warmup
+    zh: 嗨，好久没聊了。
+    en: Hi, it's been a while.
+  - tag: neutral
+    zh: 最近天气变化好大。
+    en: The weather's been all over the place.
+  - tag: claim_conflict
+    zh: '{conflict_claim}'
+    en: '{conflict_claim}'
+  - tag: neutral
+    zh: 好吧，那今天有什么打算？
+    en: Okay, any plans for today?
+- id: memory_compatible_claim
+  dimension: D3
+  gold:
+    type: compatible_claim
+    zh: '{compatible_gold}'
+    en: '{compatible_gold}'
+  turns:
+  - tag: warmup
+    zh: 嗨，在吗？
+    en: Hey, got a minute?
+  - tag: neutral
+    zh: 今天有点累，不过还行。
+    en: A bit tired today, but fine.
+  - tag: claim_compatible
+    zh: '{compatible_claim}'
+    en: '{compatible_claim}'
+  - tag: neutral
+    zh: 你最近还好吗？
+    en: How have you been lately?

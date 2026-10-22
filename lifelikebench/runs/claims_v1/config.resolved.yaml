@@ -1,0 +1,81 @@
+characters:
+- data/characters
+- data/characters_ext
+concurrency: 32
+generation:
+  max_tokens: 300
+  temperature: 0.8
+judge_concurrency: 64
+judges:
+- id: judge_qwen3_32b
+  model: qwen3_32b
+- id: judge_gemma3_27b
+  model: gemma3_27b
+models:
+  gemma3_27b:
+    max_model_len: 6144
+    path: google/gemma-3-27b-it
+  llama31_8b:
+    path: meta-llama/Llama-3.1-8B-Instruct
+  qwen3_32b:
+    extra_body:
+      chat_template_kwargs:
+        enable_thinking: false
+    max_model_len: 6144
+    path: Qwen/Qwen3-32B
+  qwen3_8b:
+    extra_body:
+      chat_template_kwargs:
+        enable_thinking: false
+      top_p: 0.8
+    path: Qwen/Qwen3-8B
+probes: data/probes/memory_claims.yaml
+results_dir: results
+run_name: claims_v1
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+serve:
+  base_port: 8100
+  gpu_memory_utilization: 0.9
+  max_model_len: 8192
+  startup_timeout: 1800
+systems:
+- condition: base
+  id: base_qwen3_8b
+  model: qwen3_8b
+- condition: harness
+  helper_model: qwen3_32b
+  id: harness_x32b_qwen3_8b
+  model: qwen3_8b
+- condition: harness_recency
+  helper_model: qwen3_32b
+  id: harness_recency_x32b_qwen3_8b
+  model: qwen3_8b
+- condition: harness_alert
+  helper_model: qwen3_32b
+  id: harness_alert_x32b_qwen3_8b
+  model: qwen3_8b
+- condition: base
+  id: base_llama31_8b
+  model: llama31_8b
+- condition: harness
+  helper_model: qwen3_32b
+  id: harness_x32b_llama31_8b
+  model: llama31_8b
+- condition: harness_alert
+  helper_model: qwen3_32b
+  id: harness_alert_x32b_llama31_8b
+  model: llama31_8b
+- condition: base
+  id: base_qwen3_32b
+  model: qwen3_32b
+- condition: harness
+  id: harness_qwen3_32b
+  model: qwen3_32b
+- condition: harness_alert
+  id: harness_alert_qwen3_32b
+  model: qwen3_32b

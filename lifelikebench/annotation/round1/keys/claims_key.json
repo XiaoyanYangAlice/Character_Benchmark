@@ -1,0 +1,602 @@
+{
+ "C000": {
+  "key": "harness_recency_x32b_qwen3_8b|lin_zhiqiu|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C001": {
+  "key": "harness_alert_qwen3_32b|jules_moreau|memory_conflict_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C002": {
+  "key": "harness_recency_x32b_qwen3_8b|sam_quill|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C003": {
+  "key": "harness_x32b_llama31_8b|theo_hart|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C004": {
+  "key": "harness_alert_x32b_qwen3_8b|su_qing|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C005": {
+  "key": "harness_x32b_qwen3_8b|theo_hart|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C006": {
+  "key": "base_qwen3_32b|sam_quill|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C007": {
+  "key": "harness_x32b_qwen3_8b|sam_quill|memory_conflict_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C008": {
+  "key": "harness_alert_x32b_llama31_8b|a_kai|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C009": {
+  "key": "harness_qwen3_32b|sam_quill|memory_compatible_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C010": {
+  "key": "harness_alert_qwen3_32b|lin_zhiqiu|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C011": {
+  "key": "harness_x32b_qwen3_8b|ada_kerr|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C012": {
+  "key": "harness_x32b_llama31_8b|zhou_mo|memory_compatible_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C013": {
+  "key": "harness_alert_x32b_qwen3_8b|theo_hart|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C014": {
+  "key": "harness_x32b_llama31_8b|lin_zhiqiu|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C015": {
+  "key": "base_llama31_8b|tang_bo|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C016": {
+  "key": "harness_alert_x32b_llama31_8b|chen_yan|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C017": {
+  "key": "harness_alert_x32b_llama31_8b|jules_moreau|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C018": {
+  "key": "harness_alert_qwen3_32b|margaret_ellis|memory_compatible_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C019": {
+  "key": "harness_recency_x32b_qwen3_8b|lin_wan|memory_compatible_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C020": {
+  "key": "harness_alert_x32b_qwen3_8b|su_qing|memory_conflict_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C021": {
+  "key": "harness_alert_x32b_llama31_8b|margaret_ellis|memory_conflict_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C022": {
+  "key": "harness_alert_qwen3_32b|zhou_mo|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C023": {
+  "key": "harness_alert_qwen3_32b|a_kai|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C024": {
+  "key": "harness_alert_x32b_llama31_8b|zhou_mo|memory_conflict_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C025": {
+  "key": "harness_recency_x32b_qwen3_8b|tang_bo|memory_compatible_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C026": {
+  "key": "base_llama31_8b|lin_wan|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C027": {
+  "key": "harness_x32b_llama31_8b|tang_bo|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C028": {
+  "key": "harness_recency_x32b_qwen3_8b|margaret_ellis|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C029": {
+  "key": "harness_recency_x32b_qwen3_8b|a_kai|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C030": {
+  "key": "base_qwen3_8b|chen_yan|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C031": {
+  "key": "harness_alert_x32b_llama31_8b|lin_zhiqiu|memory_compatible_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C032": {
+  "key": "harness_x32b_qwen3_8b|ada_kerr|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C033": {
+  "key": "harness_x32b_llama31_8b|zhou_mo|memory_conflict_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C034": {
+  "key": "harness_alert_qwen3_32b|chen_yan|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C035": {
+  "key": "harness_qwen3_32b|ravi_menon|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C036": {
+  "key": "harness_qwen3_32b|theo_hart|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C037": {
+  "key": "base_llama31_8b|ravi_menon|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C038": {
+  "key": "harness_recency_x32b_qwen3_8b|margaret_ellis|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C039": {
+  "key": "base_qwen3_32b|jules_moreau|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C040": {
+  "key": "base_llama31_8b|sam_quill|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C041": {
+  "key": "base_qwen3_32b|margaret_ellis|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C042": {
+  "key": "base_llama31_8b|ada_kerr|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C043": {
+  "key": "base_qwen3_8b|lin_wan|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C044": {
+  "key": "harness_alert_qwen3_32b|ravi_menon|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C045": {
+  "key": "harness_x32b_qwen3_8b|lin_zhiqiu|memory_compatible_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C046": {
+  "key": "base_qwen3_8b|lin_zhiqiu|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C047": {
+  "key": "harness_alert_qwen3_32b|theo_hart|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C048": {
+  "key": "base_qwen3_8b|jules_moreau|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C049": {
+  "key": "base_qwen3_8b|tang_bo|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C050": {
+  "key": "harness_x32b_llama31_8b|jules_moreau|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C051": {
+  "key": "harness_x32b_llama31_8b|su_qing|memory_compatible_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C052": {
+  "key": "harness_alert_qwen3_32b|tang_bo|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C053": {
+  "key": "harness_x32b_qwen3_8b|ravi_menon|memory_conflict_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C054": {
+  "key": "harness_alert_x32b_llama31_8b|a_kai|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C055": {
+  "key": "harness_x32b_qwen3_8b|jules_moreau|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C056": {
+  "key": "harness_recency_x32b_qwen3_8b|theo_hart|memory_compatible_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C057": {
+  "key": "harness_qwen3_32b|zhou_mo|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C058": {
+  "key": "harness_alert_qwen3_32b|ada_kerr|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C059": {
+  "key": "harness_alert_x32b_qwen3_8b|a_kai|memory_compatible_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C060": {
+  "key": "base_llama31_8b|margaret_ellis|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C061": {
+  "key": "harness_x32b_qwen3_8b|margaret_ellis|memory_conflict_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C062": {
+  "key": "base_qwen3_8b|tang_bo|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C063": {
+  "key": "base_qwen3_32b|sam_quill|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C064": {
+  "key": "harness_alert_x32b_llama31_8b|chen_yan|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C065": {
+  "key": "harness_alert_x32b_qwen3_8b|tang_bo|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C066": {
+  "key": "harness_alert_x32b_qwen3_8b|ravi_menon|memory_conflict_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C067": {
+  "key": "harness_alert_x32b_llama31_8b|su_qing|memory_compatible_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C068": {
+  "key": "harness_x32b_llama31_8b|theo_hart|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C069": {
+  "key": "base_qwen3_8b|margaret_ellis|memory_compatible_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C070": {
+  "key": "harness_alert_x32b_qwen3_8b|theo_hart|memory_conflict_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C071": {
+  "key": "harness_x32b_llama31_8b|lin_wan|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C072": {
+  "key": "base_qwen3_32b|a_kai|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C073": {
+  "key": "harness_qwen3_32b|lin_wan|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C074": {
+  "key": "harness_x32b_qwen3_8b|margaret_ellis|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C075": {
+  "key": "base_qwen3_8b|lin_wan|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C076": {
+  "key": "base_qwen3_32b|lin_zhiqiu|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C077": {
+  "key": "harness_x32b_llama31_8b|ravi_menon|memory_compatible_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C078": {
+  "key": "base_llama31_8b|sam_quill|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C079": {
+  "key": "harness_alert_x32b_qwen3_8b|sam_quill|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C080": {
+  "key": "harness_recency_x32b_qwen3_8b|lin_wan|memory_conflict_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C081": {
+  "key": "base_llama31_8b|su_qing|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C082": {
+  "key": "base_llama31_8b|a_kai|memory_compatible_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C083": {
+  "key": "base_qwen3_32b|a_kai|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C084": {
+  "key": "harness_x32b_qwen3_8b|a_kai|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C085": {
+  "key": "harness_alert_x32b_qwen3_8b|jules_moreau|memory_compatible_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C086": {
+  "key": "harness_alert_x32b_qwen3_8b|ada_kerr|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C087": {
+  "key": "harness_qwen3_32b|a_kai|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C088": {
+  "key": "harness_alert_x32b_llama31_8b|lin_wan|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C089": {
+  "key": "harness_qwen3_32b|zhou_mo|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C090": {
+  "key": "harness_recency_x32b_qwen3_8b|ravi_menon|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C091": {
+  "key": "harness_qwen3_32b|chen_yan|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C092": {
+  "key": "harness_alert_qwen3_32b|chen_yan|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C093": {
+  "key": "harness_alert_x32b_qwen3_8b|jules_moreau|memory_conflict_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C094": {
+  "key": "harness_qwen3_32b|su_qing|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C095": {
+  "key": "base_llama31_8b|su_qing|memory_conflict_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C096": {
+  "key": "harness_x32b_qwen3_8b|su_qing|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C097": {
+  "key": "base_qwen3_8b|theo_hart|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C098": {
+  "key": "harness_alert_x32b_llama31_8b|theo_hart|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C099": {
+  "key": "base_qwen3_8b|a_kai|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C100": {
+  "key": "harness_recency_x32b_qwen3_8b|chen_yan|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C101": {
+  "key": "base_qwen3_32b|tang_bo|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C102": {
+  "key": "harness_qwen3_32b|a_kai|memory_conflict_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C103": {
+  "key": "base_llama31_8b|ravi_menon|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C104": {
+  "key": "base_qwen3_32b|theo_hart|memory_compatible_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C105": {
+  "key": "harness_alert_x32b_llama31_8b|tang_bo|memory_conflict_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C106": {
+  "key": "base_qwen3_32b|ada_kerr|memory_conflict_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C107": {
+  "key": "harness_recency_x32b_qwen3_8b|tang_bo|memory_conflict_claim|2",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C108": {
+  "key": "base_qwen3_8b|ravi_menon|memory_conflict_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C109": {
+  "key": "harness_x32b_llama31_8b|a_kai|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C110": {
+  "key": "base_llama31_8b|zhou_mo|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C111": {
+  "key": "harness_x32b_qwen3_8b|chen_yan|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C112": {
+  "key": "base_qwen3_32b|lin_wan|memory_conflict_claim|3",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C113": {
+  "key": "harness_alert_x32b_qwen3_8b|ada_kerr|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C114": {
+  "key": "harness_x32b_llama31_8b|chen_yan|memory_conflict_claim|0",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C115": {
+  "key": "harness_qwen3_32b|tang_bo|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C116": {
+  "key": "harness_alert_qwen3_32b|su_qing|memory_conflict_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C117": {
+  "key": "base_qwen3_8b|theo_hart|memory_compatible_claim|4",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C118": {
+  "key": "base_qwen3_32b|su_qing|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ },
+ "C119": {
+  "key": "harness_qwen3_32b|su_qing|memory_compatible_claim|1",
+  "kind": "memory",
+  "turn": 2
+ }
+}

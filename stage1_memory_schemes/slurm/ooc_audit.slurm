@@ -1,0 +1,51 @@
+#!/bin/bash
+#SBATCH --job-name=char_ooc_audit
+#SBATCH --partition=gpu_a100
+#SBATCH --gpus=1
+#SBATCH --time=00:30:00
+#SBATCH --output=logs/ooc_audit_%j.out
+
+# 抽样重判 OOC：只需要 judge 模型（Qwen2.5-14B），1 张 GPU。
+# 从 qwen 的生成结果里随机抽 600 个角色轮次重判，导出 20 条被标出戏 + 20 条未标的盲评清单。
+# 600 次短调用、8 路并发，预计 5–10 分钟；启动 vLLM 约 2–3 分钟。
+#
+# 提交：sbatch slurm/ooc_audit.slurm
+# 产出：results/ooc_audit/{sheet.md, labels_template.csv, key.csv, meta.json}
+
+module purge; module load 2025; module load Anaconda3/2025.06-1
+source activate memory-eval
+export HF_HUB_OFFLINE=1
+export VLLM_USE_FLASHINFER_SAMPLER=0
+mkdir -p logs results
+
+JUDGE_PATH=/projects/prjs1995/models/Qwen2.5-14B-Instruct
+
+CUDA_VISIBLE_DEVICES=0 vllm serve "$JUDGE_PATH" \
+    --served-model-name judge-model --port 8002 --dtype bfloat16 --max-model-len 8192 &
+JUDGE_PID=$!
+
+UP=0
+for i in $(seq 1 30); do
+    curl -s -o /dev/null -w "%{http_code}" "http://localhost:8002/v1/models" | grep -q 200 && { UP=1; break; }
+    sleep 10
+done
+if [ "$UP" -ne 1 ]; then
+    echo "judge 服务 5 分钟内没起来，检查上面的日志。"
+    kill $JUDGE_PID 2>/dev/null
+    exit 1
+fi
+
+python src/eval/ooc_audit_sample.py \
+    --config configs/experiment.yaml \
+    --judge-port 8002 \
+    --model qwen2.5-7b \
+    --raw-dirs results/raw_outputs results_seed1/raw_outputs results_seed2/raw_outputs \
+    --n-sample 600 --n-flagged 20 --n-unflagged 20 \
+    --out-dir results/ooc_audit || {
+    echo "!!!!! ooc_audit_sample.py 报错退出，不是正常完成 !!!!!"
+    kill $JUDGE_PID 2>/dev/null
+    exit 1
+}
+
+kill $JUDGE_PID 2>/dev/null
+echo "Done. 清单在 results/ooc_audit/sheet.md"

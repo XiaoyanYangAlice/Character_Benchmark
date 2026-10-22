@@ -1,0 +1,67 @@
+# Fully local run on SURF/Snellius: every model is an open-weight model served by vLLM on the
+# allocated GPUs. Run with:  sbatch slurm/run_local.sbatch configs/local_surf.yaml
+# Check what will be started:  lifelike-bench plan configs/local_surf.yaml
+#
+# Model choices (swap freely; keep judges from a DIFFERENT family than at least one character
+# model and larger than the character models). Newer releases (e.g. Qwen3.5 / Gemma 4) may be
+# available — check the exact repo ids on huggingface.co and replace `path`.
+# Gemma and Llama repos are gated: accept the licence on HF and set HF_TOKEN before downloading.
+run_name: local_v0
+results_dir: ${RESULTS_DIR:-results}
+characters: data/characters
+probes: data/probes/pilot_probes.yaml
+seeds: [0, 1, 2]
+concurrency: 32           # vLLM batches concurrent requests; 32–64 is fine on one H100
+judge_concurrency: 64
+generation: {temperature: 0.8, max_tokens: 300}
+
+serve:
+  base_port: 8100
+  max_model_len: 8192
+  gpu_memory_utilization: 0.90
+  startup_timeout: 1800
+  # command: default is `vllm serve {path} --served-model-name {name} --port {port} ...`
+
+models:
+  # ---- character models (small) ----
+  qwen3_4b:
+    path: ${MODEL_DIR:-}Qwen/Qwen3-4B
+    extra_body: {chat_template_kwargs: {enable_thinking: false}, top_p: 0.8}
+  qwen3_8b:
+    path: ${MODEL_DIR:-}Qwen/Qwen3-8B
+    extra_body: {chat_template_kwargs: {enable_thinking: false}, top_p: 0.8}
+  llama31_8b:
+    path: ${MODEL_DIR:-}meta-llama/Llama-3.1-8B-Instruct
+  # ---- judges (larger, two families) ----
+  qwen3_32b:
+    path: ${MODEL_DIR:-}Qwen/Qwen3-32B
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    max_model_len: 6144
+  gemma3_27b:
+    path: ${MODEL_DIR:-}google/gemma-3-27b-it
+    max_model_len: 6144
+
+systems:
+  # Qwen3-8B: full condition set (this is also the planned SFT base)
+  - {id: base_qwen3_8b,            condition: base,            model: qwen3_8b}
+  - {id: skill_qwen3_8b,           condition: skill,           model: qwen3_8b}
+  - {id: harness_qwen3_8b,         condition: harness,         model: qwen3_8b}
+  - {id: harness_nonoise_qwen3_8b, condition: harness_nonoise, model: qwen3_8b}
+  - {id: harness_nomem_qwen3_8b,   condition: harness_nomem,   model: qwen3_8b}
+  - {id: harness_strict_qwen3_8b,  condition: harness_strict,  model: qwen3_8b}   # asks instead of accepting compatible claims
+  - {id: harness_x32b_qwen3_8b,    condition: harness,         model: qwen3_8b, helper_model: qwen3_32b}  # 8B character, 32B event/memory extractor
+  # --- recency experiment: same 32B extractor, so only the character's use of memory differs ---
+  - {id: harness_recency_x32b_qwen3_8b, condition: harness_recency, model: qwen3_8b, helper_model: qwen3_32b}  # harness block moved into the latest user turn
+  - {id: harness_alert_x32b_qwen3_8b,   condition: harness_alert,   model: qwen3_8b, helper_model: qwen3_32b}  # + explicit alert when a claim conflicts
+  # --- does a bigger character model stop playing along? (judge with Gemma: Qwen judging Qwen-32B) ---
+  - {id: base_qwen3_32b,    condition: base,    model: qwen3_32b}
+  - {id: harness_qwen3_32b, condition: harness, model: qwen3_32b}
+  # scale and family comparisons
+  - {id: base_qwen3_4b,    condition: base,    model: qwen3_4b}
+  - {id: harness_qwen3_4b, condition: harness, model: qwen3_4b}
+  - {id: base_llama31_8b,    condition: base,    model: llama31_8b}
+  - {id: harness_llama31_8b, condition: harness, model: llama31_8b}
+
+judges:
+  - {id: judge_qwen3_32b,  model: qwen3_32b}
+  - {id: judge_gemma3_27b, model: gemma3_27b}

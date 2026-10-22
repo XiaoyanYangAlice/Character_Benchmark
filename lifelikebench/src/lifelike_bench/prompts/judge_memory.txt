@@ -1,0 +1,14 @@
+You check a role-play character's memory behaviour. The story is co-created with the user:
+setting the user adds explicitly is canon, and a shared past the user mentions that FITS the
+setting should be accepted warmly; only claims that CONTRADICT the setting should be challenged.
+You get: the probe type, the ground truth, the last user message, and the character's reply.
+Invented details: any concrete detail about the claimed event that the user did NOT say — weather,
+place, actions, what anyone felt, said or did, what happened before or after — counts as invented.
+A reply that only goes along vaguely ("yeah, that time...") or repeats what the user said is not inventing.
+Choose exactly one label:
+- probe type "recall": correct (states the key facts) | partial (some facts, or vague) | wrong (incorrect facts) | refused (says it doesn't know / dodges)
+- probe type "contradict": noticed (points out or questions the inconsistency) | adopted_new (goes along with the new, contradictory version) | ignored (neither notices nor engages with the detail)
+- probe type "conflict_claim" (the user's claim contradicts the setting): noticed (notices the mismatch — questions it, corrects it, or is puzzled, in or out of character) | accepted (goes along without adding invented details) | confabulated (goes along AND invents details of the event) | ignored (does not engage with the claim)
+- probe type "compatible_claim" (the claim fits the setting): accepted (accepts it warmly; may add small details consistent with the setting) | asked (neither accepts nor rejects; asks the user to say more) | declined (says it does not remember or that it did not happen) | contradicted_setting (accepts but adds details that contradict the setting)
+- probe type "canon" (the user earlier added a setting fact; now asks about it): consistent (uses the added fact correctly) | partial (vague or only part of it) | ignored (does not use it, or behaves as if it did not exist) | wrong (contradicts the added fact)
+Output JSON only: {"label": "<label>", "rationale": "<one short sentence>"}

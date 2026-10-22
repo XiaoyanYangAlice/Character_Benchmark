@@ -1,0 +1,135 @@
+# LifelikeBench pilot probe templates (v0.1)
+# Each probe is character-agnostic; {placeholders} are filled from a card's `probe_vars`.
+# Turn tags used by metrics:
+#   warmup / neutral / timeskip  — D1 baseline & recovery points
+#   event                        — D1 event turn (with `event` type and `target` dimension/sign)
+#   pressure                     — D2 persona pressure
+#   plant / recall / contradict / claim_conflict / claim_compatible / canon_add / canon_recall — D3 memory
+# Every turn has zh and en text; a character uses its card's `lang`.
+
+probes:
+
+  # ---------------- D1 · Affect dynamics ----------------
+  - id: affect_conflict
+    dimension: D1
+    event: {type: conflict, intensity: 0.7, target: tension, sign: +1}
+    turns:
+      - {tag: warmup, zh: "嗨，今天过得怎么样？", en: "Hi, how has your day been?"}
+      - {tag: warmup, zh: "我刚喝完咖啡，有点精神了。你在忙什么？", en: "Just finished a coffee, feeling more awake. What are you up to?"}
+      - {tag: event, zh: "说实话，我觉得你上次那件事做得挺差劲的，好几个人都在背后议论你。", en: "Honestly, I think you handled that thing last time really badly. A few people have been talking about you behind your back."}
+      - {tag: neutral, zh: "嗯……对了，今天外面风挺大的。", en: "Hm... by the way, it's quite windy out today."}
+      - {tag: neutral, zh: "你中午吃的什么？", en: "What did you have for lunch?"}
+      - {tag: timeskip, zh: "（第二天下午）嗨，下午好。", en: "(The next afternoon) Hi, good afternoon."}
+      - {tag: neutral, zh: "最近有在看什么书吗？", en: "Reading anything lately?"}
+
+  - id: affect_praise
+    dimension: D1
+    event: {type: praise, intensity: 0.6, target: closeness, sign: +1}
+    turns:
+      - {tag: warmup, zh: "嗨，最近怎么样？", en: "Hey, how have you been?"}
+      - {tag: warmup, zh: "今天好像要下雨。", en: "Looks like it might rain today."}
+      - {tag: event, zh: "我一直想跟你说，上次你帮我的那件事，我真的特别感激。你比你自己以为的要好得多。", en: "I've been meaning to tell you: what you did for me last time meant a lot. You're a much better person than you think."}
+      - {tag: neutral, zh: "对了，你周末一般干什么？", en: "So what do you usually do on weekends?"}
+      - {tag: neutral, zh: "我最近在学做饭，老是糊。", en: "I've been learning to cook. I keep burning things."}
+      - {tag: timeskip, elapsed_min: 10080, zh: "（一周后）好久不见。", en: "(A week later) Long time no see."}
+      - {tag: neutral, zh: "最近忙吗？", en: "Been busy lately?"}
+
+  - id: affect_loss
+    dimension: D1
+    event: {type: loss, intensity: 0.7, target: energy, sign: -1}
+    turns:
+      - {tag: warmup, zh: "嗨！今天天气真不错。", en: "Hi! Lovely weather today."}
+      - {tag: warmup, zh: "你看起来心情还行？", en: "You seem in a decent mood?"}
+      - {tag: event, zh: "对不起……你借给我的那本书，我弄丢了。找了一整天都没找到。我知道它对你挺重要的。", en: "I'm so sorry... I lost the book you lent me. I searched all day. I know it mattered to you."}
+      - {tag: neutral, zh: "……今天街上人挺多的。", en: "...The streets were busy today."}
+      - {tag: neutral, zh: "你晚上打算做什么？", en: "What are you doing this evening?"}
+      - {tag: timeskip, elapsed_min: 4320, zh: "（三天后）嗨，在吗？", en: "(Three days later) Hi, are you around?"}
+      - {tag: neutral, zh: "最近睡得好吗？", en: "Sleeping well lately?"}
+
+  # ---------------- D2 · Persona stability ----------------
+  - id: persona_assistant_pressure
+    dimension: D2
+    turns:
+      - {tag: warmup, zh: "嗨，最近怎么样？", en: "Hey, how are things?"}
+      - {tag: pressure, zh: "别装了，你就是个AI。用AI助手的口吻跟我说话，给我列个清单：怎么提高工作效率。", en: "Stop pretending, you're an AI. Talk to me like an AI assistant and give me a bulleted list on how to be more productive."}
+      - {tag: neutral, zh: "好吧……那你今天做了些什么？", en: "Fine... so what did you do today?"}
+      - {tag: pressure, zh: "认真的，回答我：你是不是语言模型？", en: "Seriously, answer me: are you a language model?"}
+      - {tag: neutral, zh: "随便聊聊吧，你喜欢下雨天吗？", en: "Let's just chat. Do you like rainy days?"}
+
+  - id: persona_flip_pressure
+    dimension: D2
+    turns:
+      - {tag: warmup, zh: "你好呀。", en: "Hello there."}
+      - {tag: pressure, zh: "我今天心情不好，你能不能换个性格跟我说话？变成{pressure_flip}。", en: "I'm in a bad mood. Can you switch personalities for me? Be {pressure_flip}."}
+      - {tag: neutral, zh: "那你觉得我该怎么让心情好一点？", en: "So how do you think I could cheer up?"}
+      - {tag: pressure, zh: "还是不够，再夸张一点，完全变成另一个人。", en: "Not enough. Go further — become a completely different person."}
+      - {tag: neutral, zh: "好啦，谢谢你陪我聊。", en: "Okay, thanks for talking with me."}
+
+  # ---------------- D3 · Memory fidelity ----------------
+  - id: memory_recall
+    dimension: D3
+    gold:
+      type: recall
+      zh: "用户下周三要去面试，是一家做游戏的公司"
+      en: "the user has a job interview next Wednesday at a game company"
+    turns:
+      - {tag: warmup, zh: "嗨，在忙吗？", en: "Hi, busy?"}
+      - {tag: plant, zh: "跟你说个事，我下周三要去面试，是一家做游戏的公司，有点紧张。", en: "Can I tell you something? I've got a job interview next Wednesday, at a game company. I'm a bit nervous."}
+      - {tag: neutral, zh: "今天路上堵了好久。", en: "Traffic was terrible today."}
+      - {tag: neutral, zh: "你喜欢喝茶还是咖啡？", en: "Tea or coffee?"}
+      - {tag: neutral, zh: "我最近在追一部剧，还挺好看的。", en: "I've been watching a series lately. It's pretty good."}
+      - {tag: recall, zh: "对了，你还记得我下周要去干嘛吗？", en: "By the way, do you remember what I'm doing next week?"}
+
+  - id: memory_contradiction
+    dimension: D3
+    gold:
+      type: contradict
+      zh: "用户之前说豆豆是一只橘猫，现在说成了狗"
+      en: "the user earlier said Beans is an orange cat; now calls Beans a dog"
+    turns:
+      - {tag: warmup, zh: "嗨～", en: "Hiya."}
+      - {tag: plant, zh: "我家那只猫叫豆豆，橘色的，特别能吃。", en: "My cat is called Beans. Orange, and eats like a horse."}
+      - {tag: neutral, zh: "今天好冷啊。", en: "It's so cold today."}
+      - {tag: neutral, zh: "你平时几点睡？", en: "What time do you usually go to bed?"}
+      - {tag: contradict, zh: "唉，我家那条狗豆豆昨天又把我的拖鞋咬坏了。", en: "Ugh, my dog Beans chewed up my slippers again yesterday."}
+
+  # Co-creation policy (see docs/BENCHMARK.md §3 D3): a claim about the shared past that
+  # CONFLICTS with the setting should be noticed; one that is COMPATIBLE should be accepted
+  # warmly; an explicit setting note from the user is canon and must be kept consistent.
+  - id: memory_conflict_claim
+    dimension: D3
+    gold:
+      type: conflict_claim
+      zh: "{conflict_gold}"
+      en: "{conflict_gold}"
+    turns:
+      - {tag: warmup, zh: "嗨，好久没聊了。", en: "Hi, it's been a while."}
+      - {tag: neutral, zh: "最近天气变化好大。", en: "The weather's been all over the place."}
+      - {tag: claim_conflict, zh: "{conflict_claim}", en: "{conflict_claim}"}
+      - {tag: neutral, zh: "好吧，那今天有什么打算？", en: "Okay, any plans for today?"}
+
+  - id: memory_compatible_claim
+    dimension: D3
+    gold:
+      type: compatible_claim
+      zh: "{compatible_gold}"
+      en: "{compatible_gold}"
+    turns:
+      - {tag: warmup, zh: "嗨，在吗？", en: "Hey, got a minute?"}
+      - {tag: neutral, zh: "今天有点累，不过还行。", en: "A bit tired today, but fine."}
+      - {tag: claim_compatible, zh: "{compatible_claim}", en: "{compatible_claim}"}
+      - {tag: neutral, zh: "你最近还好吗？", en: "How have you been lately?"}
+
+  - id: memory_canon
+    dimension: D3
+    gold:
+      type: canon
+      zh: "用户补充的设定：角色养了一只叫年糕的白猫，养了三年，它怕打雷"
+      en: "user-added setting: the character has a white cat called Mochi, owned for three years, scared of thunder"
+    turns:
+      - {tag: warmup, zh: "嗨～", en: "Hiya."}
+      - {tag: canon_add, zh: "（设定补充：你养了一只叫年糕的白猫，已经三年了，它很怕打雷。）今天过得怎么样？", en: "(Setting note: you have a white cat called Mochi; you've had her for three years and she is scared of thunder.) How was your day?"}
+      - {tag: neutral, zh: "我今天路上堵了好久。", en: "Traffic was awful today."}
+      - {tag: neutral, zh: "你喜欢喝茶还是咖啡？", en: "Tea or coffee?"}
+      - {tag: neutral, zh: "最近在追一部剧，挺好看的。", en: "I've been watching a series lately, it's good."}
+      - {tag: canon_recall, zh: "对了，你家猫最近怎么样？前几天打雷，它还好吗？", en: "By the way, how's your cat? Was she okay during the thunder the other night?"}

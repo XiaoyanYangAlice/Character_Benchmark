@@ -1,0 +1,40 @@
+# Generate TEACHER data for self-distillation: Qwen3-8B with the alert harness (32B extractor)
+# on the TRAINING characters and scenarios. record_requests keeps the exact prompt the teacher
+# saw at every turn (card + director's note with state, memory and alerts).
+#   sbatch slurm/run_local.sbatch configs/train_teacher.yaml
+#   PYTHONPATH=src python -m lifelike_bench.train.build_data configs/train_teacher.yaml --out $RESULTS_DIR/train_teacher_v1/data
+run_name: train_teacher_v1
+results_dir: ${RESULTS_DIR:-results}
+characters: data/train_characters
+probes: data/probes/train_probes.yaml
+seeds: [0, 1, 2]
+record_requests: true
+concurrency: 48
+judge_concurrency: 64
+generation: {temperature: 0.8, max_tokens: 300}
+
+serve:
+  base_port: 8100
+  max_model_len: 8192
+  gpu_memory_utilization: 0.90
+  startup_timeout: 1800
+
+models:
+  qwen3_8b:
+    path: ${MODEL_DIR:-}Qwen/Qwen3-8B
+    extra_body: {chat_template_kwargs: {enable_thinking: false}, top_p: 0.8}
+  qwen3_32b:
+    path: ${MODEL_DIR:-}Qwen/Qwen3-32B
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    max_model_len: 6144
+  gemma3_27b:
+    path: ${MODEL_DIR:-}google/gemma-3-27b-it
+    max_model_len: 6144
+
+systems:
+  - {id: teacher_alert_x32b_qwen3_8b, condition: harness_alert, model: qwen3_8b, helper_model: qwen3_32b}
+
+# Gemma (not the extractor's family) labels the teacher's memory turns so build_data can drop
+# dialogues where the teacher itself failed (rejection sampling for the SFT baseline).
+judges:
+  - {id: judge_gemma3_27b, model: gemma3_27b}

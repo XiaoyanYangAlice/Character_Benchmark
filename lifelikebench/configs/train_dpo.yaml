@@ -1,0 +1,29 @@
+# DPO baseline for the distillation study: chosen = teacher reply (8B + alert harness),
+# rejected = base Qwen3-8B reply to the same student prompt (no harness).
+#   1) sbatch --time=01:00:00 slurm/train.sbatch make_dpo_pairs configs/train_dpo.yaml   (vLLM, ~10-20 min)
+#   2) sbatch --time=04:00:00 slurm/train.sbatch dpo configs/train_dpo.yaml
+#   add --smoke to either for a quick check (pairs .smoke files are written next to the real ones)
+base_model: ${MODEL_DIR:-}Qwen/Qwen3-8B
+opd_train_file: ${RESULTS_DIR:-results}/train_teacher_v1/data/opd_train.jsonl
+opd_val_file: ${RESULTS_DIR:-results}/train_teacher_v1/data/opd_val.jsonl
+train_file: ${RESULTS_DIR:-results}/train_teacher_v1/data/dpo_train.jsonl
+val_file: ${RESULTS_DIR:-results}/train_teacher_v1/data/dpo_val.jsonl
+output_dir: ${RESULTS_DIR:-results}/train/student_dpo
+seed: 0
+# rejected-reply sampling (same settings as the benchmark's character generation)
+pairs_temperature: 0.8
+pairs_top_p: 0.8
+pairs_max_tokens: 300
+# DPO
+beta: 0.1
+sft_weight: 0.0        # >0 adds an NLL anchor on the chosen reply
+lr: 2.0e-5
+epochs: 1
+grad_accum: 16         # one pair per micro-batch -> 16 pairs per step, ~250 steps
+warmup_ratio: 0.1
+max_grad_norm: 1.0
+max_len: 4096
+log_every: 5
+eval_every: 50
+n_val: 200
+lora: {r: 64, alpha: 128, dropout: 0.05}

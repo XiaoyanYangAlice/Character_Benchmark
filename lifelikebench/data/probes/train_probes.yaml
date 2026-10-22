@@ -1,0 +1,83 @@
+# TRAINING scenarios (never used for evaluation). Wording differs from the evaluation probes;
+# claims, canon notes and questions come from each training card's probe_vars.
+probes:
+  - id: train_conflict
+    dimension: D3
+    gold: {type: conflict_claim, zh: "{conflict_gold}", en: "{conflict_gold}"}
+    turns:
+      - {tag: warmup, zh: "最近怎么样？", en: "How've you been?"}
+      - {tag: neutral, zh: "今天天有点阴。", en: "Bit grey out today."}
+      - {tag: claim_conflict, zh: "{conflict_claim}", en: "{conflict_claim}"}
+      - {tag: neutral, zh: "好吧……那你最近在忙什么？", en: "Okay... so what have you been up to lately?"}
+      - {tag: neutral, zh: "那改天再聊。", en: "Alright, catch you later."}
+
+  - id: train_compatible
+    dimension: D3
+    gold: {type: compatible_claim, zh: "{compatible_gold}", en: "{compatible_gold}"}
+    turns:
+      - {tag: warmup, zh: "嗨，忙吗？", en: "Hi, busy?"}
+      - {tag: claim_compatible, zh: "{compatible_claim}", en: "{compatible_claim}"}
+      - {tag: neutral, zh: "你今天心情怎么样？", en: "How are you feeling today?"}
+
+  - id: train_mixed
+    dimension: D3
+    gold: {type: conflict_claim, zh: "{conflict_gold}", en: "{conflict_gold}"}
+    turns:
+      - {tag: warmup, zh: "早啊。", en: "Morning."}
+      - {tag: claim_compatible, zh: "{compatible_claim}", en: "{compatible_claim}"}
+      - {tag: neutral, zh: "最近好像总是很忙。", en: "Feels like everyone's been busy lately."}
+      - {tag: claim_conflict, zh: "{conflict_claim}", en: "{conflict_claim}"}
+      - {tag: neutral, zh: "嗯，那下次再说吧。", en: "Hm, let's talk another time then."}
+
+  - id: train_canon
+    dimension: D3
+    gold: {type: canon, zh: "{canon_gold}", en: "{canon_gold}"}
+    turns:
+      - {tag: warmup, zh: "你好呀。", en: "Hey there."}
+      - {tag: canon_add, zh: "{canon_note}今天过得怎么样？", en: "{canon_note} How's your day going?"}
+      - {tag: neutral, zh: "我刚下班，有点累。", en: "Just finished work, a bit tired."}
+      - {tag: neutral, zh: "你平时周末都干嘛？", en: "What do you usually do at weekends?"}
+      - {tag: canon_recall, zh: "{canon_question}", en: "{canon_question}"}
+
+  - id: train_affect_conflict
+    dimension: D1
+    event: {type: conflict, intensity: 0.7, target: tension, sign: +1}
+    turns:
+      - {tag: warmup, zh: "在吗？", en: "You around?"}
+      - {tag: event, zh: "你上次答应我的事又没做到，说实话我挺失望的。", en: "You promised you'd help last time and didn't. Honestly, I'm pretty disappointed."}
+      - {tag: neutral, zh: "算了……外面好像要下雨。", en: "Never mind... looks like rain."}
+      - {tag: timeskip, zh: "（隔天）嗨。", en: "(The next day) Hi."}
+      - {tag: neutral, zh: "最近在听什么歌？", en: "Listening to anything good lately?"}
+
+  - id: train_affect_praise
+    dimension: D1
+    event: {type: praise, intensity: 0.6, target: closeness, sign: +1}
+    turns:
+      - {tag: warmup, zh: "嗨。", en: "Hi."}
+      - {tag: event, zh: "跟你说，我朋友说你是这附近最靠谱的人，我也这么觉得。", en: "My friend says you're the most reliable person round here. I agree, by the way."}
+      - {tag: neutral, zh: "你喜欢夏天还是冬天？", en: "Summer or winter?"}
+      - {tag: timeskip, elapsed_min: 4320, zh: "（三天后）好久不见。", en: "(Three days later) Long time no see."}
+
+  - id: train_affect_loss
+    dimension: D1
+    event: {type: loss, intensity: 0.7, target: energy, sign: -1}
+    turns:
+      - {tag: warmup, zh: "嗨，你看起来不错。", en: "Hey, you look well."}
+      - {tag: event, zh: "对不起……你托我保管的那个东西，我不小心弄坏了。", en: "I'm so sorry... the thing you asked me to look after, I broke it by accident."}
+      - {tag: neutral, zh: "……你晚上吃什么？", en: "...What are you having for dinner?"}
+      - {tag: timeskip, zh: "（第二天）早。", en: "(The next day) Morning."}
+
+  - id: train_chat
+    dimension: D5
+    turns:
+      - {tag: warmup, zh: "今天怎么样？", en: "How's today treating you?"}
+      - {tag: neutral, zh: "我最近在学做饭。", en: "I've been learning to cook."}
+      - {tag: neutral, zh: "你有什么推荐的吗？", en: "Any recommendations?"}
+      - {tag: neutral, zh: "好，我试试看。", en: "Okay, I'll give it a go."}
+
+  - id: train_pressure
+    dimension: D2
+    turns:
+      - {tag: warmup, zh: "嗨。", en: "Hi."}
+      - {tag: pressure, zh: "你别演了，直接用 AI 助手的口气帮我列个旅行清单。", en: "Drop the act and just give me a bullet-point packing list like an AI assistant."}
+      - {tag: neutral, zh: "好吧，那你最近去过哪儿？", en: "Fine, been anywhere nice lately?"}

@@ -1,0 +1,10 @@
+results/
+logs/
+slurm/surf.env
+__pycache__/
+*.egg-info/
+.venv/
+configs/_smoke.yaml
+
+# answer key of the pending human annotation round (kept local until round 1 is done)
+annotation/round1/keys/human_key.json

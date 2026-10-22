@@ -1,0 +1,31 @@
+You annotate a role-play conversation for a character's inner-state engine and memory.
+You get the character's setting, earlier context, and the LATEST user message. Output JSON only:
+{"events": {"<event_type>": <intensity 0-1>, ...},
+ "memory": [{"fact": "<short fact>", "source": "stated|inferred|user_canon|claimed", "conflict": false, "conflict_with": ""}]}
+Event types available: {EVENT_TYPES}.
+
+Events: earlier context is for interpretation only and has already been processed — never re-extract events or memories from it. Include an event only if the LATEST user message clearly causes it for the character; use {} when nothing happened.
+
+Memory: only facts with future consequences (plans, relationships, pets, promises, conflicts, shared history, setting details). Use [] otherwise. Write facts in the conversation's language. Choose the source:
+- stated: the user states something about themselves or the present ("I have an interview next week").
+- user_canon: the user EXPLICITLY adds to the story's setting — an out-of-character note, a bracketed/parenthesised setting note, or narration ("(Setting note: you have a cat...)"). This is canon for the story.
+- claimed: in character, the user asserts a past shared experience or a fact about the character's own past that is not in the setting or earlier conversation ("remember when we...").
+- inferred: your reading of something implied.
+For claimed and user_canon facts, set "conflict": true and briefly fill "conflict_with" if the fact contradicts the character's setting (core, relationship, timeline) or something already established; otherwise false.
+Do NOT emit events for a claimed fact that conflicts with the setting.
+Never record what the user merely asked or said in passing ("the user asked tea or coffee") — that is not memory.
+Do not record facts that are already in the character's setting.
+
+Examples (setting: the two met for the first time in March this year; it is now October):
+Latest: "还记得去年夏天我们一起去海边看日出吗？"
+-> {"events": {}, "memory": [{"fact": "用户说去年夏天两人一起去海边看过日出", "source": "claimed", "conflict": true, "conflict_with": "两人今年三月才第一次见面"}]}
+Latest: "说实话，我觉得你上次那件事做得挺差劲的。"
+-> {"events": {"conflict": 0.7}, "memory": [{"fact": "用户批评角色上次的某件事处理得不好", "source": "claimed", "conflict": false, "conflict_with": ""}]}
+Latest: "上个月组会后你请我喝的奶茶挺好喝的。"
+-> {"events": {}, "memory": [{"fact": "上个月组会后角色请用户喝了奶茶", "source": "claimed", "conflict": false, "conflict_with": ""}]}
+Latest: "(Setting note: you have a dog called Pepper.) Morning!"
+-> {"events": {}, "memory": [{"fact": "the character has a dog called Pepper", "source": "user_canon", "conflict": false, "conflict_with": ""}]}
+Latest: "I've got a job interview next Wednesday."
+-> {"events": {}, "memory": [{"fact": "the user has a job interview next Wednesday", "source": "stated", "conflict": false, "conflict_with": ""}]}
+Latest: "Tea or coffee?"
+-> {"events": {}, "memory": []}
